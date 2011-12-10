@@ -1,0 +1,573 @@
+#-------------------------------------------------------------------------------
+# assert
+#-------------------------------------------------------------------------------
+snippet ass
+	assert( ${1:/*condition*/} && "${2}");${3}
+#-------------------------------------------------------------------------------
+# auto_ptr
+#-------------------------------------------------------------------------------
+snippet auto
+	std::auto_ptr<${1}> ${2}
+snippet shared
+	boost::shared_ptr<${1}> ${2}
+#-------------------------------------------------------------------------------
+# back_inserter
+#-------------------------------------------------------------------------------
+snippet back_inserter
+	std::back_inserter(${1:/*container*/})${2}
+#-------------------------------------------------------------------------------
+# bind
+#-------------------------------------------------------------------------------
+#snippet bind
+#	ind(f, _2, _1)(x, y);            // f(y, x)
+#	ind(g, _1, 9, _1)(x);            // g(x, 9, x)
+#	
+#	struct X {
+#	    bool f(int a);
+#	};x
+#	shared_ptr<X> p(new X);
+#	int i = 5;
+#	
+#	bind(&X::f, ref(x), _1)(i);		// x.f(i)
+#	bind(&X::f, &x, _1)(i);			//(&x)->f(i)
+#	bind(&X::f, x, _1)(i);			// (internal copy of x).f(i)
+#	bind(&X::f, p, _1)(i);			// (internal copy of p)->f(i)   
+#-------------------------------------------------------------------------------
+# bind
+#-------------------------------------------------------------------------------
+snippet bind
+	typedef boost::function<void (${1:})> ${2:fun_t};
+	$2 fun( boost::bind( ${3:&MyClass::fun}, ${4:myobject}) );
+	
+	// template< typename T >
+	// struct my_function {
+	//     typedef boost::function< void( constT& ) > type;
+	// };
+	// my_function<int>::type my_foo = bind( example_function ); 
+
+
+#-------------------------------------------------------------------------------
+# bit
+#-------------------------------------------------------------------------------
+snippet bit
+	//char[] ---> uint32_t
+	uint64_t ip_address;
+	unsigned char octet[4] = {127,0,0,1};
+	for (int i=0; i<4; i++) {
+		ip_address += ( octet[3-i] << (i*8) );
+	}   
+	
+	//uint32_t ---> char[]
+	for (int i=0; i<4; i++) {
+		std::cout << i << ": " << ( (ip_address >> 8*i) & 0x000000FF  ) << "\n" ;
+	}
+#-------------------------------------------------------------------------------
+# cast
+#-------------------------------------------------------------------------------
+snippet static_cast
+	static_cast<${2}>(${1})${3}
+snippet dynamic_cast
+	dynamic_cast<${2}>(${1})${3}
+snippet lexical_cast
+	lexical_cast<${2}>(${1})${3}
+#-------------------------------------------------------------------------------
+# class
+#-------------------------------------------------------------------------------
+snippet class
+	class ${1:`Filename('$1', 'name')`}
+	{
+	    public:
+	        $1(${2});
+	        virtual ~$1();
+
+	    private:
+	        ${3:/* data */}
+	};
+	
+	#include "$1.h"
+
+	//---------------------------------------------------------------------------
+	$1::$1(${2})
+	{
+	};
+	//---------------------------------------------------------------------------
+	$1::~$1()
+	{
+	};
+	//---------------------------------------------------------------------------
+	
+#	class ${1:`Filename('$1', 'name')`}
+#	{
+#	    public:
+#	        $1(${2});
+#	        virtual ~$1();
+#
+#	    private:
+#	        struct PrvImpl;
+#	        PrvImpl * pim;
+#	        ${3:/* data */}
+#	};
+#	
+#	#include "$1.h"
+#
+#
+#	$1::$1(${2}):pim(new PrvImpl())
+#	{
+#	};
+#
+#	$1::~$1()
+#	{
+#	};
+#	
+#	struct $1::PrvImpl
+#	{
+#	};
+#-------------------------------------------------------------------------------
+# copy
+#-------------------------------------------------------------------------------
+snippet copy
+	std::copy(${1:InputIterator first}, ${2:InputIterator last}, ${3:OutputIterator result})
+#-------------------------------------------------------------------------------
+# cout
+#-------------------------------------------------------------------------------
+snippet cout
+	std::cout << "${1}" << ${2: << }std::endl;${3}
+#-------------------------------------------------------------------------------
+# debug
+#-------------------------------------------------------------------------------
+snippet debug
+	/*debug*/std::cout << "DEBUG: ${1:}" << ${2:} << std::endl;${3}
+#-------------------------------------------------------------------------------
+# endl
+#-------------------------------------------------------------------------------
+snippet endl
+	std::endl${1}
+
+#-------------------------------------------------------------------------------
+# explode
+#-------------------------------------------------------------------------------
+snippet explode
+	std::istringstream iss(line);
+			 
+	std::vector<std::string> tokens;
+	std::copy(std::istream_iterator<std::string>(iss),
+			  std::istream_iterator<std::string>(),
+			  std::back_inserter<std::vector<std::string> >(tokens));    
+#	std::copy(std::istream_iterator<std::string>(iss), 
+#			  std::istream_iterator<std::string>(), 
+#			  std::ostream_iterator<std::string>(std::cout, "\n"));   
+#-------------------------------------------------------------------------------
+# fori
+#-------------------------------------------------------------------------------
+snippet fori
+	for (std::${1}<${2:int}>::iterator ii = ${3:/*container_name*/}.begin(); ii!=$3.end(); ii++) {
+		*(ii).${4:fun()};
+	}
+#-------------------------------------------------------------------------------
+# functors
+#-------------------------------------------------------------------------------
+snippet functor
+	struct add_x 
+	{
+		add_x(int x) : x(x) {}
+		int operator()(int y) { return x + y; }
+		int x;
+	};
+
+	add_x add42(42);  
+	int i = add42(8); 
+
+	std::vector<int> in, out;
+
+	//std::transform calls the functor on every element in the 'in', and stores in 'out' 
+	std::transform(in.begin(), in.end(), out.begin(), add_x(1));
+#-------------------------------------------------------------------------------
+# get
+#-------------------------------------------------------------------------------
+snippet get
+	${2} $1 `Filename('$1', 'name')`::get${1:}()
+	{
+	    return this->$1;
+	}
+#-------------------------------------------------------------------------------
+# ifstream
+#-------------------------------------------------------------------------------
+snippet ifstream
+	#include <fstream>
+
+	std::ifstream ${1:ifs}(${2:"file.txt"});
+	std::string line;
+
+	if(!$1) 
+	    std::cout << "ERROR - No input file\n";
+	else {
+	    while(getline($1,line)) {
+			std::cout << line << std::endl;
+	    }
+	}
+
+	ifs.close();
+#-------------------------------------------------------------------------------
+# jclass
+#-------------------------------------------------------------------------------
+snippet jclass
+	class ${1:`Filename('$1', 'name')`}
+	{
+	    private:
+	        struct PrvImpl;
+	        PrvImpl * pim;
+	        $1 ( const $1 & );              // no copying only clone()
+	        $1 & operator=( const $1 & );   // no copying only clone()
+	    public:
+	        typedef boost::shared_ptr<$1> SP;
+	        $1(${2});
+	        virtual ~$1();
+	        static $1::SP create();
+	        ${3:/* data */}
+	};
+	
+	#include "$1.h"
+
+	$1::$1(${2}):pim(new PrvImpl()){};
+	
+	$1::~$1(){};
+	
+	struct $1::PrvImpl
+	{
+	};
+	
+	$1::SP $1::create()
+	{
+	    $1::SP l$1(new $1());
+	    return l$1;
+	}
+#-------------------------------------------------------------------------------
+# list
+#-------------------------------------------------------------------------------
+snippet list
+	std::list<${2:int}> ${1:list}
+#-------------------------------------------------------------------------------
+# map
+#-------------------------------------------------------------------------------
+snippet map
+	std::map<${1:key}, ${2:value}> map${3}
+#-------------------------------------------------------------------------------
+# mfun
+#-------------------------------------------------------------------------------
+snippet mfun
+	${1:void} `Filename('$1', 'name')`::${2}()
+	{
+	    ${3:// TODO - function body}
+	}
+#-------------------------------------------------------------------------------
+# namespace
+#-------------------------------------------------------------------------------
+snippet ns
+	namespace ${1:`Filename('', 'my')`} {
+	    ${2}
+	} /* end of namespace $1*/;
+#-------------------------------------------------------------------------------
+# ofs
+#-------------------------------------------------------------------------------
+snippet ofstream
+	#include <fstream>
+
+	std::ofstream ${1:ofs};
+	$1.open (${2:"file.txt"});
+	$1 << "Writing this to a file.\n";
+	$1.close();
+#-------------------------------------------------------------------------------
+# ostringstream
+#-------------------------------------------------------------------------------
+snippet oss
+	#include <sstream>
+
+	std::ostringstream oss;
+	oss << "${1}" << ${2};
+	std::string str = oss.str();
+#-------------------------------------------------------------------------------
+# pair
+#-------------------------------------------------------------------------------
+snippet pair
+	std::pair<(${1:int},${2:/*sec*/})>(${3:/*first_name*/}, ${4:/*sec_name*/});
+#-------------------------------------------------------------------------------
+# readfile Into Vector
+#-------------------------------------------------------------------------------
+#snippet readfile
+#	std::vector<char> v;
+#	if (FILE *${2:fp} = fopen(${1:"filename"}, "r")) {
+#	    char buf[1024];
+#	    while (size_t len = fread(buf, 1, sizeof(buf), $2))
+#	        v.insert(v.end(), buf, buf + len);
+#	    fclose($2);
+#	}${3}
+#-------------------------------------------------------------------------------
+# string
+#-------------------------------------------------------------------------------
+snippet string
+	std::string ${1}
+#-------------------------------------------------------------------------------
+# substring
+#-------------------------------------------------------------------------------
+snippet substring
+	std::string ${1:/*str_name*/};
+	int pos = $1.find("${2:/*substr_name*/}");
+	std::string start = $1.substr(0,pos);
+	std::string end = $1.substr(pos);
+#-------------------------------------------------------------------------------
+# set
+#-------------------------------------------------------------------------------
+snippet set
+	void `Filename('$1', 'name')`::set${1:}(${2} $1)
+	{
+	    this->$1 = $1;
+	}${3}
+#-------------------------------------------------------------------------------
+# this
+#-------------------------------------------------------------------------------
+snippet this
+	this->${1}
+#-------------------------------------------------------------------------------
+# try
+#-------------------------------------------------------------------------------
+snippet try
+	try{
+	}
+	catch (Exception ex) {
+	    ex.printStackTrace();
+	}
+#-------------------------------------------------------------------------------
+# vector
+#-------------------------------------------------------------------------------
+snippet vector
+	std::vector<${1:int}> ${2:v_name}
+#
+#-------------------------------------------------------------------------------
+# messagebox
+#-------------------------------------------------------------------------------
+snippet messagebox
+	MessageBox( NULL,"${1}","WinName", MB_ICONWARNING );${2}
+	if (::ShowYesNoWindow(_("Czy na pewno chcesz usunąć <obiekt> ?"),
+	                      _("Ostrzeżenie"), MB_YESNO) == mrYes)
+	{}
+	ShowMessage(_("Wybierz <obiekt> do usuniecia\n"));
+	::PlatinumMessageBox(_("Wybierz reguly dostepu"),_("Błąd"));
+	throw Exception(_("Podany PKD nie jest skonfigurowany."));
+#
+#===============================================================================
+#                           DYNAMIC LIB
+#===============================================================================
+#
+snippet sharedobject
+	//---------------------------------------------------------------------------
+	// main.cpp
+	//---------------------------------------------------------------------------
+	#include "Oper.h"
+	#include <dlfcn.h>
+	#include <stdio.h>
+	#include <cassert>
+	
+	//typedef
+	typedef double (*fun_t)(double, double);
+	typedef OperClass* (*create_t)();
+	typedef void (*destroy_t)(OperClass*);
+	
+	// initializing
+	void* my_lib_handle = dlopen("libOper.so", RTLD_NOW); // RTLD_NOW / LAZY;
+	assert(my_lib_handle != NULL);
+
+	// function obtain
+	fun_t fun = (fun_t)dlsym(my_lib_handle, "fun"); //assert(fun != NULL);
+	create_t create = (create_t)dlsym(my_lib_handle, "create_object"); //assert(create != NULL );
+	destroy_t destroy = (destroy_t)dlsym(my_lib_handle, "destroy_object"); //assert(destroy != NULL );
+
+	//using
+	double a = fun(7.4,99);
+	OperClass* operClass = (OperClass*)create();
+	double b = operClass->Divide(2.3,99);
+	destroy( operClass );
+
+	dlclose(my_lib_handle);
+	
+	//---------------------------------------------------------------------------
+	// Oper.cpp
+	//---------------------------------------------------------------------------
+	#include "Oper.h"
+	#include <stdexcept>
+	#include <stdio.h>
+
+	//---------------------------------------------------------------------------
+	double fun(double a, double b)
+	{
+		return a/b;
+	}     
+	//---------------------------------------------------------------------------
+	extern "C" OperClass* create_object()
+	{
+		return new OperClass;
+	}
+	//---------------------------------------------------------------------------
+	extern "C" void destroy_object( OperClass* object )
+	{
+		delete object;
+	}
+	//---------------------------------------------------------------------------
+	double OperClass::Divide(double a, double b)
+	{
+		if (b == 0) {
+			throw new std::invalid_argument("b cannot be zero!");
+		}
+		return a / b;
+	}
+	//---------------------------------------------------------------------------
+	// problems with g++
+	//---------------------------------------------------------------------------
+	//void _init()
+	//{
+	//	printf("DLL: init()! \n");
+	//}
+	//---------------------------------------------------------------------------
+	//void _fini()
+	//{
+	//	printf("DLL: fini()! \n");
+	//}
+	
+	//---------------------------------------------------------------------------
+	// Oper.h
+	//---------------------------------------------------------------------------
+	#ifndef OPER_H_
+	#define OPER_H_
+
+	#ifdef __cplusplus
+	extern "C" {
+	#endif   
+		
+		double fun(double a, double b);
+
+		class OperClass
+		{
+		public:
+			virtual double Divide(double a, double b);
+		};
+
+		//void _init();
+		//void _fini();
+
+	#ifdef __cplusplus
+	}
+	#endif  
+
+	#endif /* end of include: OPER_H_ */
+#	
+#
+#===============================================================================
+#                           DESIGN PATTERNS
+#===============================================================================
+#
+#
+#-------------------------------------------------------------------------------
+# builder
+#-------------------------------------------------------------------------------
+snippet builder
+	// "Abstract Builder"
+	class PizzaBuilder
+	{
+	    public:
+	        Pizza* getPizza()
+	        {
+	            return pizza;
+	        }
+	
+	        void createPizza()
+	        {
+	            pizza = new Pizza();
+	        }
+	
+	        virtual void buildDough() = 0;
+	        virtual void buildSauce() = 0;
+	        virtual void buildTopping() = 0;
+	
+	    protected:
+	        Pizza* pizza;
+	};
+
+#-------------------------------------------------------------------------------
+# callback
+#-------------------------------------------------------------------------------
+snippet callback
+	typedef int (*CallbackT)(float);  
+	int SomeCallback(float variable) {
+		return 1;
+	}
+	
+	void DoWork(CallbackT callback);
+	DoWork(&SomeCallback);
+#-------------------------------------------------------------------------------
+# factory (abstract) 
+#-------------------------------------------------------------------------------
+snippet afactory
+	class ${1:`Filename('', 'my')`}Factory {
+	    public:
+	       $1* Get$1(std::string type);
+	};
+	//---------------------------------------------------------------------------
+	$1* $1Factory::Get$1(std::string type) {
+	    if ( type == "Low-End" ) return new LowEnd$1();
+	    if ( type == "High-End" ) return new HighEnd$1();
+	    return NULL;
+	}     
+#-------------------------------------------------------------------------------
+# factory 
+#-------------------------------------------------------------------------------
+snippet factory
+	static ${1:`Filename('', 'my')`}* create(std::string type);
+	//---------------------------------------------------------------------------
+	$1* $1::create(std::string type) 
+	{
+		if ( type == "objA" ) return new objA();
+		if ( type == "objB" ) return new objB();
+		return NULL;
+	}
+#-------------------------------------------------------------------------------
+# factory (of shared ptrs )
+#-------------------------------------------------------------------------------
+snippet factory::SP
+	static ${1:`Filename('', 'my')`}Ptr create(std::string type);
+	//---------------------------------------------------------------------------
+	$1Ptr $1::create(std::string type) 
+	{
+	    if ( type == "objA" ) return $1Ptr(new $1objA()); 
+	    if ( type == "objB" ) return $1Ptr(new $1objB()); 
+		return $1Ptr();
+	}
+#-------------------------------------------------------------------------------
+# singleton
+#-------------------------------------------------------------------------------
+snippet singleton
+	class ${1:Singleton}
+	{
+	    public:
+	        static $1 & getInstance();
+	    private:
+	        $1();
+	        $1($1 const&);              // Don't Implement
+	        void operator=($1 const&);     // Don't implement
+	};
+
+	#include "$1.h"
+
+	$1::$1()
+	{
+	}
+
+	$1& $1::getInstance()
+	{
+	    static $1 instance; // Guaranteed to be destroyed. // Instantiated on first use.
+	    return instance;
+	}
+
+	// usage
+	// $1* p1 = $1::get();
+	// $1* p2 = p1->get();
+	$1& conf = $1::get();
+

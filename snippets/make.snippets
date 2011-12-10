@@ -1,0 +1,118 @@
+#-------------------------------------------------------------------------------
+# simple program in C++
+#-------------------------------------------------------------------------------
+snippet make
+	# ifndef uaDIR_OUT
+	# 	export uaDIR_OUT = $(UADIR_OUT)
+	# endif
+
+	export CXX = g++
+	export CP = cp -u
+	BUILD_TYPE := production    # "debug" or "production"
+
+	ifeq ($(BUILD_TYPE), debug)
+		export CXXFLAGS = -Wall -g -mthreads -I$(uaDIR_DEP)/include -L$(uaDIR_DEP)/lib
+	else
+		export CXXFLAGS = -Wall -O3 -mthreads -I$(uaDIR_DEP)/include -L$(uaDIR_DEP)/lib
+	endif
+
+	#-------------------------------------------------------------------------------
+	_SRC = main.cpp    
+	_OBJ := $(_SRC:.cpp=.o)
+	_DLL = u700Manager.dll
+	_INC = u700Manager.h u700Manager_types.h
+
+	#-------------------------------------------------------------------------------
+
+	SDIR = ./src
+	ODIR = ./obj
+	DDIR = ./out
+	# katalogi docelowe
+	OUT_INC = $(uaDIR_OUT)/include/ua
+	OUT_BIN = $(uaDIR_OUT)/bin
+	OUT_CPP = $(uaDIR_OUT)/cpp
+
+	#-------------------------------------------------------------------------------
+	 
+	DLL  = $(addprefix $(DDIR)/, $(_DLL))
+	SRC  = $(addprefix $(SDIR)/, $(_SRC))
+	LIBS  = $(uaDIR_DEP)/bin/uaNet_v01.dll        \
+			  $(uaDIR_DEP)/bin/uaCommon_v01.dll   \
+			  $(uaDIR_DEP)/bin/uaCrypto.dll       \
+			  $(uaDIR_DEP)/cpp/uaNet.cpp          \
+			  $(uaDIR_DEP)/cpp/threads.cpp        \
+			  $(uaDIR_DEP)/cpp/uaErrors.cpp       \
+			  $(uaDIR_DEP)/cpp/uaErrorsWinApi.cpp
+
+	INC = $(addprefix $(SDIR)/, $(_INC))
+	OBJ  = $(addprefix $(ODIR)/, $(_OBJ))
+
+
+	#-------------------------------------------------------------------------------
+
+	.PHONY: all clean console copy
+
+	all: $(DLL) console copy
+
+	# for compiling single unit ---> make <unitname>.o
+	%.o: $(SDIR)/%.cpp
+		$(CXX) $(CXXFLAGS) $< -c -o $(ODIR)/$@ $(LIBS)
+
+	# for all -----> make all
+	$(ODIR)/%.o: $(SDIR)/%.cpp
+		$(CXX) $(CXXFLAGS) $< -c -o $@  
+
+	$(DLL): $(OBJ)
+		$(CXX) $(CXXFLAGS) -shared -o  $@ $^ $(LIBS)
+
+	console:
+		$(MAKE) -C ./console
+
+	copy: $(INC)
+		cp $(INC) $(DDIR)/
+		$(CP) $(INC) $(OUT_INC)/
+		$(CP) $(DLL) $(OUT_BIN)/
+
+	clean:
+		-rm -rf obj/*.o
+		-rm -rf out/*.*  
+
+#-------------------------------------------------------------------------------
+# shared object
+#-------------------------------------------------------------------------------
+snippet so
+	paths = -L. -I.
+	libs = -ldl		# -l${1:MyLib} for static linking  
+	
+	.PHONY: all lib clean
+	
+	all: lib_pp main.cpp 
+		g++ main.cpp -o main $(paths) $(libs) 
+
+	#---------------------------------------------------------------------------
+	# -fPIC		- Position Independent Code	
+	# -shared 	- making so 
+	# -soname 	- we specify what the soname will be. 
+	# -o 		- real name of the so
+	# -lc		- ?
+	#---------------------------------------------------------------------------
+	
+	lib_pp:	
+		g++ -fPIC -Wall -shared Oper.cpp -o lib$1.so
+		nm Oper.o 
+	
+	lib_cc: 
+		-ln -s ./lib$1.so.1.0 lib$1.so
+		-ln -s ./lib$1.so.1.0 lib$1.so.1
+		gcc -Wall -fPIC -c $1.cpp -o $1.o
+		ld -shared -soname lib$1.so.1 -o lib$1.so.1.0 -lc $1.o
+	
+
+	clean: 
+		-rm main $1.o lib$1.so lib$1.so.1 lib$1.so.1.0   
+#-------------------------------------------------------------------------------
+# dll
+#-------------------------------------------------------------------------------
+
+
+
