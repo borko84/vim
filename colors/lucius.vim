@@ -30,14 +30,14 @@ let colors_name="lucius"
 " Base color
 " ----------
 hi Normal           guifg=#e0e0e0           guibg=#202020
-hi Normal           ctermfg=255             ctermbg=235
+hi Normal           ctermfg=253             ctermbg=235
 
 
 " Comment Group
 " -------------
 " any comment
-hi Comment          guifg=#808080                                   gui=none
-hi Comment          ctermfg=102                                     cterm=none
+hi Comment          guifg=#606060                                   gui=none
+hi Comment          ctermfg=240                                     cterm=none
 
 
 " Constant Group
