@@ -83,6 +83,7 @@ set laststatus=2        " Always display a statusline
 set mouse=a             " Enable mouse usage (all modes)
 set nocompatible        " Use Vim settings
 set number              " Line Numbering
+set showbreak=#         " Show break char
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
 set smartcase           " Do smart case matching
@@ -580,7 +581,7 @@ au FileType python set completeopt=menuone,menu,longest,preview
 "       let &ic = ic
 "    endtry
 "endfun
-"nnoremap <silent> :call MatchCaseTag()<CR>
+"nnoremap   :call MatchCaseTag()
 
 
 " `gf` jumps to the filename under the cursor.  Point at an import statement
@@ -962,7 +963,7 @@ if &diff
     set foldminlines=99999
 
     if has("gui_running")
-        exec "winpos 40 40"
+        exec "winpos 50 50"
         exec "set lines=70"
         exec "set columns=160"
     endif

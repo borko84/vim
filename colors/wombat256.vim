@@ -39,12 +39,12 @@ let colors_name = "wombat256"
 hi Normal		ctermfg=254		ctermbg=235		cterm=none		guifg=#f6f3e8	guibg=#242424	gui=none
 hi Cursor		ctermfg=none	ctermbg=241		cterm=none		guifg=NONE		guibg=#656565	gui=none
 "hi Visual		ctermfg=7		ctermbg=238		cterm=none		guifg=#f6f3e8	guibg=#444444	gui=none
-hi Visual		ctermfg=NONE    ctermbg=238		cterm=none		guifg=NONE		guibg=#383838	gui=none
+hi Visual		ctermfg=NONE	ctermbg=238		cterm=none		guifg=NONE		guibg=#383838	gui=none
 "hi Folded		ctermfg=103		ctermbg=238		cterm=none		guifg=#a0a8b0	guibg=#384048	gui=none
 "hi Folded		ctermfg=103		ctermbg=238		cterm=none		guifg=#5f625f	guibg=#252525	gui=none
 hi Folded		ctermfg=103		ctermbg=238		cterm=none		guifg=#334433	guibg=#333344   gui=bold
 "hi Title		ctermfg=7		ctermbg=none	cterm=bold		guifg=#f6f3e8	guibg=NONE		gui=bold
-hi Title		ctermfg=7		ctermbg=none	cterm=bold      guifg=#f6f3e8	guibg=NONE		gui=bold
+hi Title		ctermfg=7		ctermbg=none	cterm=bold		guifg=#f6f3e8	guibg=NONE		gui=bold
 hi TabLine														guifg=#000000	guibg=#888888	gui=none
 hi TabLineFill  												guifg=#000000 	guibg=#aaaaaa 	gui=none
 "hi StatusLine	ctermfg=7		ctermbg=238		cterm=none		guifg=#f6f3e8	guibg=#444444	gui=italic
@@ -75,7 +75,7 @@ endif
 
 
 "#-------------------------------------------------------------------------------
-"# Syntax highlighting 
+"# Syntax highlighting
 "#-------------------------------------------------------------------------------
 "hi Keyword		ctermfg=111		cterm=none		guifg=#8ac6f2	gui=none
 "hi Statement	ctermfg=111		cterm=none		guifg=#8ac6f2	gui=none
@@ -141,7 +141,6 @@ au InsertLeave * hi StatusLine ctermbg=238 guibg=#444444
 "#---------------------------------------------------------------------------
 hi MyTagListFileName ctermfg=113   cterm=none		guifg=#95e454	gui=italic
 hi MyTagListTitle    ctermfg=25   cterm=none		guifg=#4060a0	gui=none 
-
 
 
 

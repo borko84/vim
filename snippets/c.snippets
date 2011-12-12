@@ -1,8 +1,32 @@
 #-------------------------------------------------------------------------------
 # bit
 #-------------------------------------------------------------------------------
+snippet bit simple
 	x << 7;             //move left
-	(x & 0x01) !=0      // check if lowest bit is set
+	(x & 0x01) !=0      //check if lowest bit is set
+snippet bit complex
+	//char[] ---> uint32_t
+	uint64_t ip_address;
+	unsigned char octet[4] = {127,0,0,1};
+	for (int i=0; i<4; i++) {
+		ip_address += ( octet[3-i] << (i*8) );
+	}   
+	
+	//uint32_t ---> char[]
+	for (int i=0; i<4; i++) {
+		std::cout << i << ": " << ( (ip_address >> 8*i) & 0x000000FF  ) << "\n" ;
+	}
+#-------------------------------------------------------------------------------
+# char_array
+#-------------------------------------------------------------------------------
+snippet char_array
+	char *s[]={"Jan","Feb","Mar","April"};
+	char** p = s;
+	
+	for( unsigned n = 0; n < 4; ++n ) {
+		printf("%s\n", *p );
+		++p;
+	}
 #-------------------------------------------------------------------------------
 # main()
 #-------------------------------------------------------------------------------
@@ -54,7 +78,7 @@ snippet ifndef
 
 	${2}
 
-	#endif /* end of include: $1 */
+	#endif /* end of $1 */
 #-------------------------------------------------------------------------------
 #snippet ifndef
 #	#ifndef ${1:`toupper(Filename('', 'UNTITLED').'_'.system("/usr/bin/ruby -e 'print (rand * 2821109907455).round.to_s(36)'"))`}
@@ -121,7 +145,7 @@ snippet while
 # for Loop
 #-------------------------------------------------------------------------------
 snippet for
-	for (int ${1:i} = 0; $1 < ${2:}.size(); $1++) {
+	for (int ${1:i} = 0; $1 < ${2:.size()}; $1++) {
 	    ${4:/* code */}
 	}
 #-------------------------------------------------------------------------------
@@ -175,14 +199,16 @@ snippet tde
 # unfortunately version this isn't as nice as TextMates's, given the lack of a
 # dynamic `...`
 #-------------------------------------------------------------------------------
-snippet printf
+snippet pr
 	printf("${1:%s}\n"${2});${3}
 #-------------------------------------------------------------------------------
 # fprintf (again, this isn't as nice as TextMate's version, but it works)
 #-------------------------------------------------------------------------------
 snippet fpr
 	fprintf(${1:stderr}, "${2:%s}\n"${3});${4}
-snippet .
-	[${1}]${2}
+#snippet .
+#	[${1}]${2}
 snippet un
-	unsigned
+	unsigned${1}
+snippet ui
+	uint32_t${1} 
