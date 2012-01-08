@@ -39,12 +39,12 @@ let colors_name = "wombat256"
 hi Normal		ctermfg=254		ctermbg=235		cterm=none		guifg=#f6f3e8	guibg=#242424	gui=none
 hi Cursor		ctermfg=none	ctermbg=241		cterm=none		guifg=NONE		guibg=#656565	gui=none
 "hi Visual		ctermfg=7		ctermbg=238		cterm=none		guifg=#f6f3e8	guibg=#444444	gui=none
-hi Visual		ctermfg=NONE	ctermbg=238		cterm=none		guifg=NONE		guibg=#383838	gui=none
+hi Visual		ctermfg=NONE    ctermbg=238		cterm=none		guifg=NONE		guibg=#383838	gui=none
 "hi Folded		ctermfg=103		ctermbg=238		cterm=none		guifg=#a0a8b0	guibg=#384048	gui=none
 "hi Folded		ctermfg=103		ctermbg=238		cterm=none		guifg=#5f625f	guibg=#252525	gui=none
-hi Folded		ctermfg=103		ctermbg=238		cterm=none		guifg=#334433	guibg=#333344   gui=bold
+hi Folded		ctermfg=103		ctermbg=238		cterm=none		guibg=#282835	guifg=#393939	gui=none
 "hi Title		ctermfg=7		ctermbg=none	cterm=bold		guifg=#f6f3e8	guibg=NONE		gui=bold
-hi Title		ctermfg=7		ctermbg=none	cterm=bold		guifg=#f6f3e8	guibg=NONE		gui=bold
+hi Title		ctermfg=7		ctermbg=none	cterm=bold      guifg=#f6f3e8	guibg=NONE		gui=bold
 hi TabLine														guifg=#000000	guibg=#888888	gui=none
 hi TabLineFill  												guifg=#000000 	guibg=#aaaaaa 	gui=none
 "hi StatusLine	ctermfg=7		ctermbg=238		cterm=none		guifg=#f6f3e8	guibg=#444444	gui=italic
@@ -66,8 +66,6 @@ hi CursorLine					ctermbg=236		cterm=none						guibg=#2d2d2d
 hi MatchParen	ctermfg=7		ctermbg=243		cterm=bold		guifg=#f6f3e8	guibg=#857b6f	gui=bold
 hi Pmenu		ctermfg=7		ctermbg=238						guifg=#f6f3e8	guibg=#444444
 hi PmenuSel		ctermfg=0		ctermbg=192						guifg=#000000	guibg=#cae682
-"hi PmenuSbar   ctermfg=7		ctermbg=0
-"hi PmenuThumb  ctermfg=0 		ctermbg=7  
 endif
 
 
@@ -75,32 +73,29 @@ endif
 
 
 "#-------------------------------------------------------------------------------
-"# Syntax highlighting
+"# Syntax highlighting 
 "#-------------------------------------------------------------------------------
-"hi Keyword		ctermfg=111		cterm=none		guifg=#8ac6f2	gui=none
-"hi Statement	ctermfg=111		cterm=none		guifg=#8ac6f2	gui=none
-hi Keyword		ctermfg=25		cterm=none		guifg=#4060a0	gui=none
-hi Statement	ctermfg=25		cterm=none		guifg=#4060a0	gui=none
+hi Keyword		ctermfg=25		cterm=none		guifg=#875fff	gui=none
+hi Statement	ctermfg=25		cterm=none		guifg=#875fff	gui=none
 
 hi Constant		ctermfg=167		cterm=none		guifg=#e5786d	gui=none
 hi Number		ctermfg=167		cterm=none		guifg=#e5786d	gui=none
 hi PreProc		ctermfg=167		cterm=none		guifg=#e5786d	gui=none
 
-"hi Function	ctermfg=192		cterm=none		guifg=#cae682	gui=none
-"hi Identifier	ctermfg=192		cterm=none		guifg=#cae682	gui=none
-"hi Type		ctermfg=192		cterm=none		guifg=#cae682	gui=none
-hi Function		ctermfg=74		cterm=none		guifg=#82cae6	gui=none
+hi Function		ctermfg=74		cterm=none		guifg=#ffd700 	gui=none
+
 hi Identifier	ctermfg=74		cterm=none		guifg=#82cae6	gui=none
 hi Type			ctermfg=74		cterm=none		guifg=#82cae6	gui=none
+"hi Namespace	ctermfg=74		cterm=none		guifg=#00afaf	gui=none
 
 hi Special		ctermfg=194		cterm=none		guifg=#e7f6da	gui=none
-hi String		ctermfg=113		cterm=none		guifg=#95e454	gui=italic
+hi String		ctermfg=100		cterm=none		guifg=#008787	gui=italic
 
 "hi Comment		ctermfg=246		cterm=none		guifg=#448844	gui=italic
 hi Comment		ctermfg=244		cterm=none		guifg=#99968b	gui=italic
 
 "hi Todo   ctermfg=245			 cterm=none		guifg=#8f8f8f	gui=italic
-hi Todo	   ctermbg=208 ctermfg=25 cterm=bold	guibg=#cc7722  guifg=#444444 gui=bold
+hi Todo	   ctermbg=208 ctermfg=25 cterm=bold	guibg=#cc7722	gui=bold
 
 " Links
 hi! link FoldColumn		Folded
@@ -116,11 +111,7 @@ function! InsertStatuslineColor(mode)
   elseif a:mode == 'r'
     hi StatusLine ctermbg=25	guibg=blue
   elseif a:mode == 'V'
-    hi StatusLine ctermbg=226	guibg=violet
-  elseif a:mode == 'v'
-    hi StatusLine ctermbg=226	guibg=orange
-"  elseif a:mode == ''
-"    hi StatusLine ctermbg=204	guibg=red
+    hi StatusLine ctermbg=226	guibg=green
   else
     hi StatusLine ctermbg=204	guibg=red
   endif
@@ -144,6 +135,7 @@ hi MyTagListTitle    ctermfg=25   cterm=none		guifg=#4060a0	gui=none
 
 
 
+
 "#---------------------------------------------------------------------------
 "# Ifdef
 "#---------------------------------------------------------------------------
@@ -155,8 +147,13 @@ hi IfdefColor		ctermbg=238	 ctermfg=25  cterm=none		guibg=#444444 guifg=#4060a0 
 "#---------------------------------------------------------------------------
 "# ColorColumn
 "#---------------------------------------------------------------------------
-"if version >= 703
-"hi ColorColumn	ctermbg=250	 guibg=#111111    
-"endif     
+if version >= 703
+hi ColorColumn	ctermbg=250	 guibg=#111111    
+endif     
 
 " vim:set ts=4 sw=4 noet:
+
+
+ 
+
+
