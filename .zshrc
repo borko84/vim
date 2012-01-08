@@ -43,6 +43,9 @@ SAVEHIST=1000
 #-------------------------------------------------------------------------
 # env
 #-------------------------------------------------------------------------
+LANG=pl_PL.UTF-8
+#LANG=en_US.UTF-8
+
 #TZ="Europe/Rome"
 #PYTHON_PATH="python-libs:$PYTHON_PATH"
 #HOSTNAME="`hostname -s`"
@@ -75,10 +78,21 @@ export SVN_SSH=ssh
 #CVSROOT=/var/cvs
 #CVSROOT=:ext:mako@micha.hampshire.edu:/var/cvs
 
-export GIT_AUTHOR_NAME='Piotr Bo'
-export GIT_COMMITTER_NAME=borko
+
+export GIT_AUTHOR_NAME='Piotr Work'
+export GIT_COMMITTER_NAME=PiotrWork
 export GIT_AUTHOR_EMAIL=borko84@gmail.com
 export GIT_COMMITTER_EMAIL=borko84@gmail.com
+
+
+
+
+#-------------------------------------------------------------------------
+# ctag
+#-------------------------------------------------------------------------
+alias cs='echo "mlcscope -b -R -I <idir>"'
+alias ctag_cpp='ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .' 
+#alias ctag_py ='ctags -R --python-kinds=-i *'
 
 
 #-------------------------------------------------------------------------
@@ -98,8 +112,7 @@ PS1="%D{%m%d %H:%M} [%{$fg[green]%}%m%{$reset_color%}: %2c]# "
 #-------------------------------------------------------------------------
 PATH="$HOME/bin:/usr/local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/sbin:."
 
-#export DISPLAY=localhost:0.0
-#export DISPLAY=localhost:0.0
+export DISPLAY=localhost:0
 
 #-------------------------------------------------------------------------
 # colors in terminal
@@ -135,8 +148,6 @@ alias xrestart='sudo /etc/init.d/kdm restart'
 #    grep -Hrin $1 * 
 #}
 
-
-# alias    =clear
 
 #chpwd() {
 #     [[ -t 1 ]] || return
@@ -187,8 +198,6 @@ bindkey '^R' history-incremental-search-backward
 #zstyle ':completion:*' menu select=5
 #zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
 #zstyle :compinstall filename '/home/borko/.zshrc'
-
-
 
 
 
