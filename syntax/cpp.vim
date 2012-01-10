@@ -86,49 +86,43 @@ hi def link cppTemplateName Function
 
 
 
-"#}}}"#-------------------------------------------------------------------------
-"# Keywords
-"#--------------------------------------------------------------------------#{{{
-"#  Define highlight words:   
-"#      syn keyword Type afloats aint
-"#  Using your own group):
-"#      syn keyword myVar afloats aint
-"#      syn link myVar Type      
-"#-------------------------------------------------------------------------
-
+"#-------------------------------------------------------------------------------
+"# std keywords
+"#-------------------------------------------------------------------------------
 syn match cCustomStdType "\(std::string\|std::list\|std::vector\|std::map\|std::auto_ptr\|boost::shared_ptr\|std::ostringstream\|istreambuf_iterator\|std::filebuf\|std::ofstream\|std::ifstream\|std::stream\|std::istream_iterator\|std::istringstream\|std::ostream\|std::ostream_iterator\|std::ostringstream\|std::fstream\)"  contains=cCustomScope
 
 hi def link cCustomStdType Type  
 
 
 
-"#}}}"#-------------------------------------------------------------------------
-"# Keywords
-"#--------------------------------------------------------------------------#{{{        
+
+"#-------------------------------------------------------------------------------
+"# pim keywords
+"#-------------------------------------------------------------------------------
 syn keyword Keyword pim   
 
 
 
+
 "#-------------------------------------------------------------------------------
-"# Field
+"# field with scope operator '::'
 "#-------------------------------------------------------------------------------
-syn match    cppCustomScope    "::"  
+syn match    cppCustomScope    "::"
 syn match    cppField    "\w\+::\w\+" contains=cCustomScope
+hi def link  cppField Type   
 
-hi def link cppField Type
 
 
-"#-------------------------------------------------------------------------------
-"# Highlight Class and Function names
-"#-------------------------------------------------------------------------------
-syn match    cCustomParen    "(" contains=cParen,cCppParen
-syn match    cCustomScope    "::"  
-"syn match    cCustomFunc     "\w\+\s*(" contains=cCustomParen
-syn match    cCustomClass    "\w\+::\~\?\w\+\s*(" contains=cCustomScope,cCustomParen
+""#-------------------------------------------------------------------------------
+""# class and function names
+""#-------------------------------------------------------------------------------
+"syn match    cCustomParen    "(" contains=cParen,cCppParen
+"syn match    cCustomScope    "::"  
+"syn match    cCustomClass    "\w\+::\~\?\w\+\s*(" contains=cCustomScope,cCustomParen
+"hi def link  cCustomClass Function     
 
-"hi def link cCustomFunc  Function
-hi def link cCustomClass Function     
-
+syn match cppFuncDef "\zs\w\+\(::\)\?\h\w*\ze([^)]*\()\s*\(const\|:\(.*\)\)\?\)\?$" contains=cppCustomScope
+hi def link cppFuncDef FunctionDef    
 
 
 

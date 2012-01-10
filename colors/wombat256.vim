@@ -82,7 +82,8 @@ hi Constant		ctermfg=167		cterm=none		guifg=#e5786d	gui=none
 hi Number		ctermfg=167		cterm=none		guifg=#e5786d	gui=none
 hi PreProc		ctermfg=167		cterm=none		guifg=#e5786d	gui=none
 
-hi Function		ctermfg=74		cterm=none		guifg=#ffd700 	gui=none
+hi FunctionDef	ctermfg=214		cterm=none		guifg=#ffaf00 	gui=none
+hi Function		ctermfg=185 	cterm=none		guifg=#d7d75f 	gui=none
 
 hi Identifier	ctermfg=74		cterm=none		guifg=#82cae6	gui=none
 hi Type			ctermfg=74		cterm=none		guifg=#82cae6	gui=none
