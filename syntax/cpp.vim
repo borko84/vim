@@ -71,17 +71,17 @@ let b:current_syntax = "cpp"
 syn match   cppClass "class"      
 syn match   cppClassName "class \w\+" contains=cppClass 
 hi def link cppClass Keyword
-hi def link cppClassName Function
+hi def link cppClassName FunctionDef
 
 syn match   cppNamespace "namespace"      
 syn match   cppNamespaceName "namespace \w\+" contains=cppNamespace 
 hi def link cppNamespace Keyword
-hi def link cppNamespaceName Function  
+hi def link cppNamespaceName FunctionDef  
 
 syn match   cppTemplate "template"      
 syn match   cppTemplateName "template \w\+" contains=cppTemplate
 hi def link cppTemplate Keyword
-hi def link cppTemplateName Function  
+hi def link cppTemplateName FunctionDef  
 
 
 
@@ -122,7 +122,7 @@ hi def link  cppField Type
 "hi def link  cCustomClass Function     
 
 syn match cppFuncDef "\zs\w\+\(::\)\?\h\w*\ze([^)]*\()\s*\(const\|:\(.*\)\)\?\)\?$" contains=cppCustomScope
-hi def link cppFuncDef FunctionDef    
+hi def link cppFuncDef FunctionDef   
 
 
 
