@@ -116,10 +116,10 @@ hi def link  cppField Type
 ""#-------------------------------------------------------------------------------
 ""# class and function names
 ""#-------------------------------------------------------------------------------
-"syn match    cCustomParen    "(" contains=cParen,cCppParen
-"syn match    cCustomScope    "::"  
-"syn match    cCustomClass    "\w\+::\~\?\w\+\s*(" contains=cCustomScope,cCustomParen
-"hi def link  cCustomClass Function     
+syn match    cCustomParen    "(" contains=cParen,cCppParen
+syn match    cCustomScope    "::"  
+syn match    cCustomClass    "\w\+::\~\?\w\+\s*(" contains=cCustomScope,cCustomParen
+hi def link  cCustomClass Normal     
 
 syn match cppFuncDef "\zs\w\+\(::\)\?\h\w*\ze([^)]*\()\s*\(const\|:\(.*\)\)\?\)\?$" contains=cppCustomScope
 hi def link cppFuncDef FunctionDef   
