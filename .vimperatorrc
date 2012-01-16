@@ -1,0 +1,45 @@
+"3.1 (created: 2009/05/21 13:13:06)
+
+set guioptions=
+set runtimepath=/home/borko/.vimperator
+
+source! /home/borko/.vimperatorrc.local
+
+set visualbell
+"set guioptions=r
+set complete=l
+set focuscontent  
+ 
+"---------------------------------------------------------------
+" color
+"---------------------------------------------------------------    
+colorscheme my
+
+
+
+"---------------------------------------------------------------
+" maping
+"---------------------------------------------------------------    
+
+noremap <C-c> <C-v><C-c>
+noremap <C-v> <C-v><C-v>
+inoremap <C-v> <C-v><C-v>
+noremap <C-r> :q<CR>
+inoremap <C-r> :q<CR>
+map <BS> H
+
+nnoremap ; :
+"map <C-c> Y
+"map <C-g> YP
+"map j 8<C-e>
+"map k 8<C-y>
+"map <BS> gu
+"map h <A-Left>
+"map l <A-Right>
+"map H gT
+"map L gt
+"map <S-Right> :tabmove! +1<CR>
+"map <S-Left>  :tabmove! -1<CR>
+"map <C-r> :restart<CR>
+
+

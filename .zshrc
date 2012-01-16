@@ -43,9 +43,7 @@ SAVEHIST=1000
 #-------------------------------------------------------------------------
 # env
 #-------------------------------------------------------------------------
-LANG=pl_PL.UTF-8
-#LANG=en_US.UTF-8
-
+LANG=pl_PL.UTF-8        #LANG=en_US.UTF-8
 #TZ="Europe/Rome"
 #PYTHON_PATH="python-libs:$PYTHON_PATH"
 #HOSTNAME="`hostname -s`"
@@ -56,9 +54,7 @@ LANG=pl_PL.UTF-8
 #DEBFULLNAME="Benjamin Hill (Mako)" 
 #DEBEMAIL='mako@debian.org'
 
-#LANGUAGE=
-#LC_ALL=en_US.UTF-8
-#LANG=en_US.UTF-8
+
 #LC_CTYPE=C
 #unsetopt ALL_EXPORT
 #enable ls colors by default - use yellow for directories
@@ -78,9 +74,8 @@ export SVN_SSH=ssh
 #CVSROOT=/var/cvs
 #CVSROOT=:ext:mako@micha.hampshire.edu:/var/cvs
 
-
-export GIT_AUTHOR_NAME='Piotr Work'
-export GIT_COMMITTER_NAME=PiotrWork
+export GIT_AUTHOR_NAME='Piotr Bo'
+export GIT_COMMITTER_NAME=borko
 export GIT_AUTHOR_EMAIL=borko84@gmail.com
 export GIT_COMMITTER_EMAIL=borko84@gmail.com
 
@@ -112,7 +107,7 @@ PS1="%D{%m%d %H:%M} [%{$fg[green]%}%m%{$reset_color%}: %2c]# "
 #-------------------------------------------------------------------------
 PATH="$HOME/bin:/usr/local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/sbin:."
 
-export DISPLAY=localhost:0
+#export DISPLAY=localhost:0.0
 
 #-------------------------------------------------------------------------
 # colors in terminal

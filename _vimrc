@@ -23,26 +23,30 @@
 
 cd .
 colorscheme wombat256
+set enc=utf-8                       " needed for win
 "set guifont=Terminus\ 7 
 "set guifont=courier\ 9                        
 set guifont=Liberation\ Mono\ 9  
-
-
 
 if has("win32")                     "system
     set t_Co=256
     winpos 50 80
     set lines=50 columns=140
-    set guifont=consolas:h10
+    set guifont=Courier\ New:h9
 else
     runtime! debian.vim
+    set guifont=Liberation\ Mono\ 10
 endif
 
 
 if has("gui_running")               "GUI
+    "set background=dark
     set guioptions=a
 else
+    set gfn=courier
     set t_Co=256
+    "colorscheme lucius
+    "highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE
 endif
 
 
@@ -82,7 +86,7 @@ set laststatus=2        " Always display a statusline
 set mouse=a             " Enable mouse usage (all modes)
 set nocompatible        " Use Vim settings
 set number              " Line Numbering
-set showbreak=#         " Show break char
+set showbreak=~         " Show break char
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
 set smartcase           " Do smart case matching
@@ -101,7 +105,7 @@ endif
 
 set scrolljump=7
 set sidescroll=5 "when moving in the file horizontally move 5 columns a time
-set listchars+=precedes:←,extends:→ " nice indicators that there is more text horizontally
+"set listchars+=precedes:>,extends:<? " nice indicators that there is more text horizontally
 "set showbreak=>         " Show break char
 set wildmode=longest:full
 set wildmenu  
@@ -112,12 +116,14 @@ set wildmenu
 "#--------------------------------------------------------------------------#{{{
 "set statusline=%<[%02n]\ %F%(\ %m%h%w%y\ %{&ff}\ %r%)\ %a%=\ %{strftime(\"%H:%M\")}\ %8l,%c%V/%L\ (%P)\ [%08O:%02B]
 "set statusline=%<%F%h%m%r%h%w\ \-\ %y\[%{&ff}\]\ \-\ %{strftime(\"%c\",getftime(expand(\"%:p\")))}%=\ lin:%l\/%L\ col:%c/%V\ pos:%o\ ascii:%b\ %P
-"set statusline=%f%m%r%h\ [%b]\ [%{&ff}]\ %y%=[%p%%]\ [%05lx%02v]
+
 set statusline=[%n]
 set statusline+=\ %f%m%r%h
-set statusline+=\ [%{&ff}]
-set statusline+=\ %y%=%p%%
-set statusline+=\ %05lx%02v
+"set statusline+=[lines:%L]\
+set statusline+=\ [%p%%]
+set statusline+=\ %y%=%{strftime(\"%d\.%m\.\ %H:%M\",getftime(expand(\"%:p\")))}
+"set statusline+=[%{&ff}]\
+set statusline+=\ [%05lx%02v]
 
 
 
@@ -221,7 +227,6 @@ noremap K 30k
 
 vnoremap < <gv
 vnoremap > >gv
-
 nmap <silent> <f5>:!# <CR>
 map <xCSI>[62~ <MouseDown>
 
@@ -265,6 +270,7 @@ cmap ;x <\>\(.*\)\</<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 func! Cls()
     exec ':%s/\(\s\+\)$//gc'
     exec ':%s/\t/    /gc'
+    exec ':%s/\r//gc'
 endfunc
 nmap cls :call Cls()<CR>
 
@@ -328,7 +334,7 @@ autocmd WinEnter * call NERDTreeQuit()
 "#}}}"#-------------------------------------------------------------------------
 "# Gundo
 "#--------------------------------------------------------------------------#{{{
-"nnoremap <F6> :GundoToggle<CR>
+nnoremap <F6> :GundoToggle<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -352,29 +358,28 @@ map <F11>   :call Run()<CR>
 
 
 func! CompileRunGpp()
-  exec "w"
-  exec "!g++ -Wall -g % -o %<"
-  exec "! ./%<"
+  exec "w" "Save the file
+  exec "!cd %:p:h && g++ % -o %< && IF EXIST %<.exe (%<) ELSE banner -c = Compile Unsuccessful "
+  "exec "!g++ % -o %< && cr 10 && IF EXIST %<.exe (%<) ELSE banner -c = Compile Unsuccessful "
+  exec "i" "jump back where we were
 endfunc
 
 func! Make()
   exec "w"
-  exec "! cd .. && make all"
+  exec "!cd %:p:h && cd.. && make all"
+  "exec "! %:p:h/../bin/network.exe"
 endfunc
 
 func! MakeClean()
   exec "w"
-  exec "! cd .. && make clean && make"
+  exec "!cd %:p:h && cd .. && make clean && make"
   "return ":silent \<CR>"
 endfunc
 
 func! Run()
   exec "w"
-  exec "! cd .. && ./run"
+  exec "!cd %:p:h && cd .. && run"
 endfunc
-
-
-
 "# exec "!g++ % -o %< && IF EXIST %<.exe (cr 5 && banner -c # Success) ELSE banner -c # Compile Unsuccessful "
 "# exec "!gcc -Wall -g % -o %<"
 
@@ -416,7 +421,7 @@ map <C-m> :call FoldingToggle()<CR>
 
 
 set foldmethod=syntax
-au FileType sh,ksh,awk,vim,make,txt,snippet  :set foldmethod=marker
+au FileType sh,ksh,awk,vim,make,txt,snippet :set foldmethod=marker
 au FileType python  :set foldmethod=indent
 "au BufNewFile,BufRead *.cpp exec 'normal zM'
 
@@ -432,13 +437,14 @@ au FileType python  :set foldmethod=indent
 set autochdir           " path = path of the edited file
 
 " HOME :
-set path+=~/workspace/cpp/Network/*
-set path+=~/usr/include/**
+"set path+=~/workspace/cpp/Network/**
+"set path+=~/usr/include/**
 
 " WORK :
 "set path+=C:/MinGW/include/**
 "set path+=C:/MinGW/lib/gcc/mingw32/4.5.0/include/**
 "set path+=C:/projekty/acm/out/include/**            " boost + ua
+set path+=C:/unicard/src/platinum/include/
 
 
 
@@ -457,29 +463,29 @@ set path+=~/usr/include/**
 "#   
 "#------------------------------------------------------------------------------
 
-set tags=./tags,./../tags,./../../tags ",./../../../tags,tags
-"set tags=tags,tags;/
-"set tags=tags,./tags
-
-set tags+=~/.vim/tags/std_tags
-set tags+=~/.vim/tags/cpp_tags
-set tags+=~/.vim/tags/boost_tags
-
+set tags=tags,.\tags,tags;/
 "set tags+=~\vimfiles\tags\std_tags
 "set tags+=~\vimfiles\tags\cpp_tags
-"set tags+=K:\workspace\unicard\dll\coreRcp_tags
-"set tags+=C:\unicard\src\platinum\tags
-"set tags+=C:\projekty\acman\acManager2\tags
 "set tags+=C:\unicard\src\platinum\3_utils\UniSynchro\tags
 "set tags+=C:\unicard\src\platinum\komp\tags
 
-map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+
+set tags+=..\..\tags
+set tags+=C:/MinGW/lib/gcc/mingw32/4.5.0/include/tags   " std
+set tags+=C:\unicard\src\platinum\tags                  " KD/RCP
+set tags+=C:\unicard\src\platinum\uaCoreRcp\tags        " KD/RCP
+set tags+=C:\projekty\acm\out\include\ua\tags           " acManager
+set tags+=C:\projekty\dbapi\hdr\release\tags            " core
+
+
+map <F8> :!cd %:p:h && ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+
 map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 
-autocmd FileType python     map <F8> :!/usr/bin/ctags -R -f --languages=python -python-kinds=-i .<CR> 
-"autocmd FileType python     set tags+=/.vim/tags/python26.ctags
+autocmd FileType python     map <F8> :!/usr/bin/ctags -R --c++-kinds=+p .<CR> 
+autocmd FileType python     set tags+=/.vim/tags/python26.ctags
 
 
 
@@ -487,31 +493,28 @@ autocmd FileType python     map <F8> :!/usr/bin/ctags -R -f --languages=python -
 "#}}}"#-------------------------------------------------------------------------
 "# TagList
 "#--------------------------------------------------------------------------#{{{
-let Tlist_Ctags_Cmd = "/usr/bin/ctags"
-let Tlist_Use_Right_Window = 1
-let Tlist_WinWidth = 35
-let Tlist_Exit_OnlyWindow = 1     " exit if taglist is last window open
-let Tlist_GainFocus_On_ToggleOpen = 1
-let Tlist_Use_SingleClick = 1
-let Tlist_Show_One_File = 1       " Only show tags for current buffer
-let TlistHighlightTag = 1
-let Tlist_Highlight_Tag_On_BufEnter = 1
-let Tlist_Auto_Highlight_Tag = 1
-let Tlist_Show_Menu = 1
-"let Tlist_Auto_Open = 1
-"let Tlist_Enable_Fold_Column = 0  " no fold column (only showing one file)
-"let tlist_cpp_settings = ‘c:class;f:function’
-
+"let Tlist_Ctags_Cmd = "ctags"
+"let Tlist_Use_Right_Window = 1
+"let Tlist_WinWidth = 35
+"let Tlist_Exit_OnlyWindow = 1     " exit if taglist is last window open
+"let Tlist_GainFocus_On_ToggleOpen = 1
+"let Tlist_Use_SingleClick = 1
+"let Tlist_Show_One_File = 1       " Only show tags for current buffer
+"let TlistHighlightTag = 1
+"let Tlist_Highlight_Tag_On_BufEnter = 1
+"let Tlist_Auto_Highlight_Tag = 1
+"let Tlist_Show_Menu = 1
+"
 "let s:tlist_def_cpp_settings = 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
 "                             \ 'c:class;g:enum;s:struct;u:union;f:function;m:member;' .
 "                             \ 'p:prototype'
-
-"     if !exists('Tlist_Auto_Open')
-"        let Tlist_Auto_Open = 0
-"    endif
+"let Tlist_Auto_Open = 1
+"let Tlist_Enable_Fold_Column = 0  " no fold column (only showing one file)
+"let tlist_cpp_settings = ‘c:class;f:function’
+"map <S-F4> :TlistToggle<CR>
 
 let g:tagbar_sort = 0
-let g:tagbar_compact  = 1
+let g:tagbar_compact  = 0
 
 map <S-F4> :TlistToggle<CR>
 map <F4> :TagbarToggle<CR>
@@ -582,7 +585,7 @@ au FileType python set completeopt=menuone,menu,longest,preview
 "       let &ic = ic
 "    endtry
 "endfun
-"nnoremap <silent> :call MatchCaseTag()<CR>
+"nnoremap   :call MatchCaseTag()
 
 
 " `gf` jumps to the filename under the cursor.  Point at an import statement
@@ -592,12 +595,12 @@ import os
 import sys
 import vim
 
-sys.path.append("/usr/lib/python3.1/") 
-sys.path.append("/usr/lib/python3.1") 
-sys.path.append("/usr/lib/python3.1/plat-linux2") 
-sys.path.append("/usr/lib/python3.1/lib-dynload") 
-sys.path.append("/usr/lib/python3.1/dist-packages") 
-sys.path.append("/usr/local/lib/python3.1/dist-packages")
+#sys.path.append("/usr/lib/python3.1/") 
+#sys.path.append("/usr/lib/python3.1") 
+#sys.path.append("/usr/lib/python3.1/plat-linux2") 
+#sys.path.append("/usr/lib/python3.1/lib-dynload") 
+#sys.path.append("/usr/lib/python3.1/dist-packages") 
+#sys.path.append("/usr/local/lib/python3.1/dist-packages")
 
 
 for p in sys.path:
@@ -612,6 +615,21 @@ EOF
 "#--------------------------------------------------------------------------#{{{
 set hlsearch
 noremap <C-p> :set hlsearch! hlsearch? <CR>
+
+
+""#}}}"#-------------------------------------------------------------------------
+""# Keywords
+""#--------------------------------------------------------------------------#{{{
+""#  Define highlight words:   
+""#      syn keyword Type afloats aint
+""#  Using your own group):
+""#      syn keyword myVar afloats aint
+""#      syn link myVar Type      
+""#-------------------------------------------------------------------------
+"
+""au FileType cpp     syn keyword Type std::string std::list std::vector std::map std::auto_ptr
+""                \                   boost::shared_ptr std::ostringstream 
+"au FileType cpp  syn keyword Keyword pim 
 
 
 
@@ -672,10 +690,10 @@ nnoremap ,t :call IfdefToggle()<CR>
 "#}}}"#-------------------------------------------------------------------------
 "# LateX
 "#--------------------------------------------------------------------------#{{{
-if has("unix")
-elseif has("win32")
-   cd d:/workspace/latex/
-endif
+"if has("unix")
+"elseif has("win32")
+"   cd d:/workspace/latex/
+"endif
 
 filetype plugin on          " REQUIRED: This makes vim invoke Latex-Suite when you open a tex file
 set shellslash              " IMPORTANT: win32 users will need to have 'shellslash' set so that latex
@@ -887,17 +905,17 @@ endif
 " endfunction
 
 
-" function! s:ShowDiff()
-"     exec 'NerdTreeClose'
-"     exec 'bp'
-"     diffthis
-"     exec 'vs'
-"     exec 'bp'
-"     "exec 'bp'
-"     diffthis
-" endfunction
-"command! -nargs=0 DF call <SID>ShowDiff()
-"
+function! s:ShowDiff()
+     exec 'NerdTreeClose'
+     exec 'bp'
+     diffthis
+     exec 'vs'
+     exec 'bp'
+     "exec 'bp'
+     diffthis
+ endfunction
+command! -nargs=0 DF call <SID>ShowDiff()
+
 
 "#}}}"#-------------------------------------------------------------------------
 "# Command output in split
@@ -958,7 +976,7 @@ if &diff
     set foldminlines=99999
 
     if has("gui_running")
-        exec "winpos 40 40"
+        exec "winpos 50 50"
         exec "set lines=70"
         exec "set columns=160"
     endif
@@ -971,7 +989,7 @@ if &diff
     noremap du :diffupdate<CR>
 
     "double win
-    "exec "vs"
+    "exec ":split"
     "exec "vertical resize 80"
 endif     
 
@@ -996,6 +1014,7 @@ let g:bufExplorerSplitBelow = 0
 "let g:bufExplorerOpenMode = 1
 
 map <C-b> <C-t> :BufExplorer<CR>
+map <C-S-b> :BufExplorer<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -1020,7 +1039,6 @@ function! Grepc(pat,path,ext)
 endfunction
 
 noremap <C-g><Esc> :call Grepc("",'.','cpp')<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
-au FileType python noremap <C-g><Esc> :call Grepc("",'.','py')<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 map <C-g><C-g><Esc> :vimgrep // ./**/*.cpp<left><left><left><left><left><left><left><left><left><left><left><left>
 "vnoremap <silent> gv :call VisualSearch('gv')<CR>   " When you press gv you vimgrep after the selected text
 
