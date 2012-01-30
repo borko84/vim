@@ -100,9 +100,9 @@ endif
 
 
 set scrolljump=7
-set sidescroll=5 "when moving in the file horizontally move 5 columns a time
-set listchars+=precedes:←,extends:→ " nice indicators that there is more text horizontally
-"set showbreak=>         " Show break char
+set sidescroll=5        "when moving in the file horizontally move 5 columns a time
+set listchars+=precedes:#,extends:# " nice indicators that there is more text horizontally
+"set showbreak=>        " Show break char
 set wildmode=longest:full
 set wildmenu  
 
@@ -226,8 +226,8 @@ nmap <silent> <f5>:!# <CR>
 map <xCSI>[62~ <MouseDown>
 
 
-
-inoremap (<Tab>  ()<Left>   " closing braces
+"closing braces 
+inoremap (<Tab>  ()<Left>
 inoremap {<Tab>  {}<Left>
 inoremap "<Tab>  ""<Left>
 inoremap '<Tab>  ''<Left>
@@ -244,6 +244,23 @@ inoremap [<Tab>  []<Left>
 "#}}}"#-------------------------------------------------------------------------
 "# sed & regexp
 "#--------------------------------------------------------------------------#{{{
+"
+"	\d	digit			        [0-9]
+"	\D	non-digit		        [^0-9]
+"	\x	hex digit		        [0-9a-fA-F]
+"	\X	non-hex digit	        [^0-9a-fA-F]
+"	\s	white space		        [	]     (<Tab> and <Space>)
+"	\S	non-white characters	[^ 	]     (not <Tab> and <Space>)
+"	\l	lowercase alpha		    [a-z]
+"	\L	non-lowercase alpha	    [^a-z]
+"	\u	uppercase alpha		    [A-Z]
+"	\U	non-uppercase alpha	    [^A-Z]
+"   \h                          [A-Za-z_]
+"   \w                          [0-9A-Za-z_]
+"
+"#-------------------------------------------------------------------------------  
+
+
 noremap ;; :set hlsearch<CR>:.,$s//gc<Left><Left><Left>
 
 " fast 'w'=word, 's'=space, 'd'=digit, '.'=any
@@ -479,6 +496,7 @@ map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 
 autocmd FileType python     map <F8> :!/usr/bin/ctags -R -f --languages=python -python-kinds=-i .<CR> 
+"autocmd FileType python     map <F8> :!/usr/bin/ctags .<CR>  
 "autocmd FileType python     set tags+=/.vim/tags/python26.ctags
 
 
