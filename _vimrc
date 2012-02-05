@@ -23,16 +23,13 @@
 
 cd .
 colorscheme wombat256
-set enc=utf-8                       " needed for win
-"set guifont=Terminus\ 7 
-"set guifont=courier\ 9                        
-set guifont=Liberation\ Mono\ 9  
 
 if has("win32")                     "system
     set t_Co=256
     winpos 50 80
     set lines=50 columns=140
     set guifont=Courier\ New:h9
+    set enc=utf-8                       " needed for win
 else
     runtime! debian.vim
     set guifont=Liberation\ Mono\ 10
@@ -40,12 +37,10 @@ endif
 
 
 if has("gui_running")               "GUI
-    "set background=dark
     set guioptions=a
 else
     set gfn=courier
     set t_Co=256
-    "colorscheme lucius
     "highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE
 endif
 
@@ -86,7 +81,7 @@ set laststatus=2        " Always display a statusline
 set mouse=a             " Enable mouse usage (all modes)
 set nocompatible        " Use Vim settings
 set number              " Line Numbering
-set showbreak=~         " Show break char
+set showbreak=#         " Show break char
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
 set smartcase           " Do smart case matching
@@ -99,13 +94,12 @@ set listchars=tab:>.,trail:.,extends:#,nbsp:. ",eol:$
 
 if version >= 703  
     set colorcolumn=81
-    hi ColorColumn ctermbg=250 guibg=#111111
 endif   
 
 
 set scrolljump=7
 set sidescroll=5 "when moving in the file horizontally move 5 columns a time
-"set listchars+=precedes:>,extends:<? " nice indicators that there is more text horizontally
+"set listchars+=precedes:>,extends:<?" nice indicators that there is more text horizontally
 "set showbreak=>         " Show break char
 set wildmode=longest:full
 set wildmenu  
@@ -116,6 +110,7 @@ set wildmenu
 "#--------------------------------------------------------------------------#{{{
 "set statusline=%<[%02n]\ %F%(\ %m%h%w%y\ %{&ff}\ %r%)\ %a%=\ %{strftime(\"%H:%M\")}\ %8l,%c%V/%L\ (%P)\ [%08O:%02B]
 "set statusline=%<%F%h%m%r%h%w\ \-\ %y\[%{&ff}\]\ \-\ %{strftime(\"%c\",getftime(expand(\"%:p\")))}%=\ lin:%l\/%L\ col:%c/%V\ pos:%o\ ascii:%b\ %P
+"set statusline=%f%m%r%h\ [%b]\ [%{&ff}]\ %y%=[%p%%]\ [%05lx%02v]
 
 set statusline=[%n]
 set statusline+=\ %f%m%r%h
@@ -227,12 +222,13 @@ noremap K 30k
 
 vnoremap < <gv
 vnoremap > >gv
+
 nmap <silent> <f5>:!# <CR>
 map <xCSI>[62~ <MouseDown>
 
 
-
-inoremap (<Tab>  ()<Left>   " closing braces
+" closing braces 
+inoremap (<Tab>  ()<Left>   
 inoremap {<Tab>  {}<Left>
 inoremap "<Tab>  ""<Left>
 inoremap '<Tab>  ''<Left>
@@ -279,13 +275,13 @@ nmap cls :call Cls()<CR>
 "# comment
 "#--------------------------------------------------------------------------#{{{
 let b:comment_leader = '#'
-au FileType c,cpp,java          let b:comment_leader = '//'
-au FileType sh,ruby,python,awk  let b:comment_leader = '#'
-au FileType conf,fstab,make     let b:comment_leader = '#'
-au FileType tex                 let b:comment_leader = '%'
-au FileType mail                let b:comment_leader = '>'
-au FileType vim                 let b:comment_leader = '"'
-au FileType sql                 let b:comment_leader = '--'
+au FileType c,cpp,java              let b:comment_leader = '//'
+au FileType sh,ruby,python,awk,perl let b:comment_leader = '#'
+au FileType conf,fstab,make         let b:comment_leader = '#'
+au FileType tex                     let b:comment_leader = '%'
+au FileType mail                    let b:comment_leader = '>'
+au FileType vim                     let b:comment_leader = '"'
+au FileType sql                     let b:comment_leader = '--'
 
 "vnoremap <silent> / <C-v>Ib:comment_leader<Esc><Esc>
 vnoremap / :s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
@@ -350,18 +346,35 @@ au VimEnter * AutoCloseOff
 "#-------------------------------------------------------------------------"#{{{
 "# cd %:p:h
 "#------------------------------------------------------------------------------
+map <F5>    :call LoadSession()<CR>
+map <C-F5>  :call SaveSession()<CR>
 
 map <F9>    :call CompileRunGpp()<CR>
 map <F10>   :call Make()<CR>
 map <C-F10> :call MakeClean()<CR>
 map <F11>   :call Run()<CR>
+map <F12>   :call Synchronize()<CR>
 
+func! Synchronize()
+  exec "w"
+  exec "!bash /home/sg0216005/scripts/rsync.sh"
+endfunc   
+
+func! LoadSession()
+    exec ":so ~/session.vim"
+endfunc
+
+func! SaveSession()
+    exec ":mks! ~/session.vim"
+endfunc
 
 func! CompileRunGpp()
-  exec "w" "Save the file
+  "Save the file 
+  exec "w" 
   exec "!cd %:p:h && g++ % -o %< && IF EXIST %<.exe (%<) ELSE banner -c = Compile Unsuccessful "
   "exec "!g++ % -o %< && cr 10 && IF EXIST %<.exe (%<) ELSE banner -c = Compile Unsuccessful "
-  exec "i" "jump back where we were
+  "jump back where we were
+  exec "i"  
 endfunc
 
 func! Make()
@@ -380,8 +393,17 @@ func! Run()
   exec "w"
   exec "!cd %:p:h && cd .. && run"
 endfunc
+
+
+
 "# exec "!g++ % -o %< && IF EXIST %<.exe (cr 5 && banner -c # Success) ELSE banner -c # Compile Unsuccessful "
 "# exec "!gcc -Wall -g % -o %<"
+
+au FileType python map <F9> :w<CR>:!python3 %<CR>
+au FileType python map <C-F9> :w<CR>:!python %<CR> 
+
+au FileType perl map <F9> :w<CR>:!perl -w %<CR>
+au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR> 
 
 
 
@@ -394,7 +416,8 @@ map <F2> :Dox<CR>
 "#}}}"#-------------------------------------------------------------------------
 "# switch between header/source with F4
 "#--------------------------------------------------------------------------#{{{
-map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+"map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+map <C-h> :e %:p:s,.h$,.X123X,:s,.cxx$,.h,:s,.X123X$,.cxx,<CR>
 
 
 
@@ -421,7 +444,7 @@ map <C-m> :call FoldingToggle()<CR>
 
 
 set foldmethod=syntax
-au FileType sh,ksh,awk,vim,make,txt,snippet :set foldmethod=marker
+au FileType sh,ksh,awk,vim,make,conf,txt,snippet :set foldmethod=marker
 au FileType python  :set foldmethod=indent
 "au BufNewFile,BufRead *.cpp exec 'normal zM'
 
@@ -460,7 +483,7 @@ set path+=C:/unicard/src/platinum/include/
 "#
 "# Python:
 "#      ctags -R –python-kinds=-i -f ~/.vim/tags/python26.ctags /Python26
-"#   
+"#
 "#------------------------------------------------------------------------------
 
 set tags=tags,.\tags,tags;/
@@ -486,7 +509,6 @@ map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 autocmd FileType python     map <F8> :!/usr/bin/ctags -R --c++-kinds=+p .<CR> 
 autocmd FileType python     set tags+=/.vim/tags/python26.ctags
-
 
 
 
@@ -570,8 +592,6 @@ let g:pydiction_location = 'usr/share/vim/vim72/ftplugin/pydiction/complete-dict
 
 " <silent> py !python %
 au FileType python setlocal columns=100
-au FileType python map <F9> :w<CR>:!python3 %<CR>
-au FileType python map <C-F9> :w<CR>:!python %<CR>
 au FileType python set completeopt=menuone,menu,longest,preview  
 
 
@@ -585,7 +605,7 @@ au FileType python set completeopt=menuone,menu,longest,preview
 "       let &ic = ic
 "    endtry
 "endfun
-"nnoremap   :call MatchCaseTag()
+"nnoremap <silent> :call MatchCaseTag()<CR>
 
 
 " `gf` jumps to the filename under the cursor.  Point at an import statement
@@ -989,7 +1009,7 @@ if &diff
     noremap du :diffupdate<CR>
 
     "double win
-    "exec ":split"
+    "exec ":vs"
     "exec "vertical resize 80"
 endif     
 
@@ -1039,6 +1059,7 @@ function! Grepc(pat,path,ext)
 endfunction
 
 noremap <C-g><Esc> :call Grepc("",'.','cpp')<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+au FileType python noremap <C-g><Esc> :call Grepc("",'.','py')<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 map <C-g><C-g><Esc> :vimgrep // ./**/*.cpp<left><left><left><left><left><left><left><left><left><left><left><left>
 "vnoremap <silent> gv :call VisualSearch('gv')<CR>   " When you press gv you vimgrep after the selected text
 
