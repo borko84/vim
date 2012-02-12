@@ -23,19 +23,16 @@
 
 cd .
 colorscheme wombat256
-"set guifont=Terminus\ 7 
-"set guifont=courier\ 9                        
-set guifont=Liberation\ Mono\ 9  
-
-
 
 if has("win32")                     "system
     set t_Co=256
     winpos 50 80
     set lines=50 columns=140
-    set guifont=consolas:h10
+    set guifont=Courier\ New:h9
+    set enc=utf-8                       " needed for win
 else
     runtime! debian.vim
+    set guifont=Liberation\ Mono\ 9
 endif
 
 
@@ -82,7 +79,7 @@ set laststatus=2        " Always display a statusline
 set mouse=a             " Enable mouse usage (all modes)
 set nocompatible        " Use Vim settings
 set number              " Line Numbering
-set showbreak=#         " Show break char
+set showbreak=~         " Show break char
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
 set smartcase           " Do smart case matching
@@ -95,7 +92,6 @@ set listchars=tab:>.,trail:.,extends:#,nbsp:. ",eol:$
 
 if version >= 703  
     set colorcolumn=81
-    hi ColorColumn ctermbg=250 guibg=#111111
 endif   
 
 
@@ -210,9 +206,9 @@ nnoremap ; :
 
 nmap <C-t> :tabnew <CR>
 vmap <C-c> "+y
-map <C-s> :w! <CR>
+map <C-s> :!echo "NO NO NO"<CR>
 "nmap <C-s> :w! <CR>
-imap <C-s> <Esc>:w! <CR>
+"imap <C-s> <Esc>:w! <CR>
 map <C-q> :quit <CR>
 map <C-a> ggVG
 
@@ -226,7 +222,7 @@ nmap <silent> <f5>:!# <CR>
 map <xCSI>[62~ <MouseDown>
 
 
-"closing braces 
+"closing braces
 inoremap (<Tab>  ()<Left>
 inoremap {<Tab>  {}<Left>
 inoremap "<Tab>  ""<Left>
@@ -282,6 +278,7 @@ cmap ;x <\>\(.*\)\</<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 func! Cls()
     exec ':%s/\(\s\+\)$//gc'
     exec ':%s/\t/    /gc'
+    exec ':%s/\r//gc'
 endfunc
 nmap cls :call Cls()<CR>
 
@@ -290,13 +287,13 @@ nmap cls :call Cls()<CR>
 "# comment
 "#--------------------------------------------------------------------------#{{{
 let b:comment_leader = '#'
-au FileType c,cpp,java          let b:comment_leader = '//'
-au FileType sh,ruby,python,awk  let b:comment_leader = '#'
-au FileType conf,fstab,make     let b:comment_leader = '#'
-au FileType tex                 let b:comment_leader = '%'
-au FileType mail                let b:comment_leader = '>'
-au FileType vim                 let b:comment_leader = '"'
-au FileType sql                 let b:comment_leader = '--'
+au FileType c,cpp,java              let b:comment_leader = '//'
+au FileType sh,ruby,python,awk,perl let b:comment_leader = '#'
+au FileType conf,fstab,make         let b:comment_leader = '#'
+au FileType tex                     let b:comment_leader = '%'
+au FileType mail                    let b:comment_leader = '>'
+au FileType vim                     let b:comment_leader = '"'
+au FileType sql                     let b:comment_leader = '--'
 
 "vnoremap <silent> / <C-v>Ib:comment_leader<Esc><Esc>
 vnoremap / :s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
@@ -345,7 +342,9 @@ autocmd WinEnter * call NERDTreeQuit()
 "#}}}"#-------------------------------------------------------------------------
 "# Gundo
 "#--------------------------------------------------------------------------#{{{
-"nnoremap <F6> :GundoToggle<CR>
+if version >= 703  
+    nnoremap <F6> :GundoToggle<CR>
+endif   
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -361,12 +360,27 @@ au VimEnter * AutoCloseOff
 "#-------------------------------------------------------------------------"#{{{
 "# cd %:p:h
 "#------------------------------------------------------------------------------
+map <F2>    :call SaveSession()<CR>
+map <F3>    :call LoadSession()<CR>
 
 map <F9>    :call CompileRunGpp()<CR>
 map <F10>   :call Make()<CR>
 map <C-F10> :call MakeClean()<CR>
 map <F11>   :call Run()<CR>
+map <F12>   :call Synchronize()<CR>
 
+func! Synchronize()
+  exec "w"
+  exec "!bash /home/sg0216005/scripts/rsync.sh"
+endfunc   
+
+func! LoadSession()
+    exec ":so ~/session.vim"
+endfunc
+
+func! SaveSession()
+    exec ":mks! ~/session.vim"
+endfunc
 
 func! CompileRunGpp()
   exec "w"
@@ -395,18 +409,25 @@ endfunc
 "# exec "!g++ % -o %< && IF EXIST %<.exe (cr 5 && banner -c # Success) ELSE banner -c # Compile Unsuccessful "
 "# exec "!gcc -Wall -g % -o %<"
 
+au FileType python map <F9> :w<CR>:!python3 %<CR>
+au FileType python map <C-F9> :w<CR>:!python %<CR>
+
+au FileType perl map <F9> :w<CR>:!perl -w %<CR>
+au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR> 
+
 
 
 "#}}}"#-------------------------------------------------------------------------
 "# Doxygen
 "#--------------------------------------------------------------------------#{{{
 let g:load_doxygen_syntax=1
-map <F2> :Dox<CR>
+"map <F2> :Dox<CR>
 
 "#}}}"#-------------------------------------------------------------------------
 "# switch between header/source with F4
 "#--------------------------------------------------------------------------#{{{
 map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+"map <C-h> :e %:p:s,.h$,.X123X,:s,.cxx$,.h,:s,.X123X$,.cxx,<CR>
 
 
 
@@ -428,12 +449,12 @@ function! FoldingToggle()
         let g:folding_flag = 1
     endif
 endfunction
-map <C-m> :call FoldingToggle()<CR>
+nmap zm :call FoldingToggle()<CR>
 
 
 
 set foldmethod=syntax
-au FileType sh,ksh,awk,vim,make,txt,snippet  :set foldmethod=marker
+au FileType sh,ksh,awk,vim,make,conf,txt,snippet :set foldmethod=marker
 au FileType python  :set foldmethod=indent
 "au BufNewFile,BufRead *.cpp exec 'normal zM'
 
@@ -471,7 +492,7 @@ set path+=~/usr/include/**
 "#
 "# Python:
 "#      ctags -R –python-kinds=-i -f ~/.vim/tags/python26.ctags /Python26
-"#   
+"#
 "#------------------------------------------------------------------------------
 
 set tags=./tags,./../tags,./../../tags ",./../../../tags,tags
@@ -494,9 +515,8 @@ map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
-
 autocmd FileType python     map <F8> :!/usr/bin/ctags -R -f --languages=python -python-kinds=-i .<CR> 
-"autocmd FileType python     map <F8> :!/usr/bin/ctags .<CR>  
+"autocmd FileType python     map <F8> :!/usr/bin/ctags .<CR> 
 "autocmd FileType python     set tags+=/.vim/tags/python26.ctags
 
 
@@ -516,17 +536,7 @@ let TlistHighlightTag = 1
 let Tlist_Highlight_Tag_On_BufEnter = 1
 let Tlist_Auto_Highlight_Tag = 1
 let Tlist_Show_Menu = 1
-"let Tlist_Auto_Open = 1
-"let Tlist_Enable_Fold_Column = 0  " no fold column (only showing one file)
-"let tlist_cpp_settings = ‘c:class;f:function’
 
-"let s:tlist_def_cpp_settings = 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
-"                             \ 'c:class;g:enum;s:struct;u:union;f:function;m:member;' .
-"                             \ 'p:prototype'
-
-"     if !exists('Tlist_Auto_Open')
-"        let Tlist_Auto_Open = 0
-"    endif
 
 let g:tagbar_sort = 0
 let g:tagbar_compact  = 1
@@ -585,8 +595,6 @@ let g:pydiction_location = 'usr/share/vim/vim72/ftplugin/pydiction/complete-dict
 
 " <silent> py !python %
 au FileType python setlocal columns=100
-au FileType python map <F9> :w<CR>:!python3 %<CR>
-au FileType python map <C-F9> :w<CR>:!python %<CR>
 au FileType python set completeopt=menuone,menu,longest,preview  
 
 
@@ -690,10 +698,10 @@ nnoremap ,t :call IfdefToggle()<CR>
 "#}}}"#-------------------------------------------------------------------------
 "# LateX
 "#--------------------------------------------------------------------------#{{{
-if has("unix")
-elseif has("win32")
-   cd d:/workspace/latex/
-endif
+"if has("unix")
+"elseif has("win32")
+"   cd d:/workspace/latex/
+"endif
 
 filetype plugin on          " REQUIRED: This makes vim invoke Latex-Suite when you open a tex file
 set shellslash              " IMPORTANT: win32 users will need to have 'shellslash' set so that latex
@@ -970,13 +978,13 @@ endif
 "#--------------------------------------------------------------------------#{{{
 if &diff
     set t_Co=256
-    set background=dark
     set nowrap
     set diffopt=filler
     set foldminlines=99999
-
+    colorscheme wombat256
+    
     if has("gui_running")
-        exec "winpos 40 40"
+        exec "winpos 50 50"
         exec "set lines=70"
         exec "set columns=160"
     endif
@@ -989,7 +997,7 @@ if &diff
     noremap du :diffupdate<CR>
 
     "double win
-    "exec "vs"
+    "exec ":vs"
     "exec "vertical resize 80"
 endif     
 
@@ -1013,7 +1021,8 @@ let g:bufExplorerSplitBelow = 0
 "let g:bufExplorerSplitHorzSize = 7
 "let g:bufExplorerOpenMode = 1
 
-map <C-b> <C-t> :BufExplorer<CR>
+map <C-b> :BufExplorer<CR>
+map <C-S-b> <C-t>:BufExplorer<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------

@@ -57,6 +57,19 @@ hi NonText		ctermfg=244		ctermbg=236		cterm=none		guifg=#808080	guibg=#303030	gu
 hi Search		ctermfg=204	    ctermbg=226		cterm=bold		guifg=#992222   guibg=#cccc22	gui=bold
 
 
+"#-------------------------------------------------------------------------------
+"# diff
+"#-------------------------------------------------------------------------------
+hi DiffAdd		        	    ctermbg=18      cterm=NONE      
+                                                                "                 guibg=#000087   gui=bold
+hi DiffDelete	ctermfg=17      ctermbg=30	    cterm=NONE      
+                                                                " guifg=#00005f   guibg=#008787   gui=none
+hi DiffChange	                ctermbg=90	    cterm=NONE      
+                                                                "                 guibg=#870087	gui=none
+hi DiffText	    	            ctermbg=196	    cterm=bold      
+                                                                "                 guibg=#ff0000	gui=bold
+
+           
 
 "#-------------------------------------------------------------------------------
 "# Vim version >= 7.0 specific colors
@@ -90,10 +103,11 @@ hi Type			ctermfg=74		cterm=none		guifg=#82cae6	gui=none
 "hi Namespace	ctermfg=74		cterm=none		guifg=#00afaf	gui=none
 
 hi Special		ctermfg=194		cterm=none		guifg=#e7f6da	gui=none
-hi String		ctermfg=100		cterm=none		guifg=#008787	gui=italic
+hi String		ctermfg=100		cterm=none		guifg=#95e454	gui=italic
+"hi String		ctermfg=100		cterm=none		guifg=#008787	gui=italic
 
 "hi Comment		ctermfg=246		cterm=none		guifg=#448844	gui=italic
-hi Comment		ctermfg=244		cterm=none		guifg=#99968b	gui=italic
+hi Comment		ctermfg=244		cterm=none		guifg=#808080	gui=italic
 
 "hi Todo   ctermfg=245			 cterm=none		guifg=#8f8f8f	gui=italic
 hi Todo	   ctermbg=208 ctermfg=25 cterm=bold	guibg=#cc7722	gui=bold
