@@ -90,9 +90,9 @@ set shiftwidth=4        " 4 spaces when text is indented
 set wrap
 set listchars=tab:>.,trail:.,extends:#,nbsp:. ",eol:$
 
-if version >= 703  
+if version >= 703
     set colorcolumn=81
-endif   
+endif
 
 
 set scrolljump=7
@@ -100,7 +100,7 @@ set sidescroll=5        "when moving in the file horizontally move 5 columns a t
 set listchars+=precedes:#,extends:# " nice indicators that there is more text horizontally
 "set showbreak=>        " Show break char
 set wildmode=longest:full
-set wildmenu  
+set wildmenu
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -232,7 +232,7 @@ inoremap [<Tab>  []<Left>
 
 "nnoremap n nzzzv            " Keep search matches in the middle of the window.
 "nnoremap N Nzzzv
-"nnoremap g; g;zz            " same when jumping to changes! 
+"nnoremap g; g;zz            " same when jumping to changes!
 "nnoremap g, g,zz
 
 
@@ -241,20 +241,20 @@ inoremap [<Tab>  []<Left>
 "# sed & regexp
 "#--------------------------------------------------------------------------#{{{
 "
-"	\d	digit			        [0-9]
-"	\D	non-digit		        [^0-9]
-"	\x	hex digit		        [0-9a-fA-F]
-"	\X	non-hex digit	        [^0-9a-fA-F]
-"	\s	white space		        [	]     (<Tab> and <Space>)
-"	\S	non-white characters	[^ 	]     (not <Tab> and <Space>)
-"	\l	lowercase alpha		    [a-z]
-"	\L	non-lowercase alpha	    [^a-z]
-"	\u	uppercase alpha		    [A-Z]
-"	\U	non-uppercase alpha	    [^A-Z]
-"   \h                          [A-Za-z_]
-"   \w                          [0-9A-Za-z_]
+"    \d    digit                   [0-9]
+"    \D    non-digit               [^0-9]
+"    \x    hex digit               [0-9a-fA-F]
+"    \X    non-hex digit           [^0-9a-fA-F]
+"    \s    white space             [    ]     (<Tab> and <Space>)
+"    \S    non-white characters    [^     ]     (not <Tab> and <Space>)
+"    \l    lowercase alpha         [a-z]
+"    \L    non-lowercase alpha     [^a-z]
+"    \u    uppercase alpha         [A-Z]
+"    \U    non-uppercase alpha     [^A-Z]
+"    \h                            [A-Za-z_]
+"    \w                            [0-9A-Za-z_]
 "
-"#-------------------------------------------------------------------------------  
+"#-------------------------------------------------------------------------------
 
 
 noremap ;; :set hlsearch<CR>:.,$s//gc<Left><Left><Left>
@@ -342,9 +342,9 @@ autocmd WinEnter * call NERDTreeQuit()
 "#}}}"#-------------------------------------------------------------------------
 "# Gundo
 "#--------------------------------------------------------------------------#{{{
-if version >= 703  
+if version >= 703
     nnoremap <F6> :GundoToggle<CR>
-endif   
+endif
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -372,7 +372,7 @@ map <F12>   :call Synchronize()<CR>
 func! Synchronize()
   exec "w"
   exec "!bash /home/sg0216005/scripts/rsync.sh"
-endfunc   
+endfunc
 
 func! LoadSession()
     exec ":so ~/session.vim"
@@ -413,7 +413,7 @@ au FileType python map <F9> :w<CR>:!python3 %<CR>
 au FileType python map <C-F9> :w<CR>:!python %<CR>
 
 au FileType perl map <F9> :w<CR>:!perl -w %<CR>
-au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR> 
+au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR>
 
 
 
@@ -515,8 +515,8 @@ map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
-autocmd FileType python     map <F8> :!/usr/bin/ctags -R -f --languages=python -python-kinds=-i .<CR> 
-"autocmd FileType python     map <F8> :!/usr/bin/ctags .<CR> 
+autocmd FileType python     map <F8> :!/usr/bin/ctags -R -f --languages=python -python-kinds=-i .<CR>
+"autocmd FileType python     map <F8> :!/usr/bin/ctags .<CR>
 "autocmd FileType python     set tags+=/.vim/tags/python26.ctags
 
 
@@ -567,9 +567,9 @@ let OmniCpp_ShowAccess          = 1 " show access in pop-up
 let OmniCpp_ShowPrototypeInAbbr = 1 " show prototype in pop-up
 let OmniCpp_ShowScopeInAbbr     = 0 " do not show namespace in pop-up
 let OmniCpp_SelectFirstItem     = 1 " select first item in pop-up
-let OmniCpp_MayCompleteDot      = 1 " auto .   
-let OmniCpp_MayCompleteArrow    = 1 " auto ->  
-let OmniCpp_MayCompleteScope    = 1 " auto ::  
+let OmniCpp_MayCompleteDot      = 1 " auto .
+let OmniCpp_MayCompleteArrow    = 1 " auto ->
+let OmniCpp_MayCompleteScope    = 1 " auto ::
 
 let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
 
@@ -595,7 +595,7 @@ let g:pydiction_location = 'usr/share/vim/vim72/ftplugin/pydiction/complete-dict
 
 " <silent> py !python %
 au FileType python setlocal columns=100
-au FileType python set completeopt=menuone,menu,longest,preview  
+au FileType python set completeopt=menuone,menu,longest,preview
 
 
 "" go to defn of tag under the cursor
@@ -618,11 +618,11 @@ import os
 import sys
 import vim
 
-sys.path.append("/usr/lib/python3.1/") 
-sys.path.append("/usr/lib/python3.1") 
-sys.path.append("/usr/lib/python3.1/plat-linux2") 
-sys.path.append("/usr/lib/python3.1/lib-dynload") 
-sys.path.append("/usr/lib/python3.1/dist-packages") 
+sys.path.append("/usr/lib/python3.1/")
+sys.path.append("/usr/lib/python3.1")
+sys.path.append("/usr/lib/python3.1/plat-linux2")
+sys.path.append("/usr/lib/python3.1/lib-dynload")
+sys.path.append("/usr/lib/python3.1/dist-packages")
 sys.path.append("/usr/local/lib/python3.1/dist-packages")
 
 
@@ -647,16 +647,16 @@ noremap <C-p> :set hlsearch! hlsearch? <CR>
 "#--------------------------------------------------------------------------#{{{
 "#
 "#  syn region MySkip contained start="^\s*#\s*\(if\>\|ifdef\>\|ifndef\>\)" skip="\\$" end="^\s*#\s*endif\>" contains=MySkip
-"#  
+"#
 "#  let g:CommentDefines = ""
-"#  
+"#
 "#  hi link MyCommentOut2 MyCommentOut
 "#  hi link MySkip MyCommentOut
 "#  hi link MyCommentOut Comment
-"#  
+"#
 "#  map <silent> ,a :call AddCommentDefine()<CR>
 "#  map <silent> ,x :call ClearCommentDefine()<CR>
-"#  
+"#
 "#  function! AddCommentDefine()
 "#    let g:CommentDefines = "\\(" . expand("<cword>") . "\\)"
 "#    syn clear MyCommentOut
@@ -664,7 +664,7 @@ noremap <C-p> :set hlsearch! hlsearch? <CR>
 "#    exec 'syn region MyCommentOut start="^\s*#\s*ifdef\s\+' . g:CommentDefines . '\>" end=".\|$" contains=MyCommentOut2'
 "#    exec 'syn region MyCommentOut2 contained start="' . g:CommentDefines . '" end="^\s*#\s*\(endif\>\|else\>\|elif\>\)" contains=MySkip'
 "#  endfunction
-"#  
+"#
 "#  function! ClearCommentDefine()
 "#    let g:ClearCommentDefine = ""
 "#    syn clear MyCommentOut
@@ -674,7 +674,7 @@ noremap <C-p> :set hlsearch! hlsearch? <CR>
 hi link IfdefReg IfdefColor
 
 function! ColorDefine()
-    exec 'syn region IfdefReg start="^\s*#ifdef" end="^\s*#endif\(.*\)$"' 
+    exec 'syn region IfdefReg start="^\s*#ifdef" end="^\s*#endif\(.*\)$"'
 endfunction
 function! UncolorDefine()
     syn clear IfdefReg
@@ -710,7 +710,7 @@ set grepprg=grep\ -nH\ $*   " IMPORTANT: grep will sometimes skip displaying the
                             "   search in a singe file. This will confuse Latex-Suite. Set your grep
                             "   program to always generate a file-name
 filetype indent on          " OPTIONAL: This enables automatic indentation as you type
-let g:tex_flavor='latex'    " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to 
+let g:tex_flavor='latex'    " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
                             "   'plaintex' instead of 'tex', which results in vim-latex not being loaded.
                             "   The following changes the default filetype back to 'tex':
 "set sw=2                   "   this is mostly a matter of taste. but LaTeX looks good with just a bit
@@ -776,7 +776,7 @@ if has("cscope")
         cs add $CSCOPE_DB
     endif
 
-    
+
     set cscopeverbose    " show msg when any other cscope db added
 
 
@@ -982,7 +982,7 @@ if &diff
     set diffopt=filler
     set foldminlines=99999
     colorscheme wombat256
-    
+
     if has("gui_running")
         exec "winpos 50 50"
         exec "set lines=70"
@@ -999,7 +999,7 @@ if &diff
     "double win
     "exec ":vs"
     "exec "vertical resize 80"
-endif     
+endif
 
 
 
@@ -1013,7 +1013,7 @@ map <C-f> :FufRenewCache<CR>:FufFile<CR>
 "# BufExplorer
 "#--------------------------------------------------------------------------#{{{
 "#Sort by:
-"#   'extension', 'fullpath', 'mru' (recently used), 'name, 'number' 
+"#   'extension', 'fullpath', 'mru' (recently used), 'name, 'number'
 "#-------------------------------------------------------------------------
 let g:bufExplorerSortBy='name'
 let g:bufExplorerDefaultHelp = 0

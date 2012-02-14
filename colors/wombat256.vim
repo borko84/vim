@@ -103,13 +103,10 @@ hi Type			ctermfg=74		cterm=none		guifg=#82cae6	gui=none
 "hi Namespace	ctermfg=74		cterm=none		guifg=#00afaf	gui=none
 
 hi Special		ctermfg=194		cterm=none		guifg=#e7f6da	gui=none
-hi String		ctermfg=100		cterm=none		guifg=#95e454	gui=italic
-"hi String		ctermfg=100		cterm=none		guifg=#008787	gui=italic
+hi String		ctermfg=100		cterm=none		guifg=#878700	gui=italic
+"hi String		ctermfg=113		cterm=none		guifg=#95e454	gui=italic 
 
-"hi Comment		ctermfg=246		cterm=none		guifg=#448844	gui=italic
-hi Comment		ctermfg=244		cterm=none		guifg=#808080	gui=italic
-
-"hi Todo   ctermfg=245			 cterm=none		guifg=#8f8f8f	gui=italic
+hi Comment		ctermfg=244		cterm=none		guifg=#808080	gui=none
 hi Todo	   ctermbg=208 ctermfg=25 cterm=bold	guibg=#cc7722	gui=bold
 
 " Links
@@ -163,7 +160,7 @@ hi IfdefColor		ctermbg=238	 ctermfg=25  cterm=none		guibg=#444444 guifg=#4060a0 
 "# ColorColumn
 "#---------------------------------------------------------------------------
 if version >= 703
-hi ColorColumn	ctermbg=250	 guibg=#111111    
+    hi ColorColumn	ctermbg=232    guibg=#080808    
 endif     
 
 " vim:set ts=4 sw=4 noet:
