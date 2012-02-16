@@ -230,6 +230,8 @@ inoremap '<Tab>  ''<Left>
 inoremap [<Tab>  []<Left>
 
 
+map <C-k> <Esc><C-w><C-w>
+
 "nnoremap n nzzzv            " Keep search matches in the middle of the window.
 "nnoremap N Nzzzv
 "nnoremap g; g;zz            " same when jumping to changes!
