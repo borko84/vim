@@ -97,7 +97,7 @@ endif
 
 set scrolljump=7
 set sidescroll=5        "when moving in the file horizontally move 5 columns a time
-set listchars+=precedes:#,extends:# " nice indicators that there is more text horizontally
+set listchars+=precedes:~,extends:~ " nice indicators that there is more text horizontally
 "set showbreak=>        " Show break char
 set wildmode=longest:full
 set wildmenu
@@ -207,8 +207,6 @@ nnoremap ; :
 nmap <C-t> :tabnew <CR>
 vmap <C-c> "+y
 map <C-s> :!echo "NO NO NO"<CR>
-"nmap <C-s> :w! <CR>
-"imap <C-s> <Esc>:w! <CR>
 map <C-q> :quit <CR>
 map <C-a> ggVG
 
@@ -978,6 +976,9 @@ endif
 "#}}}"#-------------------------------------------------------------------------
 "# VimDiff
 "#--------------------------------------------------------------------------#{{{
+noremap <space> ]cz.
+noremap <S-space> [cz.
+
 if &diff
     set t_Co=256
     set nowrap
@@ -993,8 +994,6 @@ if &diff
 
 
     "mappings
-    noremap <space> ]cz.
-    noremap <S-space> [cz.
     noremap dt :diffthis<CR> gg ]cz.
     noremap du :diffupdate<CR>
 

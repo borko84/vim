@@ -32,24 +32,15 @@ if has("win32")                     "system
     set enc=utf-8                       " needed for win
 else
     runtime! debian.vim
-    set guifont=Liberation\ Mono\ 10
+    set guifont=Liberation\ Mono\ 9
 endif
 
 
 if has("gui_running")               "GUI
     set guioptions=a
 else
-    set gfn=courier
     set t_Co=256
-    "highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE
 endif
-
-
-
-"#}}}#---------------------------------------------------------------------------
-"#  pathogen
-"#---------------------------------------------------------------------------#{{{
-call pathogen#infect()
 
 
 if has("syntax")
@@ -88,7 +79,7 @@ set laststatus=2        " Always display a statusline
 set mouse=a             " Enable mouse usage (all modes)
 set nocompatible        " Use Vim settings
 set number              " Line Numbering
-set showbreak=#         " Show break char
+set showbreak=~         " Show break char
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
 set smartcase           " Do smart case matching
@@ -99,17 +90,17 @@ set shiftwidth=4        " 4 spaces when text is indented
 set wrap
 set listchars=tab:>.,trail:.,extends:#,nbsp:. ",eol:$
 
-if version >= 703  
+if version >= 703
     set colorcolumn=81
-endif   
+endif
 
 
 set scrolljump=7
-set sidescroll=5 "when moving in the file horizontally move 5 columns a time
-"set listchars+=precedes:>,extends:<?" nice indicators that there is more text horizontally
-"set showbreak=>         " Show break char
+set sidescroll=5        "when moving in the file horizontally move 5 columns a time
+set listchars+=precedes:~,extends:~ " nice indicators that there is more text horizontally
+"set showbreak=>        " Show break char
 set wildmode=longest:full
-set wildmenu  
+set wildmenu
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -118,7 +109,6 @@ set wildmenu
 "set statusline=%<[%02n]\ %F%(\ %m%h%w%y\ %{&ff}\ %r%)\ %a%=\ %{strftime(\"%H:%M\")}\ %8l,%c%V/%L\ (%P)\ [%08O:%02B]
 "set statusline=%<%F%h%m%r%h%w\ \-\ %y\[%{&ff}\]\ \-\ %{strftime(\"%c\",getftime(expand(\"%:p\")))}%=\ lin:%l\/%L\ col:%c/%V\ pos:%o\ ascii:%b\ %P
 "set statusline=%f%m%r%h\ [%b]\ [%{&ff}]\ %y%=[%p%%]\ [%05lx%02v]
-
 set statusline=[%n]
 set statusline+=\ %f%m%r%h
 "set statusline+=[lines:%L]\
@@ -218,9 +208,7 @@ nnoremap ; :
 
 nmap <C-t> :tabnew <CR>
 vmap <C-c> "+y
-map <C-s> :w! <CR>
-"nmap <C-s> :w! <CR>
-imap <C-s> <Esc>:w! <CR>
+map <C-s> :!echo "NO NO NO"<CR>
 map <C-q> :quit <CR>
 map <C-a> ggVG
 
@@ -234,17 +222,19 @@ nmap <silent> <f5>:!# <CR>
 map <xCSI>[62~ <MouseDown>
 
 
-" closing braces 
-inoremap (<Tab>  ()<Left>   
+"closing braces
+inoremap (<Tab>  ()<Left>
 inoremap {<Tab>  {}<Left>
 inoremap "<Tab>  ""<Left>
 inoremap '<Tab>  ''<Left>
 inoremap [<Tab>  []<Left>
 
 
+map <C-k> <Esc><C-w><C-w>
+
 "nnoremap n nzzzv            " Keep search matches in the middle of the window.
 "nnoremap N Nzzzv
-"nnoremap g; g;zz            " same when jumping to changes! 
+"nnoremap g; g;zz            " same when jumping to changes!
 "nnoremap g, g,zz
 
 
@@ -252,6 +242,23 @@ inoremap [<Tab>  []<Left>
 "#}}}"#-------------------------------------------------------------------------
 "# sed & regexp
 "#--------------------------------------------------------------------------#{{{
+"
+"    \d    digit                   [0-9]
+"    \D    non-digit               [^0-9]
+"    \x    hex digit               [0-9a-fA-F]
+"    \X    non-hex digit           [^0-9a-fA-F]
+"    \s    white space             [    ]     (<Tab> and <Space>)
+"    \S    non-white characters    [^     ]     (not <Tab> and <Space>)
+"    \l    lowercase alpha         [a-z]
+"    \L    non-lowercase alpha     [^a-z]
+"    \u    uppercase alpha         [A-Z]
+"    \U    non-uppercase alpha     [^A-Z]
+"    \h                            [A-Za-z_]
+"    \w                            [0-9A-Za-z_]
+"
+"#-------------------------------------------------------------------------------
+
+
 noremap ;; :set hlsearch<CR>:.,$s//gc<Left><Left><Left>
 
 " fast 'w'=word, 's'=space, 'd'=digit, '.'=any
@@ -337,7 +344,9 @@ autocmd WinEnter * call NERDTreeQuit()
 "#}}}"#-------------------------------------------------------------------------
 "# Gundo
 "#--------------------------------------------------------------------------#{{{
-nnoremap <F6> :GundoToggle<CR>
+if version >= 703
+    nnoremap <F6> :GundoToggle<CR>
+endif
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -353,8 +362,8 @@ au VimEnter * AutoCloseOff
 "#-------------------------------------------------------------------------"#{{{
 "# cd %:p:h
 "#------------------------------------------------------------------------------
-map <F5>    :call LoadSession()<CR>
-map <C-F5>  :call SaveSession()<CR>
+map <F2>    :call SaveSession()<CR>
+map <F3>    :call LoadSession()<CR>
 
 map <F9>    :call CompileRunGpp()<CR>
 map <F10>   :call Make()<CR>
@@ -365,7 +374,7 @@ map <F12>   :call Synchronize()<CR>
 func! Synchronize()
   exec "w"
   exec "!bash /home/sg0216005/scripts/rsync.sh"
-endfunc   
+endfunc
 
 func! LoadSession()
     exec ":so ~/session.vim"
@@ -407,10 +416,10 @@ endfunc
 "# exec "!gcc -Wall -g % -o %<"
 
 au FileType python map <F9> :w<CR>:!python3 %<CR>
-au FileType python map <C-F9> :w<CR>:!python %<CR> 
+au FileType python map <C-F9> :w<CR>:!python %<CR>
 
 au FileType perl map <F9> :w<CR>:!perl -w %<CR>
-au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR> 
+au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR>
 
 
 
@@ -418,13 +427,13 @@ au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR>
 "# Doxygen
 "#--------------------------------------------------------------------------#{{{
 let g:load_doxygen_syntax=1
-map <F2> :Dox<CR>
+"map <F2> :Dox<CR>
 
 "#}}}"#-------------------------------------------------------------------------
 "# switch between header/source with F4
 "#--------------------------------------------------------------------------#{{{
-"map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
-map <C-h> :e %:p:s,.h$,.X123X,:s,.cxx$,.h,:s,.X123X$,.cxx,<CR>
+map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+"map <C-h> :e %:p:s,.h$,.X123X,:s,.cxx$,.h,:s,.X123X$,.cxx,<CR>
 
 
 
@@ -446,7 +455,7 @@ function! FoldingToggle()
         let g:folding_flag = 1
     endif
 endfunction
-map <C-m> :call FoldingToggle()<CR>
+nmap zm :call FoldingToggle()<CR>
 
 
 
@@ -474,7 +483,6 @@ set autochdir           " path = path of the edited file
 "set path+=C:/MinGW/include/**
 "set path+=C:/MinGW/lib/gcc/mingw32/4.5.0/include/**
 "set path+=C:/projekty/acm/out/include/**            " boost + ua
-set path+=C:/unicard/src/platinum/include/
 
 
 
@@ -543,7 +551,7 @@ autocmd FileType python     set tags+=/.vim/tags/python26.ctags
 "map <S-F4> :TlistToggle<CR>
 
 let g:tagbar_sort = 0
-let g:tagbar_compact  = 0
+let g:tagbar_compact  = 1
 
 map <S-F4> :TlistToggle<CR>
 map <F4> :TagbarToggle<CR>
@@ -571,9 +579,9 @@ let OmniCpp_ShowAccess          = 1 " show access in pop-up
 let OmniCpp_ShowPrototypeInAbbr = 1 " show prototype in pop-up
 let OmniCpp_ShowScopeInAbbr     = 0 " do not show namespace in pop-up
 let OmniCpp_SelectFirstItem     = 1 " select first item in pop-up
-let OmniCpp_MayCompleteDot      = 1 " auto .   
-let OmniCpp_MayCompleteArrow    = 1 " auto ->  
-let OmniCpp_MayCompleteScope    = 1 " auto ::  
+let OmniCpp_MayCompleteDot      = 1 " auto .
+let OmniCpp_MayCompleteArrow    = 1 " auto ->
+let OmniCpp_MayCompleteScope    = 1 " auto ::
 
 let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
 
@@ -599,7 +607,7 @@ let g:pydiction_location = 'usr/share/vim/vim72/ftplugin/pydiction/complete-dict
 
 " <silent> py !python %
 au FileType python setlocal columns=100
-au FileType python set completeopt=menuone,menu,longest,preview  
+au FileType python set completeopt=menuone,menu,longest,preview
 
 
 "" go to defn of tag under the cursor
@@ -644,21 +652,6 @@ set hlsearch
 noremap <C-p> :set hlsearch! hlsearch? <CR>
 
 
-""#}}}"#-------------------------------------------------------------------------
-""# Keywords
-""#--------------------------------------------------------------------------#{{{
-""#  Define highlight words:   
-""#      syn keyword Type afloats aint
-""#  Using your own group):
-""#      syn keyword myVar afloats aint
-""#      syn link myVar Type      
-""#-------------------------------------------------------------------------
-"
-""au FileType cpp     syn keyword Type std::string std::list std::vector std::map std::auto_ptr
-""                \                   boost::shared_ptr std::ostringstream 
-"au FileType cpp  syn keyword Keyword pim 
-
-
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -666,16 +659,16 @@ noremap <C-p> :set hlsearch! hlsearch? <CR>
 "#--------------------------------------------------------------------------#{{{
 "#
 "#  syn region MySkip contained start="^\s*#\s*\(if\>\|ifdef\>\|ifndef\>\)" skip="\\$" end="^\s*#\s*endif\>" contains=MySkip
-"#  
+"#
 "#  let g:CommentDefines = ""
-"#  
+"#
 "#  hi link MyCommentOut2 MyCommentOut
 "#  hi link MySkip MyCommentOut
 "#  hi link MyCommentOut Comment
-"#  
+"#
 "#  map <silent> ,a :call AddCommentDefine()<CR>
 "#  map <silent> ,x :call ClearCommentDefine()<CR>
-"#  
+"#
 "#  function! AddCommentDefine()
 "#    let g:CommentDefines = "\\(" . expand("<cword>") . "\\)"
 "#    syn clear MyCommentOut
@@ -683,7 +676,7 @@ noremap <C-p> :set hlsearch! hlsearch? <CR>
 "#    exec 'syn region MyCommentOut start="^\s*#\s*ifdef\s\+' . g:CommentDefines . '\>" end=".\|$" contains=MyCommentOut2'
 "#    exec 'syn region MyCommentOut2 contained start="' . g:CommentDefines . '" end="^\s*#\s*\(endif\>\|else\>\|elif\>\)" contains=MySkip'
 "#  endfunction
-"#  
+"#
 "#  function! ClearCommentDefine()
 "#    let g:ClearCommentDefine = ""
 "#    syn clear MyCommentOut
@@ -693,7 +686,7 @@ noremap <C-p> :set hlsearch! hlsearch? <CR>
 hi link IfdefReg IfdefColor
 
 function! ColorDefine()
-    exec 'syn region IfdefReg start="^\s*#ifdef" end="^\s*#endif\(.*\)$"' 
+    exec 'syn region IfdefReg start="^\s*#ifdef" end="^\s*#endif\(.*\)$"'
 endfunction
 function! UncolorDefine()
     syn clear IfdefReg
@@ -729,7 +722,7 @@ set grepprg=grep\ -nH\ $*   " IMPORTANT: grep will sometimes skip displaying the
                             "   search in a singe file. This will confuse Latex-Suite. Set your grep
                             "   program to always generate a file-name
 filetype indent on          " OPTIONAL: This enables automatic indentation as you type
-let g:tex_flavor='latex'    " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to 
+let g:tex_flavor='latex'    " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
                             "   'plaintex' instead of 'tex', which results in vim-latex not being loaded.
                             "   The following changes the default filetype back to 'tex':
 "set sw=2                   "   this is mostly a matter of taste. but LaTeX looks good with just a bit
@@ -795,7 +788,7 @@ if has("cscope")
         cs add $CSCOPE_DB
     endif
 
-    
+
     set cscopeverbose    " show msg when any other cscope db added
 
 
@@ -995,12 +988,15 @@ command! -nargs=0 DF call <SID>ShowDiff()
 "#}}}"#-------------------------------------------------------------------------
 "# VimDiff
 "#--------------------------------------------------------------------------#{{{
+noremap <space> ]cz.
+noremap <S-space> [cz.
+
 if &diff
     set t_Co=256
-    set background=dark
     set nowrap
     set diffopt=filler
     set foldminlines=99999
+    colorscheme wombat256
 
     if has("gui_running")
         exec "winpos 50 50"
@@ -1010,15 +1006,13 @@ if &diff
 
 
     "mappings
-    noremap <space> ]cz.
-    noremap <S-space> [cz.
     noremap dt :diffthis<CR> gg ]cz.
     noremap du :diffupdate<CR>
 
     "double win
     "exec ":vs"
     "exec "vertical resize 80"
-endif     
+endif
 
 
 
@@ -1032,7 +1026,7 @@ map <C-f> :FufRenewCache<CR>:FufFile<CR>
 "# BufExplorer
 "#--------------------------------------------------------------------------#{{{
 "#Sort by:
-"#   'extension', 'fullpath', 'mru' (recently used), 'name, 'number' 
+"#   'extension', 'fullpath', 'mru' (recently used), 'name, 'number'
 "#-------------------------------------------------------------------------
 let g:bufExplorerSortBy='name'
 let g:bufExplorerDefaultHelp = 0
@@ -1040,8 +1034,8 @@ let g:bufExplorerSplitBelow = 0
 "let g:bufExplorerSplitHorzSize = 7
 "let g:bufExplorerOpenMode = 1
 
-map <C-b> <C-t> :BufExplorer<CR>
-map <C-S-b> :BufExplorer<CR>
+map <C-b> :BufExplorer<CR>
+map <C-S-b> <C-t>:BufExplorer<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
