@@ -42,6 +42,23 @@ else
     set t_Co=256
 endif
 
+"#}}}#---------------------------------------------------------------------------
+"#    pathogen
+"#---------------------------------------------------------------------------#{{{
+"#   Submodule add 
+"#       > git rm -r .vim/bundle/fugitive        
+"#       > git submodule add git://github.com/tpope/vim-fugitive.git .vim/bundle/fugitive
+"#   Register :
+"#       > git submodule init        
+"#       > git submodule update
+"#   Remove submodule:
+"#       remove references in .gitmodules 
+"#                            .git/config.
+"#       > git rm --cached .vim/bundle/fugitive
+"#--------------------------------------------------------------------------------
+call pathogen#infect() 
+
+
 
 if has("syntax")
       syntax on
