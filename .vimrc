@@ -57,7 +57,7 @@ endif
 "#       > git rm --cached .vim/bundle/fugitive
 "#--------------------------------------------------------------------------------
 call pathogen#infect() 
-
+call pathogen#helptags()   
 
 
 if has("syntax")
