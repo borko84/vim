@@ -660,7 +660,7 @@ noremap <C-p> :set hlsearch! hlsearch? <CR>
 "#}}}"#-------------------------------------------------------------------------
 "#  CtrlP
 "#--------------------------------------------------------------------------#{{{
-let g:ctrlp_map = '<C-f>'
+"let g:ctrlp_map = '<C-f>'
 let g:ctrlp_use_caching = 1     " <F5> while inside |CtrlP| will purge the cache
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 0
