@@ -487,7 +487,7 @@ au FileType python  :set foldmethod=indent
 set autochdir           " path = path of the edited file
 
 " HOME :
-set path+=~/workspace/cpp/Network/*
+set path+=~/workspace/cpp/Network/**
 set path+=~/usr/include/**
 
 " WORK :
@@ -512,9 +512,8 @@ set path+=~/usr/include/**
 "#
 "#------------------------------------------------------------------------------
 
-set tags=./tags,./../tags,./../../tags ",./../../../tags,tags
-"set tags=tags,tags;/
-"set tags=tags,./tags
+set tags=./tags,./../tags,./../../tags 
+"set tags=./tags,tags;/
 
 set tags+=~/.vim/tags/std_tags
 set tags+=~/.vim/tags/cpp_tags
@@ -660,7 +659,7 @@ noremap <C-p> :set hlsearch! hlsearch? <CR>
 "#}}}"#-------------------------------------------------------------------------
 "#  CtrlP
 "#--------------------------------------------------------------------------#{{{
-"let g:ctrlp_map = '<C-f>'
+let g:ctrlp_map = '<F7>'
 let g:ctrlp_use_caching = 1     " <F5> while inside |CtrlP| will purge the cache
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 0
@@ -1055,7 +1054,6 @@ let g:bufExplorerSplitBelow = 0
 "let g:bufExplorerOpenMode = 1
 
 map <C-b> :BufExplorer<CR>
-map <C-S-b> <C-t>:BufExplorer<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
