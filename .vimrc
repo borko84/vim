@@ -444,7 +444,12 @@ let g:load_doxygen_syntax=1
 "#}}}"#-------------------------------------------------------------------------
 "# switch between header/source with F4
 "#--------------------------------------------------------------------------#{{{
-map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+"map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+
+au! BufEnter *.cpp let b:fswitchdst = 'hpp,h'
+au! BufEnter *.h   let b:fswitchdst = 'cpp,cxx,C'
+map <C-h> :FSHere<cr>
+
 "map <C-h> :e %:p:s,.h$,.X123X,:s,.cxx$,.h,:s,.X123X$,.cxx,<CR>
 
 
