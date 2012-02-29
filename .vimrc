@@ -73,8 +73,11 @@ if has("autocmd")                   "jump to the last position when reopening a 
 endif
 
 
-
-
+"#}}}#---------------------------------------------------------------------------
+"#    neocomplcache
+"#---------------------------------------------------------------------------#{{{  
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_min_syntax_length = 3
 
 "#}}}"#-------------------------------------------------------------------------
 "# Text Edition Settings
