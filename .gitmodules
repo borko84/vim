@@ -8,5 +8,8 @@
 	path = bundle/ctrlp
 	url = git://github.com/kien/ctrlp.vim.git
 [submodule "vim-fswitch"]
-	path = vim-fswitch
+	path = bundle/vim-fswitch
 	url = git://github.com/derekwyatt/vim-fswitch
+[submodule "bundle/neocomplcache"]
+	path = bundle/neocomplcache
+	url = git://github.com/Shougo/neocomplcache.git

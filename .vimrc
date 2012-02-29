@@ -47,7 +47,7 @@ endif
 "#---------------------------------------------------------------------------#{{{
 "#   Submodule add 
 "#       > git rm -r .vim/bundle/fugitive        
-"#       > git submodule add git://github.com/tpope/vim-fugitive.git .vim/bundle/fugitive
+"#       > git submodule add git://github.com/tpope/vim-fugitive.git bundle/fugitive
 "#   Register :
 "#       > git submodule init        
 "#       > git submodule update
@@ -446,7 +446,8 @@ let g:load_doxygen_syntax=1
 "#--------------------------------------------------------------------------#{{{
 "map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
 
-au! BufEnter *.cpp let b:fswitchdst = 'hpp,h'
+au! BufEnter *.cpp let b:fswitchdst = 'h,hpp'
+au! BufEnter *.cxx let b:fswitchdst = 'h,hpp'
 au! BufEnter *.h   let b:fswitchdst = 'cpp,cxx,C'
 map <C-h> :FSHere<cr>
 
