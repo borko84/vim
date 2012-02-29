@@ -275,6 +275,7 @@ map <C-k> <Esc><C-w><C-w>
 
 
 noremap ;; :set hlsearch<CR>:.,$s//gc<Left><Left><Left>
+noremap ;g :g/
 
 " fast 'w'=word, 's'=space, 'd'=digit, '.'=any
 cmap ;w \(\w\+\)
