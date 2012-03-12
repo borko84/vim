@@ -51,6 +51,7 @@ endif
 "#   Register :
 "#       > git submodule init        
 "#       > git submodule update
+"#       > git submodule update --init --recursive
 "#   Remove submodule:
 "#       remove references in .gitmodules 
 "#                            .git/config.

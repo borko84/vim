@@ -1,15 +1,54 @@
 [submodule "bundle/perlomni"]
 	path = bundle/perlomni
-    url = git://github.com/c9s/perlomni.vim
-[submodule ".vim/bundle/ctrlp"]
-	path = .vim/bundle/ctrlp
-	url = git://github.com/kien/ctrlp.vim.git
+    url = https://github.com/c9s/perlomni.vim
 [submodule "bundle/ctrlp"]
 	path = bundle/ctrlp
-	url = git://github.com/kien/ctrlp.vim.git
-[submodule "vim-fswitch"]
-	path = bundle/vim-fswitch
-	url = git://github.com/derekwyatt/vim-fswitch
+	url = https://github.com/kien/ctrlp.vim.git
 [submodule "bundle/neocomplcache"]
 	path = bundle/neocomplcache
-	url = git://github.com/Shougo/neocomplcache.git
+	url = https://github.com/Shougo/neocomplcache.git
+[submodule "bundle/vim-fswitch"]
+	path = bundle/vim-fswitch
+	url = https://github.com/derekwyatt/vim-fswitch
+[submodule "bundle/nerdtree"]
+	path = bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree
+[submodule "bundle/vim-surround"]
+	path = bundle/vim-surround
+	url = https://github.com/tpope/vim-surround
+[submodule "bundle/snipmate"]
+	path = bundle/snipmate
+	url = https://github.com/msanders/snipmate.vim
+[submodule "bundle/tagbar"]
+	path = bundle/tagbar
+	url = https://github.com/majutsushi/tagbar
+[submodule "bundle/pyflakes"]
+	path = bundle/pyflakes
+	url = https://github.com/kevinw/pyflakes-vim.git
+[submodule "bundle/omnicppcomplete"]
+	path = bundle/omnicppcomplete
+	url = https://github.com/vim-scripts/OmniCppComplete.git
+[submodule "bundle/fuf"]
+	path = bundle/fuf
+	url = https://github.com/vim-scripts/FuzzyFinder.git
+[submodule "bundle/L9"]
+	path = bundle/L9
+	url = https://github.com/vim-scripts/L9.git
+[submodule "bundle/dirdiff"]
+	path = bundle/dirdiff
+	url = https://github.com/vim-scripts/DirDiff.vim.git
+[submodule "bundle/gundo"]
+	path = bundle/gundo
+	url = https://github.com/vim-scripts/Gundo.git
+[submodule "bundle/taglist"]
+	path = bundle/taglist
+	url = https://github.com/vim-scripts/taglist.vim.git
+[submodule "bundle/autoclose"]
+	path = bundle/autoclose
+	url = https://github.com/vim-scripts/AutoClose.git
+[submodule "bundle/doxygentoolkit"]
+	path = bundle/doxygentoolkit
+	url = https://github.com/vim-scripts/DoxygenToolkit.vim.git
+[submodule "bundle/latex"]
+	path = bundle/latex
+	url = https://github.com/vim-scripts/LaTeX-Suite-aka-Vim-LaTeX.git
