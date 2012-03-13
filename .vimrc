@@ -372,7 +372,7 @@ endif
 "#}}}"#-------------------------------------------------------------------------
 "# autoclose
 "#--------------------------------------------------------------------------#{{{
-au VimEnter * AutoCloseOff
+""au VimEnter * AutoCloseOff
 "let g:AutoClosePairs = {'(': ')', '{': '}', '[': ']', '"': '"', "'": "'"}
 "let g:AutoCloseProtectedRegions = ["Comment", "String", "Character"]
 
