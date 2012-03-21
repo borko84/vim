@@ -77,7 +77,7 @@ endif
 "#}}}#---------------------------------------------------------------------------
 "#    neocomplcache
 "#---------------------------------------------------------------------------#{{{  
-let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_at_startup = 0
 let g:neocomplcache_min_syntax_length = 3
 
 "#}}}"#-------------------------------------------------------------------------
@@ -228,6 +228,8 @@ nnoremap ; :
 nmap <C-t> :tabnew <CR>
 vmap <C-c> "+y
 map <C-s> :!echo "NO NO NO"<CR>
+nmap ZZ :w!<CR>
+nmap QQ :wq!<CR>
 map <C-q> :quit <CR>
 map <C-a> ggVG
 
@@ -606,7 +608,7 @@ set completeopt=menuone,menu,longest  ",preview  "for scratch window
 
 imap <C-o> <C-x><C-o>
 imap <C-space> <C-o>
-imap <S-space> <C-x><C-o>
+"imap <S-space> <C-x><C-o>
 imap <C-n> <C-x><C-n>
 inoremap <expr> <space> ((pumvisible())?("\<Down>"):("<space>"))
 
@@ -1100,4 +1102,20 @@ map <C-g><C-g><Esc> :vimgrep // ./**/*.cpp<left><left><left><left><left><left><l
 
 "iabbr if( if( )<CR>{<esc>7hi
 
+"#}}}#---------------------------------------------------------------------------
+"#    binary
+"#---------------------------------------------------------------------------#{{{
 
+let g:bin_flag = 0
+
+function! BinToggle()
+    if (g:bin_flag==0)
+        exec ":%!xxd"
+        let g:bin_flag = 1
+    else
+        exec ":%!xxd -r"
+        let g:bin_flag = 0
+    endif
+endfunction
+
+nmap BB :call BinToggle()<CR>
