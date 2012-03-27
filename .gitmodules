@@ -40,9 +40,6 @@
 [submodule "bundle/taglist"]
 	path = bundle/taglist
 	url = https://github.com/vim-scripts/taglist.vim.git
-[submodule "bundle/autoclose"]
-	path = bundle/autoclose
-	url = https://github.com/vim-scripts/AutoClose.git
 [submodule "bundle/doxygentoolkit"]
 	path = bundle/doxygentoolkit
 	url = https://github.com/vim-scripts/DoxygenToolkit.vim.git
