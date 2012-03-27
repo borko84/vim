@@ -47,10 +47,11 @@ endif
 "#---------------------------------------------------------------------------#{{{
 "#   Submodule add 
 "#       > git rm -r .vim/bundle/fugitive        
-"#       > git submodule add git://github.com/tpope/vim-fugitive.git .vim/bundle/fugitive
+"#       > git submodule add git://github.com/tpope/vim-fugitive.git bundle/fugitive
 "#   Register :
 "#       > git submodule init        
 "#       > git submodule update
+"#       > git submodule update --init --recursive
 "#   Remove submodule:
 "#       remove references in .gitmodules 
 "#                            .git/config.
@@ -74,8 +75,11 @@ if has("autocmd")                   "jump to the last position when reopening a 
 endif
 
 
-
-
+"#}}}#---------------------------------------------------------------------------
+"#    neocomplcache
+"#---------------------------------------------------------------------------#{{{  
+let g:neocomplcache_enable_at_startup = 0
+let g:neocomplcache_min_syntax_length = 3
 
 "#}}}"#-------------------------------------------------------------------------
 "# Text Edition Settings
@@ -227,6 +231,8 @@ nnoremap ; :
 nmap <C-t> :tabnew <CR>
 vmap <C-c> "+y
 map <C-s> :!echo "NO NO NO"<CR>
+nmap ZZ :w!<CR>
+nmap QQ :wq!<CR>
 map <C-q> :quit <CR>
 map <C-a> ggVG
 
@@ -282,6 +288,7 @@ noremap * viwy/<C-r>0<CR>
 
 
 noremap ;; :set hlsearch<CR>:.,$s//gc<Left><Left><Left>
+noremap ;g :g/
 
 " fast 'w'=word, 's'=space, 'd'=digit, '.'=any
 cmap ;w \(\w\+\)
@@ -374,7 +381,7 @@ endif
 "#}}}"#-------------------------------------------------------------------------
 "# autoclose
 "#--------------------------------------------------------------------------#{{{
-au VimEnter * AutoCloseOff
+"au VimEnter * AutoCloseOff
 "let g:AutoClosePairs = {'(': ')', '{': '}', '[': ']', '"': '"', "'": "'"}
 "let g:AutoCloseProtectedRegions = ["Comment", "String", "Character"]
 
@@ -454,7 +461,13 @@ let g:load_doxygen_syntax=1
 "#}}}"#-------------------------------------------------------------------------
 "# switch between header/source with F4
 "#--------------------------------------------------------------------------#{{{
-map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+"map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+
+au! BufEnter *.cpp let b:fswitchdst = 'h,hpp'
+au! BufEnter *.cxx let b:fswitchdst = 'h,hpp'
+au! BufEnter *.h   let b:fswitchdst = 'cpp,cxx,C'
+map <C-h> :FSHere<cr>
+
 "map <C-h> :e %:p:s,.h$,.X123X,:s,.cxx$,.h,:s,.X123X$,.cxx,<CR>
 
 
@@ -687,6 +700,8 @@ let g:ctrlp_custom_ignore = '\.metadata\|\.git\|\.project\|\.cproject'
 func! CP()
     exec ':CtrlP'
 endfunc          
+
+nmap cp :call CP()<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -960,17 +975,17 @@ endif
 " endfunction
 
 
-function! s:ShowDiff()
-     exec 'NerdTreeClose'
-     exec 'bp'
-     diffthis
-     exec 'vs'
-     exec 'bp'
-     "exec 'bp'
-     diffthis
- endfunction
-command! -nargs=0 DF call <SID>ShowDiff()
-
+" function! s:ShowDiff()
+"     exec 'NerdTreeClose'
+"     exec 'bp'
+"     diffthis
+"     exec 'vs'
+"     exec 'bp'
+"     "exec 'bp'
+"     diffthis
+" endfunction
+"command! -nargs=0 DF call <SID>ShowDiff()
+"
 
 "#}}}"#-------------------------------------------------------------------------
 "# Command output in split
@@ -1070,7 +1085,6 @@ let g:bufExplorerSplitBelow = 0
 "let g:bufExplorerOpenMode = 1
 
 map <C-b> :BufExplorer<CR>
-map <C-S-b> <C-t>:BufExplorer<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -1106,4 +1120,20 @@ map <C-g><C-g><Esc> :vimgrep // ./**/*.cpp<left><left><left><left><left><left><l
 
 "iabbr if( if( )<CR>{<esc>7hi
 
+"#}}}#---------------------------------------------------------------------------
+"#    binary
+"#---------------------------------------------------------------------------#{{{
 
+let g:bin_flag = 0
+
+function! BinToggle()
+    if (g:bin_flag==0)
+        exec ":%!xxd"
+        let g:bin_flag = 1
+    else
+        exec ":%!xxd -r"
+        let g:bin_flag = 0
+    endif
+endfunction
+
+nmap BB :call BinToggle()<CR>
