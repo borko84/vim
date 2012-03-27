@@ -21,7 +21,7 @@
 "# general settings
 "#--------------------------------------------------------------------------#{{{
 
-cd .
+cd ~
 colorscheme wombat256
 
 if has("win32")                     "system
@@ -45,20 +45,19 @@ endif
 "#}}}#---------------------------------------------------------------------------
 "#    pathogen
 "#---------------------------------------------------------------------------#{{{
-"#   Submodule add 
-"#       > git rm -r .vim/bundle/fugitive        
+"#   Submodule add
+"#       > git rm -r .vim/bundle/fugitive
 "#       > git submodule add git://github.com/tpope/vim-fugitive.git bundle/fugitive
 "#   Register :
-"#       > git submodule init        
+"#       > git submodule init
 "#       > git submodule update
-"#       > git submodule update --init --recursive
 "#   Remove submodule:
-"#       remove references in .gitmodules 
+"#       remove references in .gitmodules
 "#                            .git/config.
 "#       > git rm --cached .vim/bundle/fugitive
 "#--------------------------------------------------------------------------------
-call pathogen#infect() 
-call pathogen#helptags()   
+call pathogen#infect()
+call pathogen#helptags()
 
 
 if has("syntax")
@@ -74,11 +73,6 @@ if has("autocmd")                   "jump to the last position when reopening a 
 endif
 
 
-"#}}}#---------------------------------------------------------------------------
-"#    neocomplcache
-"#---------------------------------------------------------------------------#{{{  
-let g:neocomplcache_enable_at_startup = 0
-let g:neocomplcache_min_syntax_length = 3
 
 "#}}}"#-------------------------------------------------------------------------
 "# Text Edition Settings
@@ -86,6 +80,12 @@ let g:neocomplcache_min_syntax_length = 3
 
 "set verbose=1           " see everything vim is doing
 
+"spaces
+set tabstop=3           " n-space tabs
+set shiftwidth=3        " n-spaces when text is indented
+set softtabstop=3
+
+"others
 set backspace=indent,eol,start
 set expandtab           " spaces instead of tab
 set gcr=a:blinkwait0    " non blinking cursor
@@ -104,10 +104,7 @@ set showbreak=~         " Show break char
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
 set smartcase           " Do smart case matching
-set softtabstop=4
-set tabstop=4           " 4-space tabs
 set vb t_vb=            " Flash instead of beep
-set shiftwidth=4        " 4 spaces when text is indented
 set wrap
 set listchars=tab:>.,trail:.,extends:#,nbsp:. ",eol:$
 
@@ -228,8 +225,9 @@ nnoremap ; :
 nmap <C-t> :tabnew <CR>
 vmap <C-c> "+y
 map <C-s> :!echo "NO NO NO"<CR>
-nmap ZZ :w!<CR>
-nmap QQ :wq!<CR>
+nmap XX :x!<CR>
+nmap WW :ww!<CR>
+nmap QQ :q!<CR>
 map <C-q> :quit <CR>
 map <C-a> ggVG
 
@@ -261,7 +259,9 @@ map <C-k> <Esc><C-w><C-w>
 "#}}}#---------------------------------------------------------------------------
 "#   visually selected text
 "#---------------------------------------------------------------------------#{{{
-noremap * viwy/<C-r>0<CR>  
+noremap * viwy/<C-r>0<CR>
+
+
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -273,7 +273,7 @@ noremap * viwy/<C-r>0<CR>
 "    \x    hex digit               [0-9a-fA-F]
 "    \X    non-hex digit           [^0-9a-fA-F]
 "    \s    white space             [    ]     (<Tab> and <Space>)
-"    \S    non-white characters    [^     ]     (not <Tab> and <Space>)
+"    \S    non-white characters    [^     ]   (not <Tab> and <Space>)
 "    \l    lowercase alpha         [a-z]
 "    \L    non-lowercase alpha     [^a-z]
 "    \u    uppercase alpha         [A-Z]
@@ -304,10 +304,20 @@ cmap ;x <\>\(.*\)\</<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 "# clearing function
 "#--------------------------------------------------------------------------#{{{
 func! Cls()
+
+    "# remove unwanted spaces at end-of-line
     exec ':%s/\(\s\+\)$//gc'
+
+    "# change tabs to 4 spaces 
     exec ':%s/\t/    /gc'
+
+    "# ???
     exec ':%s/\r//gc'
-endfunc
+
+    "# remove end-of-file empty lines
+    exec ':%s#\($\n\s*\)\+\%$##'   
+
+ endfunc
 nmap cls :call Cls()<CR>
 
 
@@ -329,8 +339,28 @@ vnoremap ? :s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
 "noremap <silent> ,cc :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
 "noremap <silent> ,cu :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
 
+"#}}}"#-------------------------------------------------------------------------
+"#      Neocomplcache
+"#--------------------------------------------------------------------------#{{{
+let g:acp_enableAtStartup = 0
+let g:neocomplcache_enable_at_startup = 0
+let g:neocomplcache_min_syntax_length = 4
+let g:neocomplcache_min_keyword_length = 4
+let g:neocomplcache_enable_smart_case = 1            " smartcase
+"let g:neocomplcache_enable_camel_case_completion = 1 " camel case
 
-
+" Plugin key-mappings.
+" <CR>: close popup and save indent.
+"inoremap <expr><CR>  neocomplcache#close_popup() . "\<CR>"
+" <TAB>: completion.
+"inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+"inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+"inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+"inoremap <expr><C-y>  neocomplcache#close_popup()
+"inoremap <expr><C-e>  neocomplcache#cancel_popup()
+"inoremap <expr><C-g>  neocomplcache#undo_completion()
+" FIXME use <C-n>, <C-p> or <C-j>, <C-k> to select from popup.
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -378,7 +408,7 @@ endif
 "#}}}"#-------------------------------------------------------------------------
 "# autoclose
 "#--------------------------------------------------------------------------#{{{
-""au VimEnter * AutoCloseOff
+"au VimEnter * AutoCloseOff
 "let g:AutoClosePairs = {'(': ')', '{': '}', '[': ']', '"': '"', "'": "'"}
 "let g:AutoCloseProtectedRegions = ["Comment", "String", "Character"]
 
@@ -484,6 +514,7 @@ function! FoldingToggle()
     endif
 endfunction
 nmap zm :call FoldingToggle()<CR>
+nmap z<space> za
 
 
 
@@ -529,13 +560,22 @@ set path+=~/usr/include/**
 "#
 "#------------------------------------------------------------------------------
 
+map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+autocmd FileType python     map <F8> :!/usr/bin/ctags -R -f --languages=python -python-kinds=-i .<CR>
+autocmd FileType python     set tags+=/.vim/tags/python26.ctags
+
+
+"#}}}"#-------------------------------------------------------------------------
+"# tags dirs
+"#--------------------------------------------------------------------------#{{{
 set tags=./tags,./../tags,./../../tags 
 "set tags=./tags,tags;/
-
 set tags+=~/.vim/tags/std_tags
 set tags+=~/.vim/tags/cpp_tags
 set tags+=~/.vim/tags/boost_tags
-
 "set tags+=~\vimfiles\tags\std_tags
 "set tags+=~\vimfiles\tags\cpp_tags
 "set tags+=K:\workspace\unicard\dll\coreRcp_tags
@@ -543,16 +583,6 @@ set tags+=~/.vim/tags/boost_tags
 "set tags+=C:\projekty\acman\acManager2\tags
 "set tags+=C:\unicard\src\platinum\3_utils\UniSynchro\tags
 "set tags+=C:\unicard\src\platinum\komp\tags
-
-map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
-map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-
-autocmd FileType python     map <F8> :!/usr/bin/ctags -R -f --languages=python -python-kinds=-i .<CR>
-"autocmd FileType python     map <F8> :!/usr/bin/ctags .<CR>
-"autocmd FileType python     set tags+=/.vim/tags/python26.ctags
-
-
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -612,7 +642,6 @@ set completeopt=menuone,menu,longest  ",preview  "for scratch window
 
 imap <C-o> <C-x><C-o>
 imap <C-space> <C-o>
-"imap <S-space> <C-x><C-o>
 imap <C-n> <C-x><C-n>
 inoremap <expr> <space> ((pumvisible())?("\<Down>"):("<space>"))
 
@@ -685,7 +714,7 @@ let g:ctrlp_custom_ignore = '\.metadata\|\.git\|\.project\|\.cproject\|\.directo
 
 func! CP()
     exec ':CtrlP'
-endfunc          
+endfunc
 
 nmap cp :call CP()<CR>
 
@@ -1028,10 +1057,11 @@ noremap <space> ]cz.
 noremap <S-space> [cz.
 
 if &diff
+    exec ":1"
     set t_Co=256
     set nowrap
     set diffopt=filler
-    set foldminlines=99999
+    "set foldminlines=99999
     colorscheme wombat256
 
     if has("gui_running")
@@ -1076,7 +1106,9 @@ map <C-b> :BufExplorer<CR>
 "#}}}"#-------------------------------------------------------------------------
 "# vimgrep
 "#--------------------------------------------------------------------------#{{{
-function! Grepc(pat,path,ext)
+"# map <key> :vimgrep /"pattern"/gj ~/path/to/dir/**/*.{cxx,h,cpp}
+"#--------------------------------------------------------------------------#{{{
+function! Grepc(path,ext,pat)
     let s:pat =a:pat
     let s:path=a:path
     let s:ext =a:ext
@@ -1094,10 +1126,8 @@ function! Grepc(pat,path,ext)
     endif
 endfunction
 
-noremap <C-g><Esc> :call Grepc("",'.','cpp')<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
-au FileType python noremap <C-g><Esc> :call Grepc("",'.','py')<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
-map <C-g><C-g><Esc> :vimgrep // ./**/*.cpp<left><left><left><left><left><left><left><left><left><left><left><left>
-"vnoremap <silent> gv :call VisualSearch('gv')<CR>   " When you press gv you vimgrep after the selected text
+noremap <C-g><Esc> :call Grepc('.','{cpp,cxx}',"")<Left><Left>
+au FileType python noremap <C-g><Esc> :call Grepc('.','py',"")<Left><Left>
 
 
 "#}}}"#-------------------------------------------------------------------------
