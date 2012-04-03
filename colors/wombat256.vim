@@ -144,7 +144,7 @@ au InsertLeave * hi StatusLine ctermbg=238 guibg=#444444
 "#  TagListFileName - Used for filenames
 "#---------------------------------------------------------------------------
 hi MyTagListFileName ctermfg=113   cterm=none		guifg=#95e454	gui=italic
-hi MyTagListTitle    ctermfg=25   cterm=none		guifg=#4060a0	gui=none 
+hi MyTagListTitle    ctermfg=25    cterm=none		guifg=#4060a0	gui=none 
 
 
 
