@@ -62,14 +62,13 @@ endif
 
 let b:current_syntax = "cpp"
 
-
 "#-------------------------------------------------------------------------------
 "# Class or namespace
 "#-------------------------------------------------------------------------------
 "class typename template namespace      
 
-syn match   cppClass "class"      
-syn match   cppClassName "class \w\+" contains=cppClass 
+syn match   cppClass "\_\sclass\s"      
+syn match   cppClassName "\_\sclass \w\+" contains=cppClass 
 hi def link cppClass Keyword
 hi def link cppClassName FunctionDef
 
@@ -83,6 +82,10 @@ syn match   cppTemplateName "template \w\+" contains=cppTemplate
 hi def link cppTemplate Keyword
 hi def link cppTemplateName FunctionDef  
 
+syn match   cppSt "\_\sstruct\s"      
+syn match   cppStName "\_\sstruct \w\+" contains=cStructure
+hi def link cppSt Keyword
+hi def link cppStName FunctionDef
 
 
 

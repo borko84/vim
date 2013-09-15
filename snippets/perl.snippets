@@ -6,10 +6,11 @@ snippet #!
 	use strict;
 	use warnings;
 
-	def main(){
-
+	sub main()
+	{
+		${1}
 	}
-	
+
 	main();
 #-------------------------------------------------------------------------------
 snippet my
@@ -20,9 +21,10 @@ snippet .
 #-------------------------------------------------------------------------------
 snippet %
 	%${1} = (${2:a => 1} , ${3:b => 2});${4}
+#-------------------------------------------------------------------------------
 snippet hash
 	%${1} = (${2:a => 1} , ${3:b => 2});${4}
-
+#-------------------------------------------------------------------------------
 snippet print_hash
 	print "${1:my_hash}: " , "\n";
 	foreach my $key (keys %$1) {
@@ -44,7 +46,7 @@ snippet DEBUG
 	print "DEBUG: ${1}" , "\n";${2}
 #-------------------------------------------------------------------------------
 snippet if
-	if (${1}) {
+	if ($${1}) {
 		${2:# body...}
 	}
 #-------------------------------------------------------------------------------
@@ -89,7 +91,12 @@ snippet for
 		${4:# body...}
 	}${5}
 #-------------------------------------------------------------------------------
-snippet foreach
+snippet fore
+	foreach my $${1:x} (@${2:array}) {
+		${3:# body...}
+	}${4}
+#-------------------------------------------------------------------------------
+snippet foreeach
 	foreach my $${1:x} (@${2:array}) {
 		${3:# body...}
 	}${4}
@@ -99,16 +106,16 @@ snippet xfore
 #-------------------------------------------------------------------------------
 snippet package
 	package ${1:ClassName};
-	
+
 	use base qw(${2:ParentClass});
-	
+
 	sub new {
 		my $class = shift;
 		$class = ref $class if ref $class;
 		my $self = bless {}, $class;
 		$self;
 	}
-	
+
 	1;${3}
 #-------------------------------------------------------------------------------
 snippet ret
@@ -136,7 +143,7 @@ snippet class
 	#---------------------------------------------------------------------------
 	1;
 	#---------------------------------------------------------------------------
-	
+
 	my $person = new Person();${3}
 #-------------------------------------------------------------------------------
 snippet join
@@ -146,7 +153,7 @@ snippet split
 	@${1} = split(/ /, $${2});${3}
 #-------------------------------------------------------------------------------
 snippet push
-	push(@${1}, $${2});${3}	
+	push(@${1}, $${2});${3}
 #-------------------------------------------------------------------------------
 snippet slurp
 	my $${1:var};
@@ -155,9 +162,9 @@ snippet slurp
 snippet main
 	sub main()
 	{
-	
+
 	}
-	
+
 	main();
 #-------------------------------------------------------------------------------
 snippet getopt
@@ -166,11 +173,38 @@ snippet getopt
 	my $data = "file.dat";
 	my $length = 24;
 	my $verbose;
-	$result = GetOptions ("length=i" => \$length,    # numeric
-	                      "file=s"   => \$data,      # string
-	                      "verbose"  => \$verbose);  # flag
+	if(!GetOptions ("length=i" => \$length,    # numeric
+	                "file=s"   => \$data,      # string
+	                "verbose"  => \$verbose))  # flag
+	{
+		help();
+		print "ERROR parsing arguments\n";
+	}
 #===============================================================================
-# TESTING
+#										WORK
 #===============================================================================
 snippet is
 	is( ${1},${2} ,"${3:comment}");${4}
+#-------------------------------------------------------------------------------
+snippet log
+	Log("${1:"LogMsg"}", MsgLog::${2:ERROR});
+#-------------------------------------------------------------------------------
+snippet help
+	print <<END_OF_HELP
+	Check nightly input file.
+
+	Command line usage:
+	   $g_ScriptName -a <instance> [-d <days>] [-t <seconds>]
+
+	Options are:
+	   -h               Help Information
+	   -a <instance>    Required. The carrier's instance name.
+	   -n <hours>       Send now new data alert.
+	   -T <id,subid>    Optional. Send transaction after processing.  Examples:
+	                    NOTE: anystring is always sent, with -o filename
+	   -l               Optional. Process only the most recent file, if many are found.
+	END_OF_HELP
+	;
+#-------------------------------------------------------------------------------
+snippet sleep
+	sleep(${1});$2

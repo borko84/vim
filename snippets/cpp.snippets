@@ -31,7 +31,7 @@ snippet back_inserter
 #	bind(&X::f, ref(x), _1)(i);		// x.f(i)
 #	bind(&X::f, &x, _1)(i);			//(&x)->f(i)
 #	bind(&X::f, x, _1)(i);			// (internal copy of x).f(i)
-#	bind(&X::f, p, _1)(i);			// (internal copy of p)->f(i)   
+#	bind(&X::f, p, _1)(i);			// (internal copy of p)->f(i)
 #-------------------------------------------------------------------------------
 # bind
 #-------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ snippet bind
 	// struct my_function {
 	//     typedef boost::function< void( constT& ) > type;
 	// };
-	// my_function<int>::type my_foo = bind( example_function ); 
+	// my_function<int>::type my_foo = bind( example_function );
 #-------------------------------------------------------------------------------
 # cast
 #-------------------------------------------------------------------------------
@@ -73,13 +73,11 @@ snippet class
 
 	//---------------------------------------------------------------------------
 	$1::$1(${2})
-	{
-	};
+	{}
+	
 	//---------------------------------------------------------------------------
 	$1::~$1()
-	{
-	};
-	//---------------------------------------------------------------------------
+	{}
 	
 #	class ${1:`Filename('$1', 'name')`}
 #	{
@@ -136,34 +134,46 @@ snippet explode
 	std::vector<std::string> tokens;
 	std::copy(std::istream_iterator<std::string>(iss),
 			  std::istream_iterator<std::string>(),
-			  std::back_inserter<std::vector<std::string> >(tokens));    
-#	std::copy(std::istream_iterator<std::string>(iss), 
-#			  std::istream_iterator<std::string>(), 
-#			  std::ostream_iterator<std::string>(std::cout, "\n"));   
-#-------------------------------------------------------------------------------
-# fori
+			  std::back_inserter<std::vector<std::string> >(tokens));
 #-------------------------------------------------------------------------------
 snippet fori
-	for (std::${1}<${2:int}>::iterator ii = ${3:/*container_name*/}.begin(); ii!=$3.end(); ii++) {
-		*(ii).${4:fun()};
+	for (std::${1}<${2:int}>::iterator ii = ${3:/*container_name*/}.begin(); ii!=$3.end(); ++ii) {
+	   *(ii).${4:fun()};
 	}
+#-------------------------------------------------------------------------------
+snippet fore
+	#include <boost/foreach.hpp>
+	
+	BOOST_FOREACH(${1:EType} ${2:elem}, ${3:vContainer})
+	{
+	   ${2}
+	}
+#-------------------------------------------------------------------------------
+snippet forem
+	#include <boost/foreach.hpp>
+	
+	BOOST_FOREACH(const std::map${2:< , >}::value_type& Value, ${1:mymap})
+	{
+		${3:}
+	}     
+
 #-------------------------------------------------------------------------------
 # functors
 #-------------------------------------------------------------------------------
 snippet functor
-	struct add_x 
+	struct add_x
 	{
 		add_x(int x) : x(x) {}
 		int operator()(int y) { return x + y; }
 		int x;
 	};
 
-	add_x add42(42);  
-	int i = add42(8); 
+	add_x add42(42);
+	int i = add42(8);
 
 	std::vector<int> in, out;
 
-	//std::transform calls the functor on every element in the 'in', and stores in 'out' 
+	//std::transform calls the functor on every element in the 'in', and stores in 'out'
 	std::transform(in.begin(), in.end(), out.begin(), add_x(1));
 #-------------------------------------------------------------------------------
 # get
@@ -182,7 +192,7 @@ snippet ifstream
 	std::ifstream ${1:ifs}(${2:"file.txt"});
 	std::string line;
 
-	if(!$1) 
+	if(!$1)
 	    std::cout << "ERROR - No input file\n";
 	else {
 	    while(getline($1,line)) {
@@ -191,6 +201,14 @@ snippet ifstream
 	}
 
 	ifs.close();
+#-------------------------------------------------------------------------------
+# is_number
+#-------------------------------------------------------------------------------
+snippet is_digit
+	#include <boost/fusion/include/all.hpp>
+	#include <boost/algorithm/string/detail/classification.hpp>
+	
+	boost::all(${1:string}, boost::algorithm::is_digit());
 #-------------------------------------------------------------------------------
 # jclass
 #-------------------------------------------------------------------------------
@@ -236,10 +254,17 @@ snippet list
 snippet map
 	std::map<${1:key}, ${2:value}> map${3}
 #-------------------------------------------------------------------------------
+# memcpy
+#-------------------------------------------------------------------------------
+snippet memcpy
+	memcpy(${2:dest}, ${1:const_source}, sizeof($1));${3}
+#-------------------------------------------------------------------------------
 # mfun
 #-------------------------------------------------------------------------------
 snippet mfun
+	//***************************************************************************
 	${1:void} `Filename('$1', 'name')`::${2}()
+	//***************************************************************************
 	{
 	    ${3:// TODO - function body}
 	}
@@ -247,9 +272,10 @@ snippet mfun
 # namespace
 #-------------------------------------------------------------------------------
 snippet ns
-	namespace ${1:`Filename('', 'my')`} {
+	namespace ${1:`Filename('', 'my')`}
+	{
 	    ${2}
-	} /* end of namespace $1*/;
+	} /* end of namespace $1*/
 #-------------------------------------------------------------------------------
 # ofs
 #-------------------------------------------------------------------------------
@@ -333,18 +359,29 @@ snippet vector
 #-------------------------------------------------------------------------------
 snippet messagebox messagebox
 	MessageBox( NULL,"${1}","WinName", MB_ICONWARNING );${2}
-snippet messagebox yesnowindow	
+snippet messagebox yesnowindow
 	if (::ShowYesNoWindow(_("Czy na pewno chcesz usunąć <obiekt> ?"),
 	                      _("Ostrzeżenie"), MB_YESNO) == mrYes)
 	{}
-snippet messagebox showmessage	
+snippet messagebox showmessage
 	ShowMessage(_("Wybierz <obiekt> do usuniecia\n"));
-snippet messagebox platinumMessageBox   
+snippet messagebox platinumMessageBox
 	::PlatinumMessageBox(_("Wybierz reguly dostepu"),_("Błąd"));
-snippet messagebox exception  
+snippet messagebox exception
 	throw Exception(_("Podany PKD nie jest skonfigurowany."));
+#
+#-------------------------------------------------------------------------------
+# exception
+#-------------------------------------------------------------------------------
+snippet ex
+	class ${1}Exception : public std::runtime_error
+	{
+	   public: explicit ${1}Exception(const std::string& sMessage) : runtime_error(sMessage) {}
+	};
 
-
+	throw ${1}Exception(std::string(" /* ${2} */"));
+	catch( const ${1}Exception& e )
+	{}
 
 #
 #===============================================================================
@@ -393,7 +430,7 @@ snippet sharedobject
 	double fun(double a, double b)
 	{
 		return a/b;
-	}     
+	}
 	//---------------------------------------------------------------------------
 	extern "C" OperClass* create_object()
 	{
@@ -433,7 +470,7 @@ snippet sharedobject
 
 	#ifdef __cplusplus
 	extern "C" {
-	#endif   
+	#endif
 		
 		double fun(double a, double b);
 
@@ -448,175 +485,23 @@ snippet sharedobject
 
 	#ifdef __cplusplus
 	}
-	#endif  
+	#endif
 
 	#endif /* end of include: OPER_H_ */
-#	
-#	 
-#===============================================================================
-#                               BORLAND
-#===============================================================================
 #
-#
-#-------------------------------------------------------------------------------
-# ansistring
-#-------------------------------------------------------------------------------
-snippet ansi
-	AnsiString${1}
-snippet Ansi
-	AnsiString${1}
-#-------------------------------------------------------------------------------
-# combobox
-#-------------------------------------------------------------------------------
-snippet combobox
-	comboBox${1:Name}->Items->Clear();
-	
-	//add element
-	for(int i=0;i<10;i++) {
-	    comboBox$1->AddItem(AnsiString(${2:/*Key*/}), (TObject*)${3:/*Value*/});
-	    comboBox$1->AddItem("name", (TObject*)1); 
-	    comboBox$1->AddItem("name", (TObject*)2); 
-	}
-
-	//get element 
-	int i = (int) comboBox$1->Items->Objects[comboBox$1->ItemIndex];
-
 #-------------------------------------------------------------------------------
 # extern C
 #-------------------------------------------------------------------------------
 snippet externC
 	#ifdef __cplusplus
 	extern "C" {
-	#endif   	
+	#endif
 	${1:/*code*/}
 	
 	#ifdef __cplusplus
-	} /* end of extern "C" */ ${2}  
-	#endif   	
-#-------------------------------------------------------------------------------
-# form
-#-------------------------------------------------------------------------------
-snippet form
-	//BEGIN("`Filename('$1', 'name')`:: ...");
-	std::auto_ptr<${1:MyForm}> f( new $1(Application, _("${2:UniTitle}")) );
-	f->ShowModal();
-	//END_SHOW;
-#
-#-------------------------------------------------------------------------------
-# procedure
-#-------------------------------------------------------------------------------
-snippet procedure
-	BEGIN("TODO");
-	${1:ua::ha::tg}::${2:MyProc}::SP ${3:lProc} = $1::$2::create();
-	$3->setParamValue_Recursive(dbApi::TEnum(ua::vBoolean_True));
-	$3->setParamValue_Period(dbApi::TEnum($1::vTimeGridsPeriod_Day));
-	$3->setParamValue_ArsetId((dbApi::TInt32)ARSet_Id);
-	$3->Commit();
-	END_SHOW;
-#
-#-------------------------------------------------------------------------------
-# query 
-#-------------------------------------------------------------------------------
-snippet query
-	BEGIN("TODO");
-	// query preparation
-	${1:ua::ha::tg}::${2:QMyQuery}::SP ${3:my_query} = $1::$2::create();
-
-	//$3->setParamValue_Class(dbApi::TEnum(this->classesQSG->getIdOfSelectedRows().front() ));
-	//$3->setParamValue_AccessRightsRange(dbApi::TEnum(getAccessRightRange()));
-	$3->execute();
-
-	// read records
-	$1::$2::Record::SP lRecord;
-	while ( (lRecord = $3->fetchRecordTyped()) != NULL ) {
-		//int id = lRecord->Values.Id.get();
-		//std::string s = lRecord->Values.Name.get(); ${4}
-		//$1::VEnum vp = static_cast<$1::VEnum>(lRecord->Values.Period.get());
-	}
-	END_SHOW;
-#
-#-------------------------------------------------------------------------------
-# query ID 
-#-------------------------------------------------------------------------------
-snippet getid
-	if ( this->profilesGrid->getSelectedRowsCount()>0 ) {
-		int qid = this->profilesGrid->getDataofSelectedRows(ua::kd::pr::QProfiles::colIndex_ProfileId);
-	}
-#
-#-------------------------------------------------------------------------------
-# queryStringGrid fill
-#-------------------------------------------------------------------------------
-snippet qsg
-	// QSG columns preparation
-	std::vector<unsigned int> Cols;
-	Cols.push_back(${1:my_query}->colIndex_Name);
-	Cols.push_back($1->colIndex_Id);
-	
-	// QSG preparation & executing query
-	${2:objectNameQSG}->SetQuery($1);
-	$2->SetDataColumns(Cols); ${3}
-	$2->ExecuteQuery();
-
-	//get Cols data from query
-	vector<int> qsg_ids = $2->getIdOfSelectedRows();
-	int id = this->$2->getData( qsg_ids[0], $1::colIndex_Id).getAsInt32().get();
-#
-#-------------------------------------------------------------------------------
-# dbApi true false 
-#-------------------------------------------------------------------------------
-snippet True
-	dbApi::TEnum(ua::vBoolean_True)
-snippet False
-	dbApi::TEnum(ua::vBoolean_False)
-#
-#-------------------------------------------------------------------------------
-# dbApi query
-#-------------------------------------------------------------------------------
-snippet dquery
-	std::auto_ptr<Cq${1}> lQ(lDb->createQuery$1());
-	CSqlFormula lWhere(esloAnd);
-	lWhere.add(CSqlFormula(esrEqual, lQ->colIdKdprpProfile, contextProfileId));
-	lWhere.add(CSqlFormula(esrEqual, lQ->colIdHadeapAccessPoint, contextAccessPointId));
-	lQ->setWhereClause( lWhere );
-	lQ->execute();
-	Cqr$1 * lR;
-	if ( lQ->fetchNext(lR) ) {
-		throw CApplicationApiException("Wybrany PKD posiada już charakterystykę, proszę wybrać inny.");
-	}
-#
-#-------------------------------------------------------------------------------
-# dbApi external query
-#-------------------------------------------------------------------------------
-snippet equery
-	//pobranie nazwy timeGrida
-	std::auto_ptr<dbApi_HA::CqTGTimeGrids> lQ_timegrid(lDbHa->createQueryTGTimeGrids());
-	CSqlFormula lWhere(esloAnd);
-	std::string name;
-	lWhere.add(CSqlFormula(esrEqual, lQ_timegrid->colId, lR->getValConfScheduleTimeGrid()));
-	lQ_timegrid->setWhereClause( lWhere );
-	lQ_timegrid->execute();
-	dbApi_HA::CqrTGTimeGrids * lR_timegrid;
-	if ( lQ_timegrid->fetchNext(lR_timegrid) ) {
-		oss << " nazwa siatki = " << lR->getValConfScheduleTimeGrid();
-	}
-#
-#
-#
-#}}}#===========================================================================
-#								CORE
-#===========================================================================#{{{
-#
-#
-#}}}#---------------------------------------------------------------------------
-#	sqlformula
-#---------------------------------------------------------------------------#{{{
-snippet sqlformula
-	CSqlFormula lWhere(esloAnd);
-	lWhere.add(CSqlFormula(esrEqual, lQ->colPesel, this->paramPesel.value));
-	lQ->setWhereClause(lWhere);  
-#
-#
-#
+	} /* end of extern "C" */ ${2}
+	#endif
+#	 
 #===============================================================================
 #                           DESIGN PATTERNS
 #===============================================================================
@@ -652,7 +537,7 @@ snippet builder
 # callback
 #-------------------------------------------------------------------------------
 snippet callback
-	typedef int (*CallbackT)(float);  
+	typedef int (*CallbackT)(float);
 	int SomeCallback(float variable) {
 		return 1;
 	}
@@ -660,7 +545,7 @@ snippet callback
 	void DoWork(CallbackT callback);
 	DoWork(&SomeCallback);
 #-------------------------------------------------------------------------------
-# factory (abstract) 
+# factory (abstract)
 #-------------------------------------------------------------------------------
 snippet afactory
 	class ${1:`Filename('', 'my')`}Factory {
@@ -672,14 +557,14 @@ snippet afactory
 	    if ( type == "Low-End" ) return new LowEnd$1();
 	    if ( type == "High-End" ) return new HighEnd$1();
 	    return NULL;
-	}     
+	}
 #-------------------------------------------------------------------------------
-# factory 
+# factory
 #-------------------------------------------------------------------------------
 snippet factory
 	static ${1:`Filename('', 'my')`}* create(std::string type);
 	//---------------------------------------------------------------------------
-	$1* $1::create(std::string type) 
+	$1* $1::create(std::string type)
 	{
 		if ( type == "objA" ) return new objA();
 		if ( type == "objB" ) return new objB();
@@ -691,10 +576,10 @@ snippet factory
 snippet factory::SP
 	static ${1:`Filename('', 'my')`}Ptr create(std::string type);
 	//---------------------------------------------------------------------------
-	$1Ptr $1::create(std::string type) 
+	$1Ptr $1::create(std::string type)
 	{
-	    if ( type == "objA" ) return $1Ptr(new $1objA()); 
-	    if ( type == "objB" ) return $1Ptr(new $1objB()); 
+	    if ( type == "objA" ) return $1Ptr(new $1objA());
+	    if ( type == "objB" ) return $1Ptr(new $1objB());
 		return $1Ptr();
 	}
 #-------------------------------------------------------------------------------
@@ -727,4 +612,44 @@ snippet singleton
 	// $1* p1 = $1::get();
 	// $1* p2 = p1->get();
 	$1& conf = $1::get();
+#
+#
+#
+#===============================================================================
+#		    								SABRE
+#===============================================================================
+#
+#
+#-------------------------------------------------------------------------------
+# sabretest
+#-------------------------------------------------------------------------------
+snippet TEST
+	//******************************************************************************
+	TESTCASE(${1:suite}, ${2:test1})
+	{
+		${3}
+	}
+#------------------------------------------------------------------------------- 
+# snippet avlboost	
+#------------------------------------------------------------------------------- 
+snippet avlboost	
+	//---------------------------------------------------------------------------
+	// adding availability IND-MDW
+	//---------------------------------------------------------------------------
+	at::FareSentinel mkt1FareSentinel("IND", "MDW");
+	CHECKINT(at::MarketGetAllPrices("IND", PLACE_LEVEL_AIRPORT, "MDW", PLACE_LEVEL_AIRPORT), NO_AP_ERROR);
+	CHECKCHAR(pIob->Prices[6].FcID, FcID);
+	UpdateFarePrice(FcID, 90000, pIob->Prices[6].UniqueLOID);
+	CHECKINT(at::SendTransaction(T_PRICE_UPDATE), NO_AP_ERROR);     
+#-------------------------------------------------------------------------------
+# snippet inhibit
+#-------------------------------------------------------------------------------
+snippet inhibit
+	//---------------------------------------------------------------------------
+	// add inhibit Y rule
+	//---------------------------------------------------------------------------
+	char szParams[L_RULE_PARAMETERS];
+	sprintf(szParams, "/%c%cF/", RULE_ACTION_SET, RULE_SUBACTION_NO_DISPLAY);
+	CHECKINT(sentinel.PrepareRule(szParams, RULE_ALPHA, RULE_USAGE_PRECALCULATION), NO_AP_ERROR);
+	CHECKINT(sentinel.RuleAddToHost(), NO_AP_ERROR);   
 

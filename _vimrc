@@ -23,6 +23,8 @@
 
 cd ~
 colorscheme wombat256
+set list
+
 
 if has("win32")                     "system
     set t_Co=256
@@ -107,6 +109,7 @@ set showmatch           " Show matching brackets.
 set smartcase           " Do smart case matching
 set vb t_vb=            " Flash instead of beep
 set wrap
+set nolist
 set listchars=tab:>.,trail:.,extends:#,nbsp:. ",eol:$
 
 if version >= 703
@@ -125,18 +128,26 @@ set wildmenu
 "#}}}"#-------------------------------------------------------------------------
 "# Statusline
 "#--------------------------------------------------------------------------#{{{
-"set statusline=%<[%02n]\ %F%(\ %m%h%w%y\ %{&ff}\ %r%)\ %a%=\ %{strftime(\"%H:%M\")}\ %8l,%c%V/%L\ (%P)\ [%08O:%02B]
-"set statusline=%<%F%h%m%r%h%w\ \-\ %y\[%{&ff}\]\ \-\ %{strftime(\"%c\",getftime(expand(\"%:p\")))}%=\ lin:%l\/%L\ col:%c/%V\ pos:%o\ ascii:%b\ %P
-"set statusline=%f%m%r%h\ [%b]\ [%{&ff}]\ %y%=[%p%%]\ [%05lx%02v]
 set statusline=[%n]
 set statusline+=\ %f%m%r%h
-"set statusline+=[lines:%L]\
-set statusline+=\ [%p%%]
-set statusline+=\ %y%=%{strftime(\"%d\.%m\.\ %H:%M\",getftime(expand(\"%:p\")))}
-"set statusline+=[%{&ff}]\
-set statusline+=\ [%05lx%02v]
+set statusline+=\ \ \ {\ %p%%\ }
+set statusline+=\ %=
+set statusline+=\ %{strftime(\"%H:%M\ \%d\.%m\",getftime(expand(\"%:p\")))}
+set statusline+=\ \ <\ %l:%c\ >
+set statusline+=\ \ %y
+set statusline+=[%{&ff}]
+"set statusline+=\ [lines:%L]
+"set statusline+=\ (\ lin:%l\ col:%c\ )
+"set statusline+=\ {%05lx%02v}
 
-
+"set statusline+=\ lin:%l\/%L\ col:%c/%V
+"set statusline+=\ [%b]
+"set statusline+=\ pos:%o
+"set statusline+=\ ascii:%b\ %P
+"set statusline+=%<[%02n]\ %F%w%a
+"set statusline+=\ %{strftime(\"%H:%M\")}\ %8l,%c%V/%L\ (%P)\ [%08O:%02B]
+"set statusline+=%<%F%w\
+"set statusline+= \ %{strftime(\"%c\",getftime(expand(\"%:p\")))}
 
 "#}}}"#-------------------------------------------------------------------------
 "# tab label
@@ -229,7 +240,8 @@ nmap <C-t> :tabnew <CR>
 vmap <C-c> "+y
 map <C-s> :!echo "NO NO NO"<CR>
 nmap XX :x!<CR>
-nmap WW :ww!<CR>
+nmap WW :w!<CR>
+nmap ZZ :w!<CR>
 nmap QQ :q!<CR>
 nmap WQ :wqa!<CR>
 map <C-q> :quit <CR>
@@ -253,7 +265,14 @@ inoremap '<Tab>  ''<Left>
 inoremap [<Tab>  []<Left>
 
 
-map <C-k> <Esc><C-w><C-w>
+nmap <Tab><Tab> <Esc><C-w><C-w>
+nmap <C-Down> <Esc><C-w>J
+nmap <C-Up> <Esc><C-w>K
+nmap <C-Left> <Esc><C-w>H
+nmap <C-Right> <Esc><C-w>L
+
+
+
 
 "nnoremap n nzzzv            " Keep search matches in the middle of the window.
 "nnoremap N Nzzzv
@@ -263,8 +282,7 @@ map <C-k> <Esc><C-w><C-w>
 "#}}}#---------------------------------------------------------------------------
 "#   visually selected text
 "#---------------------------------------------------------------------------#{{{
-noremap * viwy/<C-r>0<CR>
-
+noremap * viwy/<C-r>0<CR>:set hlsearch<CR>
 
 
 
@@ -312,14 +330,14 @@ func! Cls()
     "# remove unwanted spaces at end-of-line
     exec ':%s/\(\s\+\)$//gc'
 
-    "# change tabs to 4 spaces 
+    "# change tabs to 4 spaces
     exec ':%s/\t/    /gc'
 
     "# ???
     exec ':%s/\r//gc'
 
     "# remove end-of-file empty lines
-    exec ':%s#\($\n\s*\)\+\%$##'   
+    exec ':%s#\($\n\s*\)\+\%$##'
 
  endfunc
 nmap cls :call Cls()<CR>
@@ -336,6 +354,7 @@ au FileType tex                     let b:comment_leader = '%'
 au FileType mail                    let b:comment_leader = '>'
 au FileType vim                     let b:comment_leader = '"'
 au FileType sql                     let b:comment_leader = '--'
+au FileType xml                     let b:comment_leader = '<!-- -->'
 
 "vnoremap <silent> / <C-v>Ib:comment_leader<Esc><Esc>
 vnoremap / :s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
@@ -372,6 +391,7 @@ let g:neocomplcache_enable_smart_case = 1            " smartcase
 "#--------------------------------------------------------------------------#{{{
 "autocmd BufNewFile * NERDTreeMirror
 let NERDTreeWinPos = "right"
+let NERDTreeMouseMode=1
 nmap <silent> <C-e> <Esc>:NERDTreeToggle . <CR> <C-w> l
 "autocmd VimEnter * NERDTree
 
@@ -417,24 +437,9 @@ endif
 "let g:AutoCloseProtectedRegions = ["Comment", "String", "Character"]
 
 
-"#}}}"#-------------------------------------------------------------------------
-"# Compile and run C++
-"#-------------------------------------------------------------------------"#{{{
-"# cd %:p:h
-"#------------------------------------------------------------------------------
-map <F2>    :call SaveSession()<CR>
-map <F3>    :call LoadSession()<CR>
-
-map <F9>    :call CompileRunGpp()<CR>
-map <F10>   :call Make()<CR>
-map <C-F10> :call MakeClean()<CR>
-map <F11>   :call Run()<CR>
-map <F12>   :call Synchronize()<CR>
-
-func! Synchronize()
-  exec "w"
-  exec "!bash /home/sg0216005/scripts/rsync.sh"
-endfunc
+"#}}}#---------------------------------------------------------------------------
+"#   sessions
+"#---------------------------------------------------------------------------#{{{
 
 func! LoadSession()
     exec ":so ~/session.vim"
@@ -442,6 +447,22 @@ endfunc
 
 func! SaveSession()
     exec ":mks! ~/session.vim"
+endfunc   
+
+map <F2>    :call SaveSession()<CR>
+map <F3>    :call LoadSession()<CR>
+
+
+
+"#}}}"#-------------------------------------------------------------------------
+"# Compile and run 
+"#-------------------------------------------------------------------------"#{{{
+"# cd %:p:h
+"#------------------------------------------------------------------------------
+
+func! Synchronize()
+  exec "w"
+  exec "!bash /home/sg0216005/scripts/rsync.sh"
 endfunc
 
 func! CompileRunGpp()
@@ -455,13 +476,15 @@ endfunc
 
 func! Make()
   exec "w"
-  exec "!cd %:p:h && cd.. && make all"
+  exec "!bash /home/sg0216005/scripts/r_make.sh"
+  "exec "!cd %:p:h && cd.. && make all"
   "exec "! %:p:h/../bin/network.exe"
 endfunc
 
 func! MakeClean()
   exec "w"
-  exec "!cd %:p:h && cd .. && make clean && make"
+  exec "!bash /home/sg0216005/scripts/r_remake_all.sh"
+  "exec "!cd %:p:h && cd .. && make clean && make"
   "return ":silent \<CR>"
 endfunc
 
@@ -470,16 +493,29 @@ func! Run()
   exec "!cd %:p:h && cd .. && run"
 endfunc
 
-
+func! RunPerl()
+  exec "w"
+  exec "!bash /home/sg0216005/scripts/r_run_perl.sh"
+endfunc   
 
 "# exec "!g++ % -o %< && IF EXIST %<.exe (cr 5 && banner -c # Success) ELSE banner -c # Compile Unsuccessful "
 "# exec "!gcc -Wall -g % -o %<"
 
-au FileType python map <F9> :w<CR>:!python3 %<CR>
-au FileType python map <C-F9> :w<CR>:!python %<CR>
 
+map <F9> :call CompileRunGpp()<CR>
+au FileType python map <F9> :w<CR>:!python3 %<CR>
 au FileType perl map <F9> :w<CR>:!perl -w %<CR>
+au FileType perl map <F9> :call RunPerl() % <CR>
+
+au FileType python map <C-F9> :w<CR>:!python %<CR>
 au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR>
+
+
+map <F10>   :call Make()<CR>
+map <C-F10> :call MakeClean()<CR>
+map <F11>   :call Run()<CR>
+map <F12>   :call Synchronize()<CR>     
+
 
 
 
@@ -532,6 +568,9 @@ au FileType python  :set foldmethod=indent
 "au BufNewFile,BufRead *.cpp exec 'normal zM'
 
 
+
+
+
 "#}}}"#=========================================================================
 "#                              C++ setttings
 "#==========================================================================#{{{
@@ -542,15 +581,25 @@ au FileType python  :set foldmethod=indent
 "#--------------------------------------------------------------------------#{{{
 set autochdir           " path = path of the edited file
 
-" HOME :
-"set path+=~/workspace/cpp/Network/**
-"set path+=~/usr/include/**
-
 " WORK :
-"set path+=C:/MinGW/include/**
-"set path+=C:/MinGW/lib/gcc/mingw32/4.5.0/include/**
-"set path+=C:/projekty/acm/out/include/**            " boost + ua
+set path+=~/workspace/ssi/unix/devl/include/**      "ssi include
+set path+=~/workspace/ssi/unix/devl/src/**          "ssi src
+"set path+=C:/versant/7_0_1/h/**
+"set path+=C:/src/boost_1_45_0/**
 
+"set path+=c:\cygwin\lib\gcc\i686-pc-cygwin\3.4.4\include\c++\**
+
+
+"#}}}"#-------------------------------------------------------------------------
+"# tags dirs
+"#--------------------------------------------------------------------------#{{{
+set tags=tags,tags+=tags;/
+"set tags+=..\..\tags
+set tags+=C:/Users/sg0216005/workspace/ssi/unix/devl/tags
+set tags+=C:/Users/sg0216005/workspace/ssi/unix/test/tags
+set tags+=C:/versant/7_0_1/h/tags
+"set tags+=C:/src/boost_1_45_0/boost/tags
+set tags+=~\vimfiles\tags\std_tags
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -569,6 +618,7 @@ set autochdir           " path = path of the edited file
 "#------------------------------------------------------------------------------
 
 map <F8> :!cd %:p:h && ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+map <C-F8> :!cd C:\Users\sg0216005\workspace\ssi\unix\devl\ && ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
@@ -576,20 +626,9 @@ autocmd FileType python     map <F8> :!ctags -R -f -languages=python -python-kin
 autocmd FileType python     set tags+=/.vim/tags/python26.ctags
 
 
-"#}}}"#-------------------------------------------------------------------------
-"# tags dirs
-"#--------------------------------------------------------------------------#{{{
-set tags=tags,.\tags,tags;/
-"set tags+=~\vimfiles\tags\std_tags
-"set tags+=~\vimfiles\tags\cpp_tags
-"set tags+=C:\unicard\src\platinum\3_utils\UniSynchro\tags
-"set tags+=C:\unicard\src\platinum\komp\tags
-set tags+=..\..\tags
-set tags+=C:/MinGW/lib/gcc/mingw32/4.5.0/include/tags   " std
-set tags+=C:\unicard\src\platinum\tags                  " KD/RCP
-set tags+=C:\unicard\src\platinum\uaCoreRcp\tags        " KD/RCP
-set tags+=C:\projekty\acm\out\include\ua\tags           " acManager
-set tags+=C:\projekty\dbapi\hdr\release\tags            " core
+
+
+
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -650,6 +689,7 @@ set completeopt=menuone,menu,longest  ",preview  "for scratch window
 imap <C-o> <C-x><C-o>
 imap <C-space> <C-o>
 imap <C-n> <C-x><C-n>
+imap <S-space> <C-x><C-n>
 inoremap <expr> <space> ((pumvisible())?("\<Down>"):("<space>"))
 
 
@@ -682,23 +722,23 @@ au FileType python set completeopt=menuone,menu,longest,preview
 
 " `gf` jumps to the filename under the cursor.  Point at an import statement
 " and jump to it!
-python << EOF
-import os
-import sys
-import vim
-
-#sys.path.append("/usr/lib/python3.1/") 
-#sys.path.append("/usr/lib/python3.1") 
-#sys.path.append("/usr/lib/python3.1/plat-linux2") 
-#sys.path.append("/usr/lib/python3.1/lib-dynload") 
-#sys.path.append("/usr/lib/python3.1/dist-packages") 
-#sys.path.append("/usr/local/lib/python3.1/dist-packages")
-
-
-for p in sys.path:
-    if os.path.isdir(p):
-        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
-EOF
+"python << EOF
+"import os
+"import sys
+"import vim
+"
+"#sys.path.append("/usr/lib/python3.1/")
+"#sys.path.append("/usr/lib/python3.1")
+"#sys.path.append("/usr/lib/python3.1/plat-linux2")
+"#sys.path.append("/usr/lib/python3.1/lib-dynload")
+"#sys.path.append("/usr/lib/python3.1/dist-packages")
+"#sys.path.append("/usr/local/lib/python3.1/dist-packages")
+"
+"
+"for p in sys.path:
+"    if os.path.isdir(p):
+"        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+"EOF
 
 
 
@@ -706,13 +746,13 @@ EOF
 "# Hlsearch
 "#--------------------------------------------------------------------------#{{{
 set hlsearch
-noremap <C-p> :set hlsearch! hlsearch? <CR>
+noremap cp :set hlsearch! hlsearch? <CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
 "#  CtrlP
 "#--------------------------------------------------------------------------#{{{
-let g:ctrlp_map = '<F7>'
+let g:ctrlp_map = 'F7'
 let g:ctrlp_use_caching = 1     " <F5> while inside |CtrlP| will purge the cache
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 0
@@ -720,10 +760,10 @@ let g:ctrlp_match_window_reversed = 0
 let g:ctrlp_custom_ignore = '\.metadata\|\.git\|\.project\|\.cproject\|\.directory|\.o$'
 
 func! CP()
-    exec ':CtrlP'
+    exec ':CtrlP ~/workspace/ssi/'
 endfunc
 
-nmap cp :call CP()<CR>
+nmap <C-p> :call CP()<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -799,9 +839,9 @@ let g:tex_flavor='latex'    " OPTIONAL: Starting with Vim 7, the filetype of emp
                             "   The following changes the default filetype back to 'tex':
 "set sw=2                   "   this is mostly a matter of taste. but LaTeX looks good with just a bit
                             "   of indentation.
-set iskeyword+=:            " TIP: if you write your \label's as \label{fig:something}, then if you
-                            "   type in \ref{fig: and press <C-n> you will automatically cycle through
-                            "   all the figure labels. Very useful!
+"set iskeyword+=:            " TIP: if you write your \label's as \label{fig:something}, then if you
+"                            "   type in \ref{fig: and press <C-n> you will automatically cycle through
+"                            "   all the figure labels. Very useful!
 
 "#}}}"#-------------------------------------------------------------------------
 "# CScope
@@ -834,7 +874,7 @@ set iskeyword+=:            " TIP: if you write your \label's as \label{fig:some
 "#
 "#-------------------------------------------------------------------------
 
-map <C-F8> :!cs<CR>
+""map <C-F8> :!cs<CR>
 
 "if has("win32")
 "    se csprg=D:\cscope\bin\cscope.exe"
@@ -1104,6 +1144,9 @@ map <C-f> :FufRenewCache<CR>:FufFile<CR>
 let g:bufExplorerSortBy='name'
 let g:bufExplorerDefaultHelp = 0
 let g:bufExplorerSplitBelow = 0
+let g:bufExplorerShowRelativePath=1
+let g:bufExplorerSplitOutPathName=1
+
 "let g:bufExplorerSplitHorzSize = 7
 "let g:bufExplorerOpenMode = 1
 
@@ -1133,9 +1176,9 @@ function! Grepc(path,ext,pat)
     endif
 endfunction
 
-noremap <C-g><Esc> :call Grepc('.','{cpp,cxx}',"")<Left><Left>
 au FileType python noremap <C-g><Esc> :call Grepc('.','py',"")<Left><Left>
-noremap <C-g><C-g><Esc> :call Grepc('~/workspace/ssi/unix/','{cpp,cxx}',"")<Left><Left>
+noremap <C-g> :call Grepc('~/workspace/ssi/unix/','{cpp,cxx}',"")<Left><Left>
+noremap <C-g><C-g> :call Grepc('.','{cpp,cxx}',"")<Left><Left>
 
 
 "#}}}"#-------------------------------------------------------------------------

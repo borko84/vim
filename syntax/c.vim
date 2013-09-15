@@ -14,7 +14,7 @@ syn keyword	cLabel		case default
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
 
-syn keyword	cTodo		contained TODO FIXME XXX
+syn keyword	cTodo		contained TODO FIXME
 
 " It's easy to accidentally add a space after a backslash that was intended
 " for line continuation.  Some compilers allow it, which makes it
@@ -268,6 +268,17 @@ endif
 if !exists("c_no_c99") " ISO C99
   syn keyword cConstant true false
 endif
+
+"#------------------------------------------------------------------------------
+"#   SSI
+"#------------------------------------------------------------------------------
+syn keyword	cType		i8 i16 i32 i64
+syn keyword	cType		u8 u16 u32 u64
+syn keyword	cType		DBDate DBTime DBFlight Status
+
+
+
+
 
 " Accept %: for # (C99)
 syn region	cPreCondit	start="^\s*\(%:\|#\)\s*\(if\|ifdef\|ifndef\|elif\)\>" skip="\\$" end="$"  contains=cComment,cCommentL,cCppString,cCharacter,cCppParen,cParenError,cNumbers,cCommentError,cSpaceError

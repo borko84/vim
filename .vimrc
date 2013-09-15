@@ -31,13 +31,13 @@ if has("win32")                     "system
     set guifont=Courier\ New:h9
     set enc=utf-8                       " needed for win
 else
-    runtime! debian.vim
-    set guifont=Liberation\ Mono\ 9
+    set guifont=Liberation\ Mono\ 7.1
 endif
 
 
 if has("gui_running")               "GUI
-    set guioptions=a
+   set guioptions=a
+   behave mswin
 else
     set t_Co=256
 endif
@@ -56,6 +56,8 @@ endif
 "#       remove references in .gitmodules
 "#                            .git/config.
 "#       > git rm --cached .vim/bundle/fugitive
+"#   Update all:
+"#       git submodule foreach git pull origin master
 "#--------------------------------------------------------------------------------
 call pathogen#infect()
 call pathogen#helptags()
@@ -78,7 +80,6 @@ endif
 "#}}}"#-------------------------------------------------------------------------
 "# Text Edition Settings
 "#--------------------------------------------------------------------------#{{{
-
 "set verbose=1           " see everything vim is doing
 
 "spaces
@@ -87,6 +88,7 @@ set shiftwidth=3        " n-spaces when text is indented
 set softtabstop=3
 
 "others
+set autochdir           " path = path of the edited file
 set backspace=indent,eol,start
 set expandtab           " spaces instead of tab
 set gcr=a:blinkwait0    " non blinking cursor
@@ -107,12 +109,8 @@ set showmatch           " Show matching brackets.
 set smartcase           " Do smart case matching
 set vb t_vb=            " Flash instead of beep
 set wrap
+set nolist
 set listchars=tab:>.,trail:.,extends:#,nbsp:. ",eol:$
-
-if version >= 703
-    set colorcolumn=81
-endif
-
 
 set scrolljump=7
 set sidescroll=5        "when moving in the file horizontally move 5 columns a time
@@ -125,83 +123,14 @@ set wildmenu
 "#}}}"#-------------------------------------------------------------------------
 "# Statusline
 "#--------------------------------------------------------------------------#{{{
-"set statusline=%<[%02n]\ %F%(\ %m%h%w%y\ %{&ff}\ %r%)\ %a%=\ %{strftime(\"%H:%M\")}\ %8l,%c%V/%L\ (%P)\ [%08O:%02B]
-"set statusline=%<%F%h%m%r%h%w\ \-\ %y\[%{&ff}\]\ \-\ %{strftime(\"%c\",getftime(expand(\"%:p\")))}%=\ lin:%l\/%L\ col:%c/%V\ pos:%o\ ascii:%b\ %P
-"set statusline=%f%m%r%h\ [%b]\ [%{&ff}]\ %y%=[%p%%]\ [%05lx%02v]
 set statusline=[%n]
-set statusline+=\ %f%m%r%h
-set statusline+=\ [%{&ff}]
-set statusline+=\ %y%=%p%%
-set statusline+=\ %05lx%02v
-
-
-
-"#}}}"#-------------------------------------------------------------------------
-"# tab label
-"#--------------------------------------------------------------------------#{{{
-
-" crashes after 25 tabs opened
-"--------------------------------
-"function MyTabLine()
-"    let s = ''
-"    let t = tabpagenr()
-"    let i = 1
-"    while i <= tabpagenr('$')
-"        let buflist = tabpagebuflist(i)
-"        let winnr = tabpagewinnr(i)
-"        let s .= '%' . i . 'T'
-"        let s .= (i == t ? '%1*' : '%2*')
-"        "let s .= ' ' . i . ' '
-"        let s .= '%*'
-"        let s .= ' '
-"        let s .= (i == t ? '%#TabLineSel#' : '%#TabLine#')
-"        let file = bufname(buflist[winnr - 1])
-"        let file = fnamemodify(file, ' :p:t ')
-"        if file == ''
-"            let file = ' [No Name] '
-"        endif
-"         "name trunc
-"        if strlen(file) >= 10
-"             let file = file[0:10]
-"        endif
-"        let s .= file
-"        let i = i + 1
-"    endwhile
-"    let s .= '%T%#TabLineFill#%='
-"    let s .= (tabpagenr('$') > 1 ? '%999XX' : 'X')
-"    return s
-"endfunction
-"set tabline=%!MyTabLine()
-
-" TODO
-"--------------------------------
-"function MyTabLine()
-"  let s = ''
-"  for i in range(tabpagenr('$'))
-"    " select the highlighting
-"    if i + 1 == tabpagenr()
-"      let s .= '%#TabLineSel#'
-"    else
-"      let s .= '%#TabLine#'
-"    endif
-"
-"    " set the tab page number (for mouse clicks)
-"    let s .= '%' . (i + 1) . 'T'
-"
-"    " the label is made by MyTabLabel()
-"    let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
-"  endfor
-"
-"  " after the last tab fill with TabLineFill and reset tab page nr
-"  let s .= '%#TabLineFill#%T'
-"
-"  " right-align the label to close the current tab page
-"  if tabpagenr('$') > 1
-"    let s .= '%=%#TabLine#%999Xclose'
-"  endif
-"
-"  return s
-"endfunction
+set statusline+=\ \ %f%m%r%h:%l
+set statusline+=\ \ \ \ \ \ {\ %p%%\ }
+set statusline+=\ %=
+set statusline+=\ %{strftime(\"%H:%M\ \%d\.%m\",getftime(expand(\"%:p\")))}
+set statusline+=\ \ <\ %l:%c\ >
+set statusline+=\ \ %y
+set statusline+=[%{&ff}]
 
 
 
@@ -209,6 +138,8 @@ set statusline+=\ %05lx%02v
 "#  key mapping
 "#--------------------------------------------------------------------------#{{{
 nnoremap ; :
+nnoremap @@ @:
+nnoremap 'p "0p
 
 "tabs
 "map <C-h> gT
@@ -223,13 +154,13 @@ nnoremap ; :
 :map <A-8> :tabn 8<CR>
 :map <A-9> :tabn 9<CR>
 
-nmap <C-t> :tabnew <CR>
-vmap <C-c> "+y
+nmap tn :tabnew <CR>
+nmap Q :q!<CR>
+nmap Z :call SmallCls()<CR>:w!<CR>
+nmap BD :bd! %<CR>
+map <C-q> :!echo "NO NO NO"<CR>
 map <C-s> :!echo "NO NO NO"<CR>
-nmap XX :x!<CR>
-nmap WW :ww!<CR>
-nmap QQ :q!<CR>
-map <C-q> :quit <CR>
+"vmap <C-c> "+y
 map <C-a> ggVG
 
 noremap J 30j
@@ -241,16 +172,19 @@ vnoremap > >gv
 nmap <silent> <f5>:!# <CR>
 map <xCSI>[62~ <MouseDown>
 
-
 "closing braces
 inoremap (<Tab>  ()<Left>
 inoremap {<Tab>  {}<Left>
 inoremap "<Tab>  ""<Left>
 inoremap '<Tab>  ''<Left>
 inoremap [<Tab>  []<Left>
+inoremap <<Tab>  <><Left>
 
 
-map <C-k> <Esc><C-w><C-w>
+"Tab conflict  with C-i
+noremap tt <Esc><C-w><C-w>
+
+"vnoremap <silent>y "+y<Esc>
 
 "nnoremap n nzzzv            " Keep search matches in the middle of the window.
 "nnoremap N Nzzzv
@@ -260,8 +194,8 @@ map <C-k> <Esc><C-w><C-w>
 "#}}}#---------------------------------------------------------------------------
 "#   visually selected text
 "#---------------------------------------------------------------------------#{{{
-noremap * viwy/<C-r>0<CR>
-
+noremap * viwy/<C-r>0<CR>:set hlsearch<CR>
+set iskeyword=@,48-57,_,192-255,#
 
 
 
@@ -287,12 +221,14 @@ noremap * viwy/<C-r>0<CR>
 
 noremap ;; :set hlsearch<CR>:.,$s//gc<Left><Left><Left>
 noremap ;g :g/
+noremap ;v :v/
 
 " fast 'w'=word, 's'=space, 'd'=digit, '.'=any
 cmap ;w \(\w\+\)
 cmap ;s \(\s\+\)
 cmap ;d \(\d\+\)
 cmap ;. \(.*\)
+cmap ;- \(.\{-}\)
 
 cmap ;n \(\n\+\)
 cmap ;' \(\)<Left><Left>
@@ -304,19 +240,24 @@ cmap ;x <\>\(.*\)\</<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 "#}}}"#-------------------------------------------------------------------------
 "# clearing function
 "#--------------------------------------------------------------------------#{{{
+func! SmallCls()
+      exec ':%s/\(\s\+\)$//ge'
+endfunc
+
+
 func! Cls()
 
     "# remove unwanted spaces at end-of-line
-    exec ':%s/\(\s\+\)$//gc'
+    exec ':%s/\(\s\+\)$//gce'
 
-    "# change tabs to 4 spaces 
-    exec ':%s/\t/    /gc'
+    "# change tabs to 4 spaces
+    exec ':%s/\t/    /gce'
 
-    "# ???
-    exec ':%s/\r//gc'
+    "# remove windows eol
+    exec ':%s/\r//gce'
 
     "# remove end-of-file empty lines
-    exec ':%s#\($\n\s*\)\+\%$##'   
+    exec ':%s#\($\n\s*\)\+\%$##e'
 
  endfunc
 nmap cls :call Cls()<CR>
@@ -326,19 +267,28 @@ nmap cls :call Cls()<CR>
 "# comment
 "#--------------------------------------------------------------------------#{{{
 let b:comment_leader = '#'
-au FileType c,cpp,java              let b:comment_leader = '//'
+au FileType c,cpp,java,actionscript let b:comment_leader = '//'
 au FileType sh,ruby,python,awk,perl let b:comment_leader = '#'
-au FileType conf,fstab,make         let b:comment_leader = '#'
+au FileType conf,fstab,make,txt     let b:comment_leader = '#'
 au FileType tex                     let b:comment_leader = '%'
 au FileType mail                    let b:comment_leader = '>'
 au FileType vim                     let b:comment_leader = '"'
 au FileType sql                     let b:comment_leader = '--'
+au FileType xml                     let b:comment_leader = '<!-- -->'
 
-"vnoremap <silent> / <C-v>Ib:comment_leader<Esc><Esc>
 vnoremap / :s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
 vnoremap ? :s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
-"noremap <silent> ,cc :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
-"noremap <silent> ,cu :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
+
+
+"#}}}"#-------------------------------------------------------------------------
+"#    SCD
+"#--------------------------------------------------------------------------#{{{
+au BufRead,BufNewFile *.scd setfiletype scd
+au FileType scd   let b:comment_leader = 'CMNT;'
+
+
+au BufRead,BufNewFile *.txt setfiletype conf
+
 
 "#}}}"#-------------------------------------------------------------------------
 "#      Neocomplcache
@@ -367,10 +317,10 @@ let g:neocomplcache_enable_smart_case = 1            " smartcase
 "#}}}"#-------------------------------------------------------------------------
 "# NERDTree
 "#--------------------------------------------------------------------------#{{{
-"autocmd BufNewFile * NERDTreeMirror
-let NERDTreeWinPos = "right"
+let NERDTreeWinPos="right"
+let NERDTreeDirArrows=0
+let NERDTreeMouseMode=1
 nmap <silent> <C-e> <Esc>:NERDTreeToggle . <CR> <C-w> l
-"autocmd VimEnter * NERDTree
 
 function! NERDTreeQuit()
   redir => buffersoutput
@@ -414,24 +364,9 @@ endif
 "let g:AutoCloseProtectedRegions = ["Comment", "String", "Character"]
 
 
-"#}}}"#-------------------------------------------------------------------------
-"# Compile and run C++
-"#-------------------------------------------------------------------------"#{{{
-"# cd %:p:h
-"#------------------------------------------------------------------------------
-map <F2>    :call SaveSession()<CR>
-map <F3>    :call LoadSession()<CR>
-
-map <F9>    :call CompileRunGpp()<CR>
-map <F10>   :call Make()<CR>
-map <C-F10> :call MakeClean()<CR>
-map <F11>   :call Run()<CR>
-map <F12>   :call Synchronize()<CR>
-
-func! Synchronize()
-  exec "w"
-  exec "!bash /home/sg0216005/scripts/rsync.sh"
-endfunc
+"#}}}#---------------------------------------------------------------------------
+"#   sessions
+"#---------------------------------------------------------------------------#{{{
 
 func! LoadSession()
     exec ":so ~/session.vim"
@@ -439,6 +374,32 @@ endfunc
 
 func! SaveSession()
     exec ":mks! ~/session.vim"
+endfunc
+
+map <F2>    :call SaveSession()<CR>
+map <F3>    :call LoadSession()<CR>
+
+
+"#}}}"#-------------------------------------------------------------------------
+"# Compile and run C++
+"#-------------------------------------------------------------------------"#{{{
+"# cd %:p:h
+"#------------------------------------------------------------------------------
+map <F9>    :call CompileRunGpp()<CR>
+map <F10>   :call Synchronize()<CR><CR>
+map <C-F10> :call MakeClean()<CR><CR>
+map <F11>   :call Run()<CR><CR>
+
+au FileType python map <F9> :w<CR>:!python %<CR>
+au FileType python map <C-F9> :w<CR>:!python3 %<CR>
+
+au FileType perl map <F9> :w<CR>:!perl -w %<CR>
+au FileType perl map <F9> :call RunPerl() % <CR>
+au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR>
+
+func! Synchronize()
+  exec "w"
+  exec "!bash /home/sg216005/bin/rsync.sh"
 endfunc
 
 func! CompileRunGpp()
@@ -463,36 +424,21 @@ func! Run()
   exec "! cd .. && ./run"
 endfunc
 
-
-
-"# exec "!g++ % -o %< && IF EXIST %<.exe (cr 5 && banner -c # Success) ELSE banner -c # Compile Unsuccessful "
-"# exec "!gcc -Wall -g % -o %<"
-
-au FileType python map <F9> :w<CR>:!python3 %<CR>
-au FileType python map <C-F9> :w<CR>:!python %<CR>
-
-au FileType perl map <F9> :w<CR>:!perl -w %<CR>
-au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR>
+func! RunPerl()
+  exec "w"
+  exec "!bash /home/sg0216005/scripts/r_run_perl.sh"
+endfunc
 
 
 
-"#}}}"#-------------------------------------------------------------------------
-"# Doxygen
-"#--------------------------------------------------------------------------#{{{
-let g:load_doxygen_syntax=1
-"map <F2> :Dox<CR>
 
 "#}}}"#-------------------------------------------------------------------------
 "# switch between header/source with F4
 "#--------------------------------------------------------------------------#{{{
-"map <C-h> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
-
 au! BufEnter *.cpp let b:fswitchdst = 'h,hpp'
 au! BufEnter *.cxx let b:fswitchdst = 'h,hpp'
 au! BufEnter *.h   let b:fswitchdst = 'cpp,cxx,C'
 map <C-h> :FSHere<cr>
-
-"map <C-h> :e %:p:s,.h$,.X123X,:s,.cxx$,.h,:s,.X123X$,.cxx,<CR>
 
 
 
@@ -501,8 +447,6 @@ map <C-h> :FSHere<cr>
 "#--------------------------------------------------------------------------#{{{
 set foldlevelstart=20
 set foldnestmax=1
-
-"map <C-m> <Esc>zM
 
 let g:folding_flag = 0
 function! FoldingToggle()
@@ -518,11 +462,18 @@ nmap zm :call FoldingToggle()<CR>
 nmap z<space> za
 
 
-
-set foldmethod=syntax
+set foldmethod=marker
 au FileType sh,ksh,awk,vim,make,conf,txt,snippet :set foldmethod=marker
 au FileType python  :set foldmethod=indent
 "au BufNewFile,BufRead *.cpp exec 'normal zM'
+
+
+"" Don't screw up folds when inserting text that might affect them, until
+"" leaving insert mode. Foldmethod is local to the window. Protect against
+"" screwing up folding when switching between windows.
+"autocmd InsertEnter * if !exists('w:last_fdm') | let w:last_fdm=&foldmethod | setlocal foldmethod=manual | endif
+"autocmd InsertLeave,WinLeave * if exists('w:last_fdm') | let &l:foldmethod=w:last_fdm | unlet w:last_fdm | endif
+
 
 
 "#}}}"#=========================================================================
@@ -533,18 +484,26 @@ au FileType python  :set foldmethod=indent
 "#}}}"#-------------------------------------------------------------------------
 "# path
 "#--------------------------------------------------------------------------#{{{
-set autochdir           " path = path of the edited file
-
-" HOME :
-set path+=~/workspace/cpp/Network/**
-set path+=~/usr/include/**
-
-" WORK :
-"set path+=C:/MinGW/include/**
-"set path+=C:/MinGW/lib/gcc/mingw32/4.5.0/include/**
-"set path+=C:/projekty/acm/out/include/**            " boost + ua
+set path+=~/workspace/ssi/unix/devl/include/**      "ssi include
+set path+=~/workspace/ssi/unix/devl/src/**          "ssi src
+"set path+=C:/versant/7_0_1/h/**
+"set path+=C:/src/boost_1_45_0/**
+"set path+=c:\cygwin\lib\gcc\i686-pc-cygwin\3.4.4\include\c++\**
 
 
+"#}}}"#-------------------------------------------------------------------------
+"# tags dirs
+"#--------------------------------------------------------------------------#{{{
+set tags=tags,tags+=tags;/
+"set tags+=..\..\tags
+set tags+=~/workspace/ssi/unix/devl/tags
+set tags+=~/workspace/ssi/unix/test/tags
+set tags+=C:/versant/7_0_1/h/tags
+"set tags+=C:/src/boost_1_48_0/boost/tags
+set tags+=~\vimfiles\tags\std_tags
+
+
+autocmd FileType python     set tags+=/.vim/tags/python26.ctags
 
 "#}}}"#-------------------------------------------------------------------------
 "# Ctags
@@ -565,43 +524,33 @@ map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
-autocmd FileType python     map <F8> :!/usr/bin/ctags -R -f --languages=python -python-kinds=-i .<CR>
-autocmd FileType python     set tags+=/.vim/tags/python26.ctags
+autocmd FileType python     map <F8> :!ctags -R -f -languages=python -python-kinds=-i .<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
-"# tags dirs
+"#  CtrlP
 "#--------------------------------------------------------------------------#{{{
-set tags=./tags,./../tags,./../../tags 
-"set tags=./tags,tags;/
-set tags+=~/.vim/tags/std_tags
-set tags+=~/.vim/tags/cpp_tags
-set tags+=~/.vim/tags/boost_tags
-"set tags+=~\vimfiles\tags\std_tags
-"set tags+=~\vimfiles\tags\cpp_tags
-"set tags+=K:\workspace\unicard\dll\coreRcp_tags
-"set tags+=C:\unicard\src\platinum\tags
-"set tags+=C:\projekty\acman\acManager2\tags
-"set tags+=C:\unicard\src\platinum\3_utils\UniSynchro\tags
-"set tags+=C:\unicard\src\platinum\komp\tags
+let g:ctrlp_map = 'F7'
+let g:ctrlp_use_caching = 1     " <F5> while inside |CtrlP| will purge the cache
+let g:ctrlp_match_window_bottom = 0
+let g:ctrlp_match_window_reversed = 0
+let g:ctrlp_working_path_mode = 2
+let g:ctrlp_custom_ignore = '\.metadata\|\.git\|\.project\|\.cproject\|\.directory|\.o$'
+let g:ctrlp_extensions = ['tag', 'buffertag', 'quickfix', 'dir', 'rtscript']
+
+func! CP()
+   "exec ':CtrlP ~/workspace/cruisecontrol-2.7/'
+   exec ':CtrlP ~/workspace/ssi/unix/'
+endfunc
+
+nmap <C-p> :call CP()<CR>
+nmap <C-t> :CtrlPTag<CR>
+
 
 
 "#}}}"#-------------------------------------------------------------------------
 "# TagList
 "#--------------------------------------------------------------------------#{{{
-let Tlist_Ctags_Cmd = "/usr/bin/ctags"
-let Tlist_Use_Right_Window = 1
-let Tlist_WinWidth = 35
-let Tlist_Exit_OnlyWindow = 1     " exit if taglist is last window open
-let Tlist_GainFocus_On_ToggleOpen = 1
-let Tlist_Use_SingleClick = 1
-let Tlist_Show_One_File = 1       " Only show tags for current buffer
-let TlistHighlightTag = 1
-let Tlist_Highlight_Tag_On_BufEnter = 1
-let Tlist_Auto_Highlight_Tag = 1
-let Tlist_Show_Menu = 1
-
-
 let g:tagbar_sort = 0
 let g:tagbar_compact  = 1
 
@@ -622,28 +571,48 @@ autocmd FileType css        set omnifunc=csscomplete#CompleteCSS
 
 
 "#}}}"#-------------------------------------------------------------------------
-"# omnicomplete - cpp
+"# clang
 "#--------------------------------------------------------------------------#{{{
-let OmniCpp_GlobalScopeSearch   = 1
-let OmniCpp_DisplayMode         = 1
-let OmniCpp_NamespaceSearch     = 1
-let OmniCpp_ShowAccess          = 1 " show access in pop-up
-let OmniCpp_ShowPrototypeInAbbr = 1 " show prototype in pop-up
-let OmniCpp_ShowScopeInAbbr     = 0 " do not show namespace in pop-up
-let OmniCpp_SelectFirstItem     = 1 " select first item in pop-up
-let OmniCpp_MayCompleteDot      = 1 " auto .
-let OmniCpp_MayCompleteArrow    = 1 " auto ->
-let OmniCpp_MayCompleteScope    = 1 " auto ::
+let g:clang_library_path="/usr/lib/"  
+let g:clang_use_library=1     
+" let g:clang_library_path="/usr/lib/"
+let g:clang_auto_select=1     "select first entry in popup menu but don't insert in code
+let g:clang_complete_auto=1   "auto complete after -> . and ::
+let g:clang_complete_copen=1  "open quick fix on error
+let g:clang_complete_hl_errors=1    " highlight errors and warnings
+let g:clang_periodic_quickfix=1     " update quickfix periodically
+let g:clang_trailing_placeholder=1  " add trailing placeholder after function
+let g:clang_close_preview=1         " close preview window after completion
+"let g:clang_user_options='-Wc++11-extensions -std=c++0x -I/usr/lib/c++/v1/ -I/Users/aliak/dev/source/boost_1_53_0 -std=c++11'
+let g:clang_user_options='-I/usr/lib/c++/'
+let g:clang_snippets=1              " some magic after function ( or ,
+"let g:clang_snippets_engine='snipmate'
+let g:clang_debug=1 
 
-let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
+""#}}}"#-------------------------------------------------------------------------
+""# omnicomplete - cpp
+""#--------------------------------------------------------------------------#{{{
+"let OmniCpp_GlobalScopeSearch   = 1
+"let OmniCpp_DisplayMode         = 1
+"let OmniCpp_NamespaceSearch     = 1
+"let OmniCpp_ShowAccess          = 1 " show access in pop-up
+"let OmniCpp_ShowPrototypeInAbbr = 1 " show prototype in pop-up
+"let OmniCpp_ShowScopeInAbbr     = 0 " do not show namespace in pop-up
+"let OmniCpp_SelectFirstItem     = 1 " select first item in pop-up
+"let OmniCpp_MayCompleteDot      = 1 " auto .
+"let OmniCpp_MayCompleteArrow    = 1 " auto ->
+"let OmniCpp_MayCompleteScope    = 1 " auto ::
+"
+"let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
+
 
 "auto open/close popup menu
 au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
 set completeopt=menuone,menu,longest  ",preview  "for scratch window
-
 imap <C-o> <C-x><C-o>
-imap <C-space> <C-o>
+imap <C-space> <C-x><C-u>
 imap <C-n> <C-x><C-n>
+imap <C-f> <C-x><C-f>
 inoremap <expr> <space> ((pumvisible())?("\<Down>"):("<space>"))
 
 
@@ -657,7 +626,7 @@ inoremap <expr> <space> ((pumvisible())?("\<Down>"):("<space>"))
 let g:pydiction_location = 'usr/share/vim/vim72/ftplugin/pydiction/complete-dict'
 
 " <silent> py !python %
-au FileType python setlocal columns=100
+"au FileType python setlocal columns=100
 au FileType python set completeopt=menuone,menu,longest,preview
 
 
@@ -676,23 +645,24 @@ au FileType python set completeopt=menuone,menu,longest,preview
 
 " `gf` jumps to the filename under the cursor.  Point at an import statement
 " and jump to it!
-python << EOF
-import os
-import sys
-import vim
+"python << EOF
+"import os
+"import sys
+"import vim
+"
+"#sys.path.append("/usr/lib/python3.1/")
+"#sys.path.append("/usr/lib/python3.1")
+"#sys.path.append("/usr/lib/python3.1/plat-linux2")
+"#sys.path.append("/usr/lib/python3.1/lib-dynload")
+"#sys.path.append("/usr/lib/python3.1/dist-packages")
+"#sys.path.append("/usr/local/lib/python3.1/dist-packages")
+"
+"
+"for p in sys.path:
+"    if os.path.isdir(p):
+"        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+"EOF
 
-sys.path.append("/usr/lib/python3.1/")
-sys.path.append("/usr/lib/python3.1")
-sys.path.append("/usr/lib/python3.1/plat-linux2")
-sys.path.append("/usr/lib/python3.1/lib-dynload")
-sys.path.append("/usr/lib/python3.1/dist-packages")
-sys.path.append("/usr/local/lib/python3.1/dist-packages")
-
-
-for p in sys.path:
-    if os.path.isdir(p):
-        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
-EOF
 
 
 
@@ -700,24 +670,9 @@ EOF
 "# Hlsearch
 "#--------------------------------------------------------------------------#{{{
 set hlsearch
-noremap <C-p> :set hlsearch! hlsearch? <CR>
+noremap cp :set hlsearch! hlsearch? <CR>
 
 
-"#}}}"#-------------------------------------------------------------------------
-"#  CtrlP
-"#--------------------------------------------------------------------------#{{{
-let g:ctrlp_map = '<F7>'
-let g:ctrlp_use_caching = 1     " <F5> while inside |CtrlP| will purge the cache
-let g:ctrlp_working_path_mode = 2
-let g:ctrlp_match_window_bottom = 0
-let g:ctrlp_match_window_reversed = 0
-let g:ctrlp_custom_ignore = '\.metadata\|\.git\|\.project\|\.cproject\|\.directory|\.o$'
-
-func! CP()
-    exec ':CtrlP'
-endfunc
-
-nmap cp :call CP()<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -751,20 +706,13 @@ nmap cp :call CP()<CR>
 "#-------------------------------------------------------------------------
 hi link IfdefReg IfdefColor
 
-function! ColorDefine()
-    exec 'syn region IfdefReg start="^\s*#ifdef" end="^\s*#endif\(.*\)$"'
-endfunction
-function! UncolorDefine()
-    syn clear IfdefReg
-endfunction
-
 let g:ifdef_highlight = 0
 function! IfdefToggle()
     if g:ifdef_highlight
-        call UncolorDefine()
+        syn clear IfdefReg
         let g:ifdef_highlight = 0
     else
-        call ColorDefine()
+        syn region IfdefReg start="^\s*#ifdef" end="^\s*#endif\(.*\)$"
         let g:ifdef_highlight = 1
     endif
 endfunction
@@ -793,9 +741,9 @@ let g:tex_flavor='latex'    " OPTIONAL: Starting with Vim 7, the filetype of emp
                             "   The following changes the default filetype back to 'tex':
 "set sw=2                   "   this is mostly a matter of taste. but LaTeX looks good with just a bit
                             "   of indentation.
-set iskeyword+=:            " TIP: if you write your \label's as \label{fig:something}, then if you
-                            "   type in \ref{fig: and press <C-n> you will automatically cycle through
-                            "   all the figure labels. Very useful!
+"set iskeyword+=:            " TIP: if you write your \label's as \label{fig:something}, then if you
+"                            "   type in \ref{fig: and press <C-n> you will automatically cycle through
+"                            "   all the figure labels. Very useful!
 
 "#}}}"#-------------------------------------------------------------------------
 "# CScope
@@ -828,180 +776,134 @@ set iskeyword+=:            " TIP: if you write your \label's as \label{fig:some
 "#
 "#-------------------------------------------------------------------------
 
-map <C-F8> :!cs<CR>
+"map <C-F8> :!cs<CR>
 
 "if has("win32")
 "    se csprg=D:\cscope\bin\cscope.exe"
 "endif
 
-
-if has("cscope")
-
-    " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
-    set cscopetag       " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
-    set csto=0          " check cscope for definition of a symbol before checking ctags: set to 1
-                        " if you want the reverse search order.
-    "set cscopeverbose  " show msg when any other cscope db added
-
-    " add any cscope database in current directory
-    if filereadable("./cscope.out")
-        cs add cscope.out
-    elseif filereadable("../cscope.out")
-        cs add ../cscope.out
-    elseif filereadable("../../cscope.out")
-        cs add ../../cscope.out
-    elseif $CSCOPE_DB != ""
-        cs add $CSCOPE_DB
-    endif
-
-
-    set cscopeverbose    " show msg when any other cscope db added
-
-
-    """"""""""""" My cscope/vim key mappings
-    "
-    " The following maps all invoke one of the following cscope search types:
-    "
-    "   's'   symbol: find all references to the token under cursor
-    "   'g'   global: find global definition(s) of the token under cursor
-    "   'c'   calls:  find all calls to the function name under cursor
-    "   't'   text:   find all instances of the text under cursor
-    "   'e'   egrep:  egrep search for the word under cursor
-    "   'f'   file:   open the filename under cursor
-    "   'i'   includes: find files that include the filename under cursor
-    "   'd'   called: find functions that function under cursor calls
-    "
-    " Below are three sets of the maps: one set that just jumps to your
-    " search result, one that splits the existing vim window horizontally and
-    " diplays your search result in the new window, and one that does the same
-    " thing, but does a vertical split instead (vim 6 only).
-    "
-    " I've used CTRL-\ and CTRL-@ as the starting keys for these maps, as it's
-    " unlikely that you need their default mappings (CTRL-\'s default use is
-    " as part of CTRL-\ CTRL-N typemap, which basically just does the same
-    " thing as hitting 'escape': CTRL-@ doesn't seem to have any default use).
-    " If you don't like using 'CTRL-@' or CTRL-\, , you can change some or all
-    " of these maps to use other keys.  One likely candidate is 'CTRL-_'
-    " (which also maps to CTRL-/, which is easier to type).  By default it is
-    " used to switch between Hebrew and English keyboard mode.
-    "
-    " All of the maps involving the <cfile> macro use '^<cfile>$': this is so
-    " that searches over '#include <time.h>" return only references to
-    " 'time.h', and not 'sys/time.h', etc. (by default cscope will return all
-    " files that contain 'time.h' as part of their name).
-    "
-    " To do the first type of search, hit 'CTRL-\', followed by one of the
-    " cscope search types above (s,g,c,t,e,f,i,d).  The result of your cscope
-    " search will be displayed in the current window.  You can use CTRL-T to
-    " go back to where you were before the search.
-    "
-
-    nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-
-
-    " Using 'CTRL-spacebar' (intepreted as CTRL-@ by vim) then a search type
-    " makes the vim window split horizontally, with search result displayed in
-    " the new window.
-    "
-    " (Note: earlier versions of vim may not have the :scs command, but it
-    " can be simulated roughly via:
-    "    nmap <C-@>s <C-W><C-S> :cs find s <C-R>=expand("<cword>")<CR><CR>
-
-    nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
-
-
-    " Hitting CTRL-space *twice* before the search type does a vertical
-    " split instead of a horizontal one (vim 6 and up only)
-    "
-    " (Note: you may wish to put a 'set splitright' in your .vimrc
-    " if you prefer the new window on the right instead of the left
-
-    nmap <C-@><C-@>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@><C-@>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@><C-@>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@><C-@>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@><C-@>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
-
-
-    "set notimeout          " By default Vim will only wait 1 second for each keystroke in a mapping.
-                            " You may find that too short with the above typemaps.  If so, you should
-                            " either turn off mapping timeouts via 'notimeout'.
-    "set timeoutlen=4000    " Or, you can keep timeouts, by uncommenting the timeoutlen line below,
-                            " with your own personal favorite value (in milliseconds):
-    "set ttimeout           " Either way, since mapping timeout settings by default also set the
-                            " timeouts for multicharacter 'keys codes' (like <F1>), you should also
-                            " set ttimeout and ttimeoutlen: otherwise, you will experience strange
-                            " delays as vim waits for a keystroke after you hit ESC (it will be
-                            " waiting to see if the ESC is actually part of a key code like <F1>).
-    "set ttimeoutlen=100    " personally, I find a tenth of a second to work well for key code
-                            " timeouts. If you experience problems and have a slow terminal or network
-                            " connection, set it higher.  If you don't set ttimeoutlen, the value for
-                            " timeoutlent (default: 1000 = 1 second, which is sluggish) is used.
-
-endif
-
-"#}}}"#-------------------------------------------------------------------------
-"# cmdResult() - show output in other tab
-"#--------------------------------------------------------------------------#{{{
-"function! CmdResult(cmd)
-"  redir => message
-"  silent execute a:cmd
-"  redir END
-"  new
-"  silent put=message
-"  set nomodified
-"endfunction
-"command! -nargs=+ -complete=command CmdResult call CmdResult(<q-args>)
-
-
-"#}}}"#-------------------------------------------------------------------------
-"# VimDiff2 -showChanges() in new tab
-"#--------------------------------------------------------------------------#{{{
-" function! s:ShowDiff()
-"     let tmpa = tempname()
-"     let tmpb = tempname()
-"     earlier 100h
-"     exec 'w '.tmpa
-"     later 100h
-"     exec 'w '.tmpb
-"     update
-"     exec 'tabnew '.tmpa
-"     exec 'NerdTreeClose'
-"     diffthis
-"     vert split
-"     exec 'edit '.tmpb
-"     diffthis
-" endfunction
-
-
-" function! s:ShowDiff()
-"     exec 'NerdTreeClose'
-"     exec 'bp'
-"     diffthis
-"     exec 'vs'
-"     exec 'bp'
-"     "exec 'bp'
-"     diffthis
-" endfunction
-"command! -nargs=0 DF call <SID>ShowDiff()
 "
+"if has("cscope")
+"
+"    " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
+"    set cscopetag       " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
+"    set csto=0          " check cscope for definition of a symbol before checking ctags: set to 1
+"                        " if you want the reverse search order.
+"    "set cscopeverbose  " show msg when any other cscope db added
+"
+"    " add any cscope database in current directory
+"    if filereadable("./cscope.out")
+"        cs add cscope.out
+"    elseif filereadable("../cscope.out")
+"        cs add ../cscope.out
+"    elseif filereadable("../../cscope.out")
+"        cs add ../../cscope.out
+"    elseif $CSCOPE_DB != ""
+"        cs add $CSCOPE_DB
+"    endif
+"
+"
+"    set cscopeverbose    " show msg when any other cscope db added
+"
+"
+"    """"""""""""" My cscope/vim key mappings
+"    "
+"    " The following maps all invoke one of the following cscope search types:
+"    "
+"    "   's'   symbol: find all references to the token under cursor
+"    "   'g'   global: find global definition(s) of the token under cursor
+"    "   'c'   calls:  find all calls to the function name under cursor
+"    "   't'   text:   find all instances of the text under cursor
+"    "   'e'   egrep:  egrep search for the word under cursor
+"    "   'f'   file:   open the filename under cursor
+"    "   'i'   includes: find files that include the filename under cursor
+"    "   'd'   called: find functions that function under cursor calls
+"    "
+"    " Below are three sets of the maps: one set that just jumps to your
+"    " search result, one that splits the existing vim window horizontally and
+"    " diplays your search result in the new window, and one that does the same
+"    " thing, but does a vertical split instead (vim 6 only).
+"    "
+"    " I've used CTRL-\ and CTRL-@ as the starting keys for these maps, as it's
+"    " unlikely that you need their default mappings (CTRL-\'s default use is
+"    " as part of CTRL-\ CTRL-N typemap, which basically just does the same
+"    " thing as hitting 'escape': CTRL-@ doesn't seem to have any default use).
+"    " If you don't like using 'CTRL-@' or CTRL-\, , you can change some or all
+"    " of these maps to use other keys.  One likely candidate is 'CTRL-_'
+"    " (which also maps to CTRL-/, which is easier to type).  By default it is
+"    " used to switch between Hebrew and English keyboard mode.
+"    "
+"    " All of the maps involving the <cfile> macro use '^<cfile>$': this is so
+"    " that searches over '#include <time.h>" return only references to
+"    " 'time.h', and not 'sys/time.h', etc. (by default cscope will return all
+"    " files that contain 'time.h' as part of their name).
+"    "
+"    " To do the first type of search, hit 'CTRL-\', followed by one of the
+"    " cscope search types above (s,g,c,t,e,f,i,d).  The result of your cscope
+"    " search will be displayed in the current window.  You can use CTRL-T to
+"    " go back to where you were before the search.
+"    "
+"
+"    nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+"    nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+"    nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+"
+"
+"    " Using 'CTRL-spacebar' (intepreted as CTRL-@ by vim) then a search type
+"    " makes the vim window split horizontally, with search result displayed in
+"    " the new window.
+"    "
+"    " (Note: earlier versions of vim may not have the :scs command, but it
+"    " can be simulated roughly via:
+"    "    nmap <C-@>s <C-W><C-S> :cs find s <C-R>=expand("<cword>")<CR><CR>
+"
+"    nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
+"    nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+"    nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
+"
+"
+"    " Hitting CTRL-space *twice* before the search type does a vertical
+"    " split instead of a horizontal one (vim 6 and up only)
+"    "
+"    " (Note: you may wish to put a 'set splitright' in your .vimrc
+"    " if you prefer the new window on the right instead of the left
+"
+"    nmap <C-@><C-@>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@><C-@>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@><C-@>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@><C-@>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@><C-@>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+"    nmap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
+"    nmap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+"    nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+"
+"
+"    "set notimeout          " By default Vim will only wait 1 second for each keystroke in a mapping.
+"                            " You may find that too short with the above typemaps.  If so, you should
+"                            " either turn off mapping timeouts via 'notimeout'.
+"    "set timeoutlen=4000    " Or, you can keep timeouts, by uncommenting the timeoutlen line below,
+"                            " with your own personal favorite value (in milliseconds):
+"    "set ttimeout           " Either way, since mapping timeout settings by default also set the
+"                            " timeouts for multicharacter 'keys codes' (like <F1>), you should also
+"                            " set ttimeout and ttimeoutlen: otherwise, you will experience strange
+"                            " delays as vim waits for a keystroke after you hit ESC (it will be
+"                            " waiting to see if the ESC is actually part of a key code like <F1>).
+"    "set ttimeoutlen=100    " personally, I find a tenth of a second to work well for key code
+"                            " timeouts. If you experience problems and have a slow terminal or network
+"                            " connection, set it higher.  If you don't set ttimeoutlen, the value for
+"                            " timeoutlent (default: 1000 = 1 second, which is sluggish) is used.
+"
+"endif
 
 "#}}}"#-------------------------------------------------------------------------
 "# Command output in split
@@ -1014,43 +916,6 @@ endif
 "    return output
 "endfunct!
 
-
-"#}}}"#-------------------------------------------------------------------------
-"# Buffer select
-"#--------------------------------------------------------------------------#{{{
-"
-"function! BufSel(pattern)
-"  let bufcount = bufnr("$")
-"  let currbufnr = 1
-"  let nummatches = 0
-"  let firstmatchingbufnr = 0
-"  while currbufnr <= bufcount
-"    if(bufexists(currbufnr))
-"      let currbufname = bufname(currbufnr)
-"      if(match(currbufname, a:pattern) > -1)
-"        echo currbufnr . ": ". bufname(currbufnr)
-"        let nummatches += 1
-"        let firstmatchingbufnr = currbufnr
-"      endif
-"    endif
-"    let currbufnr = currbufnr + 1
-"  endwhile
-"  if(nummatches == 1)
-"    execute ":buffer ". firstmatchingbufnr
-"  elseif(nummatches > 1)
-"    let desiredbufnr = input("Enter buffer number: ")
-"    if(strlen(desiredbufnr) != 0)
-"      execute ":buffer ". desiredbufnr
-"    endif
-"  else
-"    echo "No matching buffers"
-"  endif
-"endfunction
-"
-""Bind the BufSel() function to a user-command
-"command! -nargs=1 Bs :call BufSel("<args>")
-
-
 "#}}}"#-------------------------------------------------------------------------
 "# VimDiff
 "#--------------------------------------------------------------------------#{{{
@@ -1058,12 +923,9 @@ noremap <space> ]cz.
 noremap <S-space> [cz.
 
 if &diff
-    exec ":1"
     set t_Co=256
     set nowrap
     set diffopt=filler
-    "set foldminlines=99999
-    colorscheme wombat256
 
     if has("gui_running")
         exec "winpos 50 50"
@@ -1071,14 +933,10 @@ if &diff
         exec "set columns=160"
     endif
 
-
     "mappings
     noremap dt :diffthis<CR> gg ]cz.
     noremap du :diffupdate<CR>
 
-    "double win
-    "exec ":vs"
-    "exec "vertical resize 80"
 endif
 
 
@@ -1086,7 +944,7 @@ endif
 "#}}}"#-------------------------------------------------------------------------
 "# FuzzyFinder
 "#--------------------------------------------------------------------------#{{{
-map <C-f> :FufRenewCache<CR>:FufFile<CR>
+noremap <C-f> :FufRenewCache<CR>:FufFile<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -1098,8 +956,6 @@ map <C-f> :FufRenewCache<CR>:FufFile<CR>
 let g:bufExplorerSortBy='name'
 let g:bufExplorerDefaultHelp = 0
 let g:bufExplorerSplitBelow = 0
-"let g:bufExplorerSplitHorzSize = 7
-"let g:bufExplorerOpenMode = 1
 
 map <C-b> :BufExplorer<CR>
 
@@ -1127,20 +983,13 @@ function! Grepc(path,ext,pat)
     endif
 endfunction
 
-noremap <C-g><Esc> :call Grepc('.','{cpp,cxx}',"")<Left><Left>
-au FileType python noremap <C-g><Esc> :call Grepc('.','py',"")<Left><Left>
+noremap <C-g><C-g> :call Grepc('~/workspace/ssi/unix/','{cpp,cxx,h,py}',"")<Left><Left>
+noremap <C-g> :call Grepc('.','{cpp,cxx,h,py,js,txt,html}',"")<Left><Left>
 
-
-"#}}}"#-------------------------------------------------------------------------
-"# Abbreviations
-"#--------------------------------------------------------------------------#{{{
-
-"iabbr if( if( )<CR>{<esc>7hi
 
 "#}}}#---------------------------------------------------------------------------
 "#    binary
 "#---------------------------------------------------------------------------#{{{
-
 let g:bin_flag = 0
 
 function! BinToggle()
