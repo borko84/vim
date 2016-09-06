@@ -1,1 +1,0 @@
-/home/borko/.vim/ftplugin/xml.vim

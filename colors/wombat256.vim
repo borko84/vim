@@ -37,8 +37,9 @@ let colors_name = "wombat256"
 "#-------------------------------------------------------------------------------
 hi Normal           ctermfg=254     ctermbg=235     cterm=none        guifg=#f6f3e8    guibg=#242424    gui=none
 "hi Cursor           ctermfg=none    ctermbg=241     cterm=none        guifg=#000000    guibg=#656565    gui=none
-hi Cursor           ctermfg=none    ctermbg=241     cterm=none        guifg=NONE   guibg=#3939fa    gui=none
-hi Visual           ctermfg=NONE    ctermbg=238     cterm=none        guifg=NONE       guibg=#383838    gui=none
+"hi Cursor           ctermfg=none    ctermbg=241     cterm=none        guifg=NONE   guibg=#3939fa    gui=none
+hi Cursor           ctermfg=167    ctermbg=113     cterm=none        guifg=#000000   guibg=#39fa39    gui=none
+hi Visual           ctermfg=NONE   ctermbg=238     cterm=none        guifg=NONE       guibg=#383838    gui=none
 hi Folded           ctermfg=103     ctermbg=238     cterm=none        guibg=#282835    guifg=#393939    gui=none
 hi Title            ctermfg=7       ctermbg=none    cterm=bold        guifg=#f6f3e8    guibg=NONE       gui=bold
 hi TabLine                                                            guifg=#000000    guibg=#888888    gui=none

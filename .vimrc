@@ -23,24 +23,31 @@
 
 cd ~
 colorscheme wombat256
+set t_Co=256                       "without this line tmux/screen will do *bad* things to colors, dude
 
-if has("win32")                     "system
-    set t_Co=256
-    winpos 50 80
-    set lines=50 columns=140
-    set guifont=Courier\ New:h9
-    set enc=utf-8                       " needed for win
+if has("win32")                    "system
+   set guifont=Courier\ New:h9
+   winpos 50 80
+   set lines=50 columns=140
+   set encoding=utf-8                   "needed for win
 else
     set guifont=Liberation\ Mono\ 7.1
 endif
 
-
-if has("gui_running")               "GUI
-   set guioptions=a
+if has("gui_running")
    behave mswin
-else
-    set t_Co=256
+   set guioptions=a
 endif
+
+"jump to the last position when reopening a file
+if has("autocmd")
+   autocmd! BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | execute "normal! g'\"" | endif
+endif
+
+"indentation rules and plugins(filetype)
+syntax on
+filetype plugin indent on
+
 
 "#}}}#---------------------------------------------------------------------------
 "#    pathogen
@@ -63,20 +70,6 @@ call pathogen#infect()
 call pathogen#helptags()
 
 
-if has("syntax")
-      syntax on
-endif
-
-if has("autocmd")                   "indentation rules and plugins(filetype)
-  filetype plugin indent on
-endif
-
-if has("autocmd")                   "jump to the last position when reopening a file
-  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exec "normal! g'\"" | endif
-endif
-
-
-
 "#}}}"#-------------------------------------------------------------------------
 "# Text Edition Settings
 "#--------------------------------------------------------------------------#{{{
@@ -91,34 +84,34 @@ set softtabstop=3
 set autochdir           " path = path of the edited file
 set backspace=indent,eol,start
 set expandtab           " spaces instead of tab
-set gcr=a:blinkwait0    " non blinking cursor
+set guicursor=a:blinkwait0    " non blinking cursor
 set hidden              " Hide buffers when they are abandoned
 set history=1000        " remember more commands and search history
 set undolevels=1000     " use many muchos levels of undo
 set virtualedit=all     " let the cursor stray beyond the defined text.
-set hls                 " set highlighting
-set ic                  " ignorecase (Case insensitive search)
-set incsearch           " Incremental search - "b" = go to the first "b" ; type "o," go to "bo".
+set hlsearch incsearch  " Incremental search - "b" = go to the first "b" ; type "o," go to "bo"
+set ignorecase          " ignorecase (Case insensitive search)
 set laststatus=2        " Always display a statusline
 set mouse=a             " Enable mouse usage (all modes)
 set nocompatible        " Use Vim settings
 set number              " Line Numbering
 set showbreak=~         " Show break char
-set showcmd             " Show (partial) command in status line.
-set showmatch           " Show matching brackets.
-set smartcase           " Do smart case matching
-set vb t_vb=            " Flash instead of beep
-set wrap
+set showcmd             " Show (partial) command in status line
+set showmatch           " Show matching brackets
+set smartcase           " /The search for "The", while /the would find "the" or "The" etc
+set visualbell t_vb=    " Flash instead of beep
+set nowrap
 set nolist
 set listchars=tab:>.,trail:.,extends:#,nbsp:. ",eol:$
+set listchars+=precedes:~,extends:~ " nice indicators that there is more text horizontally
 
 set scrolljump=7
 set sidescroll=5        "when moving in the file horizontally move 5 columns a time
-set listchars+=precedes:~,extends:~ " nice indicators that there is more text horizontally
 "set showbreak=>        " Show break char
 set wildmode=longest:full
 set wildmenu
 
+let mapleader = ","
 
 "#}}}"#-------------------------------------------------------------------------
 "# Statusline
@@ -132,45 +125,52 @@ set statusline+=\ \ <\ %l:%c\ >
 set statusline+=\ \ %y
 set statusline+=[%{&ff}]
 
+"#}}}"#-------------------------------------------------------------------------
+"# Folding
+"#--------------------------------------------------------------------------#{{{
+set foldlevelstart=20
+set foldnestmax=1
+set foldmethod=marker
 
+:augroup folding
+:  autocmd!
+:  autocmd FileType sh,ksh,awk,vim,make,conf,txt,snippet set foldmethod=marker
+:  autocmd FileType python                               set foldmethod=indent
+:  autocmd FileType c,cpp                                set foldmethod=syntax
+:augroup END
+
+let g:folding_flag = 0
+function! FoldingToggle()
+   execute g:folding_flag ? 'normal! zR' : 'normal! zM'
+   let g:folding_flag = !g:folding_flag
+endfunction
+nnoremap <leader>f :call FoldingToggle()<CR>
 
 "#}}}"#-------------------------------------------------------------------------
 "#  key mapping
 "#--------------------------------------------------------------------------#{{{
 nnoremap ; :
 nnoremap @@ @:
-nnoremap 'p "0p
+
+nnoremap <C-c> yiw
+nnoremap <C-x> yiwdiw
+"nnoremap <C-v> viw"0p
+"vnoremap <C-v> "_d"0P
+nnoremap F viw"0p
+vnoremap F "_d"0P
 
 "tabs
-"map <C-h> gT
-"map <C-l> gt
-:map <A-1> :tabn 1<CR>
-:map <A-2> :tabn 2<CR>
-:map <A-3> :tabn 3<CR>
-:map <A-4> :tabn 4<CR>
-:map <A-5> :tabn 5<CR>
-:map <A-6> :tabn 6<CR>
-:map <A-7> :tabn 7<CR>
-:map <A-8> :tabn 8<CR>
-:map <A-9> :tabn 9<CR>
+nnoremap tn :tabnew <CR>
+nnoremap Q :q!<CR>
+nnoremap Z :w!<CR> :call SmallCls()<CR>
+nnoremap BD :bd! %<CR>
 
-nmap tn :tabnew <CR>
-nmap Q :q!<CR>
-nmap Z :call SmallCls()<CR>:w!<CR>
-nmap BD :bd! %<CR>
-map <C-q> :!echo "NO NO NO"<CR>
-map <C-s> :!echo "NO NO NO"<CR>
-"vmap <C-c> "+y
-map <C-a> ggVG
-
-noremap J 30j
-noremap K 30k
-
+"vnoremap <C-c> "+y
+noremap <C-a> ggVG
 vnoremap < <gv
 vnoremap > >gv
 
-nmap <silent> <f5>:!# <CR>
-map <xCSI>[62~ <MouseDown>
+noremap <xCSI>[62~ <MouseDown>
 
 "closing braces
 inoremap (<Tab>  ()<Left>
@@ -180,21 +180,23 @@ inoremap '<Tab>  ''<Left>
 inoremap [<Tab>  []<Left>
 inoremap <<Tab>  <><Left>
 
+nnoremap tt :wincmd w <Esc>
+nnoremap <leader>t :wincmd w <Esc>
 
-"Tab conflict  with C-i
-noremap tt <Esc><C-w><C-w>
+" Keep search matches in the middle of the window
+nnoremap n nzzzv
+nnoremap N Nzzzv
+" same when jumping to changes!
+nnoremap g; g;zz
+nnoremap g, g,zz
 
-"vnoremap <silent>y "+y<Esc>
-
-"nnoremap n nzzzv            " Keep search matches in the middle of the window.
-"nnoremap N Nzzzv
-"nnoremap g; g;zz            " same when jumping to changes!
-"nnoremap g, g,zz
+"hlsearch
+nnoremap <leader>cp :set hlsearch! hlsearch? <CR>
 
 "#}}}#---------------------------------------------------------------------------
 "#   visually selected text
 "#---------------------------------------------------------------------------#{{{
-noremap * viwy/<C-r>0<CR>:set hlsearch<CR>
+nnoremap * viwy/<C-r>0<CR>:set hlsearch<CR>N
 set iskeyword=@,48-57,_,192-255,#
 
 
@@ -217,67 +219,84 @@ set iskeyword=@,48-57,_,192-255,#
 "    \w                            [0-9A-Za-z_]
 "
 "#-------------------------------------------------------------------------------
-
-
 noremap ;; :set hlsearch<CR>:.,$s//gc<Left><Left><Left>
-noremap ;g :g/
-noremap ;v :v/
 
 " fast 'w'=word, 's'=space, 'd'=digit, '.'=any
-cmap ;w \(\w\+\)
-cmap ;s \(\s\+\)
-cmap ;d \(\d\+\)
-cmap ;. \(.*\)
-cmap ;- \(.\{-}\)
-
-cmap ;n \(\n\+\)
-cmap ;' \(\)<Left><Left>
-cmap ;< \<\><Left><Left>
-cmap ;x <\>\(.*\)\</<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
-
+cnoremap ;w (\w+)
+cnoremap ;s (\s\+)
+cnoremap ;d (\d\+)
+cnoremap ;. (.*)
+cnoremap ;- (.{-})
+cnoremap ;! ()\@!<Left><Left><Left><Left><Left>
+cnoremap ;n (\n+)
+cnoremap ;' ()<Left>
+cnoremap ;< <><Left>
+cnoremap ;x <\>\(.*\)\</<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 
 
 "#}}}"#-------------------------------------------------------------------------
 "# clearing function
 "#--------------------------------------------------------------------------#{{{
-func! SmallCls()
-      exec ':%s/\(\s\+\)$//ge'
+function! SmallCls()
+   exec ':%s/\(\s\+\)$//ge'
+   "# remove end-of-file empty lines
+   exec ':%s#\($\n\s*\)\+\%$##e'
 endfunc
 
-
-func! Cls()
-
-    "# remove unwanted spaces at end-of-line
-    exec ':%s/\(\s\+\)$//gce'
-
-    "# change tabs to 4 spaces
-    exec ':%s/\t/    /gce'
-
-    "# remove windows eol
-    exec ':%s/\r//gce'
-
-    "# remove end-of-file empty lines
-    exec ':%s#\($\n\s*\)\+\%$##e'
-
- endfunc
-nmap cls :call Cls()<CR>
+function! Cls()
+   "# remove unwanted spaces at end-of-line
+   exec ':%s/\(\s\+\)$//gce'
+   "# change tabs to 4 spaces
+   exec ':%s/\t/    /gce'
+   "# remove windows eol
+   exec ':%s/\r//gce'
+   "# remove end-of-file empty lines
+   exec ':%s#\($\n\s*\)\+\%$##e'
+endfunc
+nnoremap <leader>cls :call Cls()<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
-"# comment
+"# autocmd
 "#--------------------------------------------------------------------------#{{{
-let b:comment_leader = '#'
-au FileType c,cpp,java,actionscript let b:comment_leader = '//'
-au FileType sh,ruby,python,awk,perl let b:comment_leader = '#'
-au FileType conf,fstab,make,txt     let b:comment_leader = '#'
-au FileType tex                     let b:comment_leader = '%'
-au FileType mail                    let b:comment_leader = '>'
-au FileType vim                     let b:comment_leader = '"'
-au FileType sql                     let b:comment_leader = '--'
-au FileType xml                     let b:comment_leader = '<!-- -->'
+:augroup comments
+:   autocmd!
+:   autocmd FileType c,cpp,java,actionscript let b:comment_leader = '//'
+:   autocmd FileType sh,ruby,python,awk,perl let b:comment_leader = '#'
+:   autocmd FileType conf,fstab,make,txt,gitconfig let b:comment_leader = '#'
+:   autocmd FileType tex                     let b:comment_leader = '%'
+:   autocmd FileType mail                    let b:comment_leader = '>'
+:   autocmd FileType vim                     let b:comment_leader = '"'
+:   autocmd FileType sql,haskell             let b:comment_leader = '--'
+:   autocmd FileType xml                     let b:comment_leader = '<!-- -->'
+:augroup END
 
-vnoremap / :s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
-vnoremap ? :s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
+function! NewComment() range
+    " check if commented
+    let myline = getline(".")
+    let commented = 1
+    for i in range(0, strlen(b:comment_leader)-1)
+       if b:comment_leader[i] != myline[i]
+          let commented = 0
+       endif
+    endfor
+
+    " comment
+    for linenum in range(a:firstline, a:lastline)
+       let myline = getline(linenum)
+       if commented==0
+          let new_line = substitute(myline, '^', b:comment_leader, 'g')
+       else
+          let new_line = substitute(myline, '^'.b:comment_leader,'', 'g')
+       endif
+       call  setline(linenum, new_line)
+    endfor
+endfunction
+
+vnoremap / :call NewComment()<CR>
+vnoremap ? :call NewComment()<CR>
+"vnoremap / :s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
+"vnoremap ? :s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -285,9 +304,6 @@ vnoremap ? :s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
 "#--------------------------------------------------------------------------#{{{
 au BufRead,BufNewFile *.scd setfiletype scd
 au FileType scd   let b:comment_leader = 'CMNT;'
-
-
-au BufRead,BufNewFile *.txt setfiletype conf
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -320,7 +336,7 @@ let g:neocomplcache_enable_smart_case = 1            " smartcase
 let NERDTreeWinPos="right"
 let NERDTreeDirArrows=0
 let NERDTreeMouseMode=1
-nmap <silent> <C-e> <Esc>:NERDTreeToggle . <CR> <C-w> l
+nnoremap <silent> <C-e> <Esc>:NERDTreeToggle . <CR> <C-w> l
 
 function! NERDTreeQuit()
   redir => buffersoutput
@@ -344,135 +360,106 @@ function! NERDTreeQuit()
     quitall
   endif
 endfunction
-autocmd WinEnter * call NERDTreeQuit()
-
-
-
-"#}}}"#-------------------------------------------------------------------------
-"# Gundo
-"#--------------------------------------------------------------------------#{{{
-if version >= 703
-    nnoremap <F6> :GundoToggle<CR>
-endif
+autocmd! WinEnter * call NERDTreeQuit()
 
 
 "#}}}"#-------------------------------------------------------------------------
 "# autoclose
 "#--------------------------------------------------------------------------#{{{
-"au VimEnter * AutoCloseOff
+"autocmd VimEnter * AutoCloseOff
 "let g:AutoClosePairs = {'(': ')', '{': '}', '[': ']', '"': '"', "'": "'"}
 "let g:AutoCloseProtectedRegions = ["Comment", "String", "Character"]
 
 
 "#}}}#---------------------------------------------------------------------------
-"#   sessions
+"#   f keys
 "#---------------------------------------------------------------------------#{{{
+noremap <F2>    :mks! ~/session.vim
+noremap <F3>    :so ~/session.vim
 
-func! LoadSession()
-    exec ":so ~/session.vim"
-endfunc
+"Gundo
+if version >= 703
+    nnoremap <F6> :GundoToggle<CR>
+endif
 
-func! SaveSession()
-    exec ":mks! ~/session.vim"
-endfunc
-
-map <F2>    :call SaveSession()<CR>
-map <F3>    :call LoadSession()<CR>
-
+"run script
+"nnoremap <silent> <f5>:!# <CR>
 
 "#}}}"#-------------------------------------------------------------------------
 "# Compile and run C++
 "#-------------------------------------------------------------------------"#{{{
 "# cd %:p:h
 "#------------------------------------------------------------------------------
-map <F9>    :call CompileRunGpp()<CR>
-map <F10>   :call Synchronize()<CR><CR>
-map <C-F10> :call MakeClean()<CR><CR>
-map <F11>   :call Run()<CR><CR>
+:augroup my_functions
+:  autocmd!
+:  autocmd FileType c,cpp    noremap <F9>    :call CompileRunGpp()<CR>
+:  autocmd FileType c,cpp    noremap <S-F9>  :call Cgdb()<CR>
+:  autocmd FileType c,cpp    noremap <C-F10> :call MakeClean()<CR>
+:  autocmd FileType c,cpp    noremap <F11>   :call Run()<CR>
+:
+:  autocmd FileType python    noremap <F9> :w<CR>:!python %<CR>
+":  autocmd FileType perl      noremap <F9> :w<CR>:silent !r_run_perl.sh % 2>&1 \| tee ~/tmp/output<CR>:vsplit ~/tmp/output<CR>:redraw!<CR>
+:  autocmd FileType perl      noremap <F9> :w<CR>:!perl %<CR>
+:augroup END
 
-au FileType python map <F9> :w<CR>:!python %<CR>
-au FileType python map <C-F9> :w<CR>:!python3 %<CR>
+noremap <F10>   :call Synchronize()<CR>
 
-au FileType perl map <F9> :w<CR>:!perl -w %<CR>
-au FileType perl map <F9> :call RunPerl() % <CR>
-au FileType perl map <C-F9> :w<CR>:!perl -wc %<CR>
-
-func! Synchronize()
-  exec "w"
-  exec "!bash /home/sg216005/bin/rsync.sh"
+function! Synchronize()
+  exec ':%s/\(\s\+\)$//gc'
+"  exec "w | !bash /home/sg216005/bin/rsync.sh"
+  exec "w | !bash /home/sg216005/bin/smake"
 endfunc
 
-func! CompileRunGpp()
-  exec "w"
-  exec "!g++ -Wall -g % -o %<"
+function! CompileRunGpp()
+  exec "w | !g++ -Wall  -g % -o %< -lboost_system -lboost_thread"
   exec "! ./%<"
 endfunc
 
-func! Make()
-  exec "w"
-  exec "! cd .. && make all"
+function! Make()
+  exec "w | ! cd .. && make all"
 endfunc
 
-func! MakeClean()
-  exec "w"
-  exec "! cd .. && make clean && make"
-  "return ":silent \<CR>"
+function! MakeClean()
+  exec "w | ! cd .. && make clean && make"
 endfunc
 
-func! Run()
-  exec "w"
-  exec "! cd .. && ./run"
+function! Run()
+  exec "w | ! cd .. && ./run"
 endfunc
 
-func! RunPerl()
-  exec "w"
-  exec "!bash /home/sg0216005/scripts/r_run_perl.sh"
-endfunc
-
-
-
+"noremap <F9>  :w<CR>:silent !chmod +x %:p<CR>:silent !%:p 2>&1 \| tee ~/tmp/output<CR>:vsplit ~/tmp/output<CR>:redraw!<CR>:
 
 "#}}}"#-------------------------------------------------------------------------
-"# switch between header/source with F4
+"# switch between header/source with
 "#--------------------------------------------------------------------------#{{{
-au! BufEnter *.cpp let b:fswitchdst = 'h,hpp'
-au! BufEnter *.cxx let b:fswitchdst = 'h,hpp'
-au! BufEnter *.h   let b:fswitchdst = 'cpp,cxx,C'
-map <C-h> :FSHere<cr>
-
-
+:augroup header_switch
+:  autocmd!
+:  autocmd BufEnter *.cpp let b:fswitchdst = 'h,hpp'
+:  autocmd BufEnter *.cxx let b:fswitchdst = 'h,hpp'
+:  autocmd BufEnter *.h   let b:fswitchdst = 'cpp,cxx,C'
+:  autocmd FileType c,cpp  noremap <C-h> :FSHere<cr>
+:augroup END
 
 "#}}}"#-------------------------------------------------------------------------
-"# Folding
+"# ifndef regions
 "#--------------------------------------------------------------------------#{{{
-set foldlevelstart=20
-set foldnestmax=1
+hi link IfdefReg IfdefColor
 
-let g:folding_flag = 0
-function! FoldingToggle()
-    if g:folding_flag
-         execute 'normal zR'
-        let g:folding_flag = 0
-    else
-        execute 'normal zM'
-        let g:folding_flag = 1
-    endif
+let g:ifdef_highlight = 0
+function! IfdefToggle()
+   if g:ifdef_highlight
+       syn clear IfdefReg
+   else
+       syn region IfdefReg start="^\s*#ifdef" end="^\s*#endif\(.*\)$"
+   endif
+   let g:ifdef_highlight = !g:ifdef_highlight
 endfunction
-nmap zm :call FoldingToggle()<CR>
-nmap z<space> za
 
-
-set foldmethod=marker
-au FileType sh,ksh,awk,vim,make,conf,txt,snippet :set foldmethod=marker
-au FileType python  :set foldmethod=indent
-"au BufNewFile,BufRead *.cpp exec 'normal zM'
-
-
-"" Don't screw up folds when inserting text that might affect them, until
-"" leaving insert mode. Foldmethod is local to the window. Protect against
-"" screwing up folding when switching between windows.
-"autocmd InsertEnter * if !exists('w:last_fdm') | let w:last_fdm=&foldmethod | setlocal foldmethod=manual | endif
-"autocmd InsertLeave,WinLeave * if exists('w:last_fdm') | let &l:foldmethod=w:last_fdm | unlet w:last_fdm | endif
+:augroup ifdef
+:  autocmd!
+:  autocmd FileType c,cpp call IfdefToggle()
+:  autocmd FileType c,cpp nnoremap <leader>i :call IfdefToggle()<CR>
+:augroup END
 
 
 
@@ -480,31 +467,19 @@ au FileType python  :set foldmethod=indent
 "#                              C++ setttings
 "#==========================================================================#{{{
 
-
 "#}}}"#-------------------------------------------------------------------------
 "# path
 "#--------------------------------------------------------------------------#{{{
-set path+=~/workspace/ssi/unix/devl/include/**      "ssi include
-set path+=~/workspace/ssi/unix/devl/src/**          "ssi src
+set path+=~/workspace/ssi/trunk/unix/devl/include/**      "ssi include
+set path+=~/workspace/ssi/trunk/unix/devl/src/**          "ssi src
+set path+=/usr/include/boost/**
 "set path+=C:/versant/7_0_1/h/**
-"set path+=C:/src/boost_1_45_0/**
 "set path+=c:\cygwin\lib\gcc\i686-pc-cygwin\3.4.4\include\c++\**
 
 
 "#}}}"#-------------------------------------------------------------------------
 "# tags dirs
 "#--------------------------------------------------------------------------#{{{
-set tags=tags,tags+=tags;/
-"set tags+=..\..\tags
-set tags+=~/workspace/ssi/unix/devl/tags
-set tags+=~/workspace/ssi/unix/test/tags
-set tags+=C:/versant/7_0_1/h/tags
-"set tags+=C:/src/boost_1_48_0/boost/tags
-set tags+=~\vimfiles\tags\std_tags
-
-
-autocmd FileType python     set tags+=/.vim/tags/python26.ctags
-
 "#}}}"#-------------------------------------------------------------------------
 "# Ctags
 "#--------------------------------------------------------------------------#{{{
@@ -519,18 +494,35 @@ autocmd FileType python     set tags+=/.vim/tags/python26.ctags
 "#      ctags -R –python-kinds=-i -f ~/.vim/tags/python26.ctags /Python26
 "#
 "#------------------------------------------------------------------------------
-
-map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
-map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-
-autocmd FileType python     map <F8> :!ctags -R -f -languages=python -python-kinds=-i .<CR>
+"set tags=tags,tags+=tags;/
+""set tags+=..\..\tags
+"set tags+=~/workspace/ssi/unix/devl/tags
+"set tags+=~/workspace/ssi/unix/test/tags
+"set tags+=C:/versant/7_0_1/h/tags
+""set tags+=C:/src/boost_1_48_0/boost/tags
+"set tags+=~\vimfiles\tags\std_tags
+"
+"
+"autocmd FileType python     set tags+=/.vim/tags/python26.ctags
+"
+"
+":augroup ctags
+":  autocmd!
+":  autocmd FileType python    set tags+=/.vim/tags/python26.ctags
+":  autocmd FileType python    noremap <F8> :!/usr/bin/ctags -R --languages=python --python-kinds=-i . <CR>
+"
+":  autocmd FileType c,cpp     set tags+=/usr/include/c++/tags
+":  autocmd FileType c,cpp     noremap <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR>
+":  autocmd FileType c,cpp     noremap <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+":  autocmd FileType c,cpp     noremap <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+":augroup END
 
 
 "#}}}"#-------------------------------------------------------------------------
 "#  CtrlP
 "#--------------------------------------------------------------------------#{{{
 let g:ctrlp_map = 'F7'
+let g:ctrlp_follow_symlinks=1
 let g:ctrlp_use_caching = 1     " <F5> while inside |CtrlP| will purge the cache
 let g:ctrlp_match_window_bottom = 0
 let g:ctrlp_match_window_reversed = 0
@@ -538,56 +530,55 @@ let g:ctrlp_working_path_mode = 2
 let g:ctrlp_custom_ignore = '\.metadata\|\.git\|\.project\|\.cproject\|\.directory|\.o$'
 let g:ctrlp_extensions = ['tag', 'buffertag', 'quickfix', 'dir', 'rtscript']
 
-func! CP()
-   "exec ':CtrlP ~/workspace/cruisecontrol-2.7/'
-   exec ':CtrlP ~/workspace/ssi/unix/'
-endfunc
+function! CheckPath()
+   exec ':CtrlP ~/workspace/ssi/trunk/unix'
+endfunction
 
-nmap <C-p> :call CP()<CR>
-nmap <C-t> :CtrlPTag<CR>
-
+nnoremap <C-p> :call CheckPath()<CR>
+nnoremap <C-t> :CtrlPTag<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
 "# TagList
 "#--------------------------------------------------------------------------#{{{
+let Tlist_Ctags_Cmd = "/usr/bin/ctags"
+let Tlist_Use_Right_Window = 1
+let Tlist_WinWidth = 35
+let Tlist_Exit_OnlyWindow = 1     " exit if taglist is last window open
+let Tlist_GainFocus_On_ToggleOpen = 1
+let Tlist_Use_SingleClick = 1
+let Tlist_Show_One_File = 1       " Only show tags for current buffer
+let TlistHighlightTag = 1
+let Tlist_Highlight_Tag_On_BufEnter = 1
+let Tlist_Auto_Highlight_Tag = 1
+let Tlist_Show_Menu = 1
+
 let g:tagbar_sort = 0
-let g:tagbar_compact  = 1
+let g:tagbar_compact  = 0
 
-map <S-F4> :TlistToggle<CR>
-map <F4> :TagbarToggle<CR>
-
-
-
-
-"#}}}"#-------------------------------------------------------------------------
-"# omnicomplete
-"#--------------------------------------------------------------------------#{{{
-autocmd FileType python     set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType html       set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType css        set omnifunc=csscomplete#CompleteCSS
-"set omnifunc=syntaxcomplete#Complete " override built-in C omnicomplete with C++ OmniCppComplete plugin
+noremap <S-F4> :TlistToggle<CR>
+noremap <F4> :TagbarToggle<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
 "# clang
 "#--------------------------------------------------------------------------#{{{
-let g:clang_library_path="/usr/lib/"  
-let g:clang_use_library=1     
-" let g:clang_library_path="/usr/lib/"
-let g:clang_auto_select=1     "select first entry in popup menu but don't insert in code
-let g:clang_complete_auto=1   "auto complete after -> . and ::
-let g:clang_complete_copen=1  "open quick fix on error
+let g:clang_library_path="/usr/lib/llvm-3.6/lib/"
+let g:clang_use_library=1
+let g:clang_auto_select=1           "select first entry in popup menu but don't insert in code
+let g:clang_complete_auto=1         "auto complete after -> . and ::
+let g:clang_complete_copen=1        "open quick fix on error
 let g:clang_complete_hl_errors=1    " highlight errors and warnings
 let g:clang_periodic_quickfix=1     " update quickfix periodically
 let g:clang_trailing_placeholder=1  " add trailing placeholder after function
 let g:clang_close_preview=1         " close preview window after completion
-"let g:clang_user_options='-Wc++11-extensions -std=c++0x -I/usr/lib/c++/v1/ -I/Users/aliak/dev/source/boost_1_53_0 -std=c++11'
-let g:clang_user_options='-I/usr/lib/c++/'
+let g:clang_user_options='-I/usr/include/boost'
 let g:clang_snippets=1              " some magic after function ( or ,
 "let g:clang_snippets_engine='snipmate'
-let g:clang_debug=1 
+let g:clang_debug=1
+
+"nnoremap <f5> :call g:ClangUpdateQuickFix()<CR>
+nnoremap <f5> :wincmd K<CR> :let g:clang_periodic_quickfix=1<CR> :call g:ClangUpdateQuickFix()<CR>
 
 ""#}}}"#-------------------------------------------------------------------------
 ""# omnicomplete - cpp
@@ -605,14 +596,23 @@ let g:clang_debug=1
 "
 "let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
 
+:augroup omnigroup
+:  autocmd!
+:  autocmd FileType python     set omnifunc=pythoncomplete#Complete
+:  autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+:  autocmd FileType html       set omnifunc=htmlcomplete#CompleteTags
+:  autocmd FileType css        set omnifunc=csscomplete#CompleteCSS
+:augroup END
 
-"auto open/close popup menu
+
 au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
 set completeopt=menuone,menu,longest  ",preview  "for scratch window
-imap <C-o> <C-x><C-o>
-imap <C-space> <C-x><C-u>
-imap <C-n> <C-x><C-n>
-imap <C-f> <C-x><C-f>
+inoremap <C-o> <C-x><C-o>
+inoremap <C-u> <C-x><C-u>
+inoremap <C-space> <C-x><C-u>
+inoremap <C-n> <C-x><C-n>
+inoremap <C-f> <C-x><C-f>
+"automatically run down if omnicomplete
 inoremap <expr> <space> ((pumvisible())?("\<Down>"):("<space>"))
 
 
@@ -626,99 +626,29 @@ inoremap <expr> <space> ((pumvisible())?("\<Down>"):("<space>"))
 let g:pydiction_location = 'usr/share/vim/vim72/ftplugin/pydiction/complete-dict'
 
 " <silent> py !python %
-"au FileType python setlocal columns=100
-au FileType python set completeopt=menuone,menu,longest,preview
+"autocmd! FileType python setlocal columns=100
+autocmd! FileType python set completeopt=menuone,menu,longest,preview
 
 
-"" go to defn of tag under the cursor
-"fun! MatchCaseTag()
-"    let ic = &ic
-"    set noic
-"    try
-"        exe 'tjump ' . expand('')
-"    finally
-"       let &ic = ic
-"    endtry
-"endfun
-"nnoremap <silent> :call MatchCaseTag()<CR>
-
-
-" `gf` jumps to the filename under the cursor.  Point at an import statement
-" and jump to it!
+"`gf` jumps to the filename under the cursor.  Point at an import statement
+"and jump to it!
 "python << EOF
 "import os
 "import sys
 "import vim
 "
-"#sys.path.append("/usr/lib/python3.1/")
-"#sys.path.append("/usr/lib/python3.1")
-"#sys.path.append("/usr/lib/python3.1/plat-linux2")
-"#sys.path.append("/usr/lib/python3.1/lib-dynload")
-"#sys.path.append("/usr/lib/python3.1/dist-packages")
-"#sys.path.append("/usr/local/lib/python3.1/dist-packages")
-"
+"sys.path.append("/usr/lib/python3.1/")
+"sys.path.append("/usr/lib/python3.1")
+"sys.path.append("/usr/lib/python3.1/plat-linux2")
+"sys.path.append("/usr/lib/python3.1/lib-dynload")
+"sys.path.append("/usr/lib/python3.1/dist-packages")
+"sys.path.append("/usr/local/lib/python3.1/dist-packages")
 "
 "for p in sys.path:
 "    if os.path.isdir(p):
 "        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
 "EOF
 
-
-
-
-"#}}}"#-------------------------------------------------------------------------
-"# Hlsearch
-"#--------------------------------------------------------------------------#{{{
-set hlsearch
-noremap cp :set hlsearch! hlsearch? <CR>
-
-
-
-
-"#}}}"#-------------------------------------------------------------------------
-"# ifndef regions
-"#--------------------------------------------------------------------------#{{{
-"#
-"#  syn region MySkip contained start="^\s*#\s*\(if\>\|ifdef\>\|ifndef\>\)" skip="\\$" end="^\s*#\s*endif\>" contains=MySkip
-"#
-"#  let g:CommentDefines = ""
-"#
-"#  hi link MyCommentOut2 MyCommentOut
-"#  hi link MySkip MyCommentOut
-"#  hi link MyCommentOut Comment
-"#
-"#  map <silent> ,a :call AddCommentDefine()<CR>
-"#  map <silent> ,x :call ClearCommentDefine()<CR>
-"#
-"#  function! AddCommentDefine()
-"#    let g:CommentDefines = "\\(" . expand("<cword>") . "\\)"
-"#    syn clear MyCommentOut
-"#    syn clear MyCommentOut2
-"#    exec 'syn region MyCommentOut start="^\s*#\s*ifdef\s\+' . g:CommentDefines . '\>" end=".\|$" contains=MyCommentOut2'
-"#    exec 'syn region MyCommentOut2 contained start="' . g:CommentDefines . '" end="^\s*#\s*\(endif\>\|else\>\|elif\>\)" contains=MySkip'
-"#  endfunction
-"#
-"#  function! ClearCommentDefine()
-"#    let g:ClearCommentDefine = ""
-"#    syn clear MyCommentOut
-"#    syn clear MyCommentOut2
-"#  endfunction
-"#-------------------------------------------------------------------------
-hi link IfdefReg IfdefColor
-
-let g:ifdef_highlight = 0
-function! IfdefToggle()
-    if g:ifdef_highlight
-        syn clear IfdefReg
-        let g:ifdef_highlight = 0
-    else
-        syn region IfdefReg start="^\s*#ifdef" end="^\s*#endif\(.*\)$"
-        let g:ifdef_highlight = 1
-    endif
-endfunction
-
-au FileType c,cpp call IfdefToggle()
-nnoremap ,t :call IfdefToggle()<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -732,9 +662,9 @@ nnoremap ,t :call IfdefToggle()<CR>
 filetype plugin on          " REQUIRED: This makes vim invoke Latex-Suite when you open a tex file
 set shellslash              " IMPORTANT: win32 users will need to have 'shellslash' set so that latex
                             "   can be called correctly.
-set grepprg=grep\ -nH\ $*   " IMPORTANT: grep will sometimes skip displaying the file name if you
-                            "   search in a singe file. This will confuse Latex-Suite. Set your grep
-                            "   program to always generate a file-name
+"set grepprg=grep\ -nH\ $*   " IMPORTANT: grep will sometimes skip displaying the file name if you
+"                            "   search in a singe file. This will confuse Latex-Suite. Set your grep
+"                            "   program to always generate a file-name
 filetype indent on          " OPTIONAL: This enables automatic indentation as you type
 let g:tex_flavor='latex'    " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
                             "   'plaintex' instead of 'tex', which results in vim-latex not being loaded.
@@ -776,7 +706,7 @@ let g:tex_flavor='latex'    " OPTIONAL: Starting with Vim 7, the filetype of emp
 "#
 "#-------------------------------------------------------------------------
 
-"map <C-F8> :!cs<CR>
+"noremap <C-F8> :!cs<CR>
 
 "if has("win32")
 "    se csprg=D:\cscope\bin\cscope.exe"
@@ -917,26 +847,28 @@ let g:tex_flavor='latex'    " OPTIONAL: Starting with Vim 7, the filetype of emp
 "endfunct!
 
 "#}}}"#-------------------------------------------------------------------------
-"# VimDiff
+"# Diff
 "#--------------------------------------------------------------------------#{{{
 noremap <space> ]cz.
 noremap <S-space> [cz.
+noremap <leader>dt :call RunDiff()<CR>
+noremap <leader>du :diffupdate<CR>
+
+function! RunDiff()
+   if &diff
+      exec ":wincmd w | set nodiff"
+      exec ":wincmd w | set nodiff"
+   else
+      exec ":wincmd w | diffthis"
+      exec ":wincmd w | diffthis | normal! gg ]cz."
+   endif
+endfunction
 
 if &diff
-    set t_Co=256
-    set nowrap
-    set diffopt=filler
-
-    if has("gui_running")
-        exec "winpos 50 50"
-        exec "set lines=70"
-        exec "set columns=160"
-    endif
-
-    "mappings
-    noremap dt :diffthis<CR> gg ]cz.
-    noremap du :diffupdate<CR>
-
+   let g:clang_periodic_quickfix=0
+   if has("gui_running")
+      exec "winpos 50 50 | set lines=70 | set columns=160"
+   endif
 endif
 
 
@@ -957,49 +889,72 @@ let g:bufExplorerSortBy='name'
 let g:bufExplorerDefaultHelp = 0
 let g:bufExplorerSplitBelow = 0
 
-map <C-b> :BufExplorer<CR>
+noremap <C-b> :BufExplorer<CR>
 
 
 "#}}}"#-------------------------------------------------------------------------
 "# vimgrep
 "#--------------------------------------------------------------------------#{{{
-"# map <key> :vimgrep /"pattern"/gj ~/path/to/dir/**/*.{cxx,h,cpp}
-"#--------------------------------------------------------------------------#{{{
-function! Grepc(path,ext,pat)
-    let s:pat =a:pat
-    let s:path=a:path
-    let s:ext =a:ext
-
-    if s:ext==""
-        let s:ext="*"
-    endif
-    if s:path==""
-        let s:path="."
-    endif
-    if s:pat!=""
-        execute("vimgrep /".s:pat."/gj ".s:path."/**/*.".s:ext)
-        cwindow
-        execute ":wincmd J"
-    endif
-endfunction
-
-noremap <C-g><C-g> :call Grepc('~/workspace/ssi/unix/','{cpp,cxx,h,py}',"")<Left><Left>
-noremap <C-g> :call Grepc('.','{cpp,cxx,h,py,js,txt,html}',"")<Left><Left>
+let g:ssi_path = "~/workspace/ssi/trunk/unix"
+nnoremap <C-g> :silent grep! "<C-R><C-W>" /home/sg216005/workspace/ssi/trunk/unix -r -i<CR>:copen<CR>
+"command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+"nnoremap \ :Ag<SPACE>
+nnoremap ' :silent grep! <C-r>/ /home/sg216005/workspace/ssi/trunk/unix -r -i<CR>:copen<CR>
 
 
 "#}}}#---------------------------------------------------------------------------
 "#    binary
 "#---------------------------------------------------------------------------#{{{
 let g:bin_flag = 0
-
 function! BinToggle()
-    if (g:bin_flag==0)
-        exec ":%!xxd"
-        let g:bin_flag = 1
-    else
-        exec ":%!xxd -r"
-        let g:bin_flag = 0
-    endif
+   exec g:bin_flag==0 ? ":%!xxd" : ":%!xxd -r"
+   let g:bin_flag = !g:bin_flag
 endfunction
+nnoremap <leader>b :call BinToggle()<CR>
 
-nmap BB :call BinToggle()<CR>
+"#}}}#---------------------------------------------------------------------------
+"#    vimrc
+"#---------------------------------------------------------------------------#{{{
+nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+nnoremap <leader>sv :source $MYVIMRC<cr>
+
+noremap J :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-D>:set scroll=0<CR>
+noremap K :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-U>:set scroll=0<CR>
+
+nnoremap H ^
+nnoremap L g_
+vnoremap H ^
+vnoremap L g_
+
+inoremap kj <esc>
+vnoremap kj <esc>
+
+"nnoremap 0 <nop>
+"nnoremap $ <nop>
+"noremap <C-q> <nop>
+"noremap <C-s> <nop>
+"inoremap <esc> <nop>
+"noremap tt <nop>
+"nnoremap : <nop>
+"nnoremap cp <nop>
+"nnoremap BB <nop>
+
+command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
+function! s:RunShellCommand(cmdline)
+  echo a:cmdline
+  let expanded_cmdline = a:cmdline
+  for part in split(a:cmdline, ' ')
+     if part[0] =~ '\v[%#<]'
+        let expanded_part = fnameescape(expand(part))
+        let expanded_cmdline = substitute(expanded_cmdline, part, expanded_part, '')
+     endif
+  endfor
+  botright new
+  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
+  call setline(1, 'You entered:    ' . a:cmdline)
+  call setline(2, 'Expanded Form:  ' .expanded_cmdline)
+  call setline(3,substitute(getline(2),'.','=','g'))
+  execute '$read !'. expanded_cmdline
+  setlocal nomodifiable
+  1
+endfunction

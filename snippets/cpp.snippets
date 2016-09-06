@@ -4,6 +4,13 @@
 snippet ass
 	assert( ${1:/*condition*/} && "${2}");${3}
 #-------------------------------------------------------------------------------
+# assert
+#-------------------------------------------------------------------------------
+snippet assign
+	#include <boost/assign/list_of.hpp>
+
+	boost::assign::list_of<i16>(${1:0});${2}
+#-------------------------------------------------------------------------------
 # auto_ptr
 #-------------------------------------------------------------------------------
 snippet auto
@@ -21,13 +28,13 @@ snippet back_inserter
 #snippet bind
 #	ind(f, _2, _1)(x, y);            // f(y, x)
 #	ind(g, _1, 9, _1)(x);            // g(x, 9, x)
-#	
+#
 #	struct X {
 #	    bool f(int a);
 #	};x
 #	shared_ptr<X> p(new X);
 #	int i = 5;
-#	
+#
 #	bind(&X::f, ref(x), _1)(i);		// x.f(i)
 #	bind(&X::f, &x, _1)(i);			//(&x)->f(i)
 #	bind(&X::f, x, _1)(i);			// (internal copy of x).f(i)
@@ -38,7 +45,7 @@ snippet back_inserter
 snippet bind
 	typedef boost::function<void (${1:})> ${2:fun_t};
 	$2 fun( boost::bind( ${3:&MyClass::fun}, ${4:myobject}) );
-	
+
 	// template< typename T >
 	// struct my_function {
 	//     typedef boost::function< void( constT& ) > type;
@@ -58,53 +65,36 @@ snippet lexical
 #-------------------------------------------------------------------------------
 # class
 #-------------------------------------------------------------------------------
-snippet class
+snippet class short
 	class ${1:`Filename('$1', 'name')`}
 	{
-	    public:
-	        $1(${2});
-	        virtual ~$1();
-
-	    private:
-	        ${3:/* data */}
+	public:
+		$1() {};
+	   virtual ~$1() {};
 	};
-	
+#-------------------------------------------------------------------------------
+# class
+#-------------------------------------------------------------------------------
+snippet class for_cpp
+	class ${1:`Filename('$1', 'name')`}
+	{
+	public:
+		$1(${2});
+	   virtual ~$1();
+
+	private:
+	   ${3:/* data */}
+	};
+
 	#include "$1.h"
 
 	//---------------------------------------------------------------------------
 	$1::$1(${2})
 	{}
-	
+
 	//---------------------------------------------------------------------------
 	$1::~$1()
 	{}
-	
-#	class ${1:`Filename('$1', 'name')`}
-#	{
-#	    public:
-#	        $1(${2});
-#	        virtual ~$1();
-#
-#	    private:
-#	        struct PrvImpl;
-#	        PrvImpl * pim;
-#	        ${3:/* data */}
-#	};
-#	
-#	#include "$1.h"
-#
-#
-#	$1::$1(${2}):pim(new PrvImpl())
-#	{
-#	};
-#
-#	$1::~$1()
-#	{
-#	};
-#	
-#	struct $1::PrvImpl
-#	{
-#	};
 #-------------------------------------------------------------------------------
 # copy
 #-------------------------------------------------------------------------------
@@ -114,7 +104,11 @@ snippet copy
 # cout
 #-------------------------------------------------------------------------------
 snippet cout
-	std::cout << "${1}" << ${2: << }std::endl;${3}
+	std::cout << "${1}" << std::endl;${2}
+# cout
+#-------------------------------------------------------------------------------
+snippet <<
+	<< ${1} <<${2}
 #-------------------------------------------------------------------------------
 # debug
 #-------------------------------------------------------------------------------
@@ -130,7 +124,7 @@ snippet endl
 #-------------------------------------------------------------------------------
 snippet explode
 	std::istringstream iss(line);
-			 
+
 	std::vector<std::string> tokens;
 	std::copy(std::istream_iterator<std::string>(iss),
 			  std::istream_iterator<std::string>(),
@@ -141,9 +135,17 @@ snippet fori
 	   *(ii).${4:fun()};
 	}
 #-------------------------------------------------------------------------------
-snippet fore
+snippet FOR
 	#include <boost/foreach.hpp>
-	
+
+	BOOST_FOREACH(${1:EType} ${2:elem}, ${3:vContainer})
+	{
+	   ${2}
+	}
+#-------------------------------------------------------------------------------
+snippet FOREACH
+	#include <boost/foreach.hpp>
+
 	BOOST_FOREACH(${1:EType} ${2:elem}, ${3:vContainer})
 	{
 	   ${2}
@@ -151,11 +153,11 @@ snippet fore
 #-------------------------------------------------------------------------------
 snippet forem
 	#include <boost/foreach.hpp>
-	
+
 	BOOST_FOREACH(const std::map${2:< , >}::value_type& Value, ${1:mymap})
 	{
 		${3:}
-	}     
+	}
 
 #-------------------------------------------------------------------------------
 # functors
@@ -207,7 +209,7 @@ snippet ifstream
 snippet is_digit
 	#include <boost/fusion/include/all.hpp>
 	#include <boost/algorithm/string/detail/classification.hpp>
-	
+
 	boost::all(${1:string}, boost::algorithm::is_digit());
 #-------------------------------------------------------------------------------
 # jclass
@@ -227,17 +229,17 @@ snippet jclass
 	        static $1::SP create();
 	        ${3:/* data */}
 	};
-	
+
 	#include "$1.h"
 
 	$1::$1(${2}):pim(new PrvImpl()){};
-	
+
 	$1::~$1(){};
-	
+
 	struct $1::PrvImpl
 	{
 	};
-	
+
 	$1::SP $1::create()
 	{
 	    $1::SP l$1(new $1());
@@ -351,9 +353,10 @@ snippet try
 #-------------------------------------------------------------------------------
 # vector
 #-------------------------------------------------------------------------------
+snippet vec
+	std::vector<${1:int}> ${2:v}
 snippet vector
-	std::vector<${1:int}> ${2:v_name}
-#
+	std::vector<${1:int}> ${2:v}
 #-------------------------------------------------------------------------------
 # messagebox
 #-------------------------------------------------------------------------------
@@ -396,12 +399,12 @@ snippet sharedobject
 	#include <dlfcn.h>
 	#include <stdio.h>
 	#include <cassert>
-	
+
 	//typedef
 	typedef double (*fun_t)(double, double);
 	typedef OperClass* (*create_t)();
 	typedef void (*destroy_t)(OperClass*);
-	
+
 	// initializing
 	void* my_lib_handle = dlopen("libOper.so", RTLD_NOW); // RTLD_NOW / LAZY;
 	assert(my_lib_handle != NULL);
@@ -418,7 +421,7 @@ snippet sharedobject
 	destroy( operClass );
 
 	dlclose(my_lib_handle);
-	
+
 	//---------------------------------------------------------------------------
 	// Oper.cpp
 	//---------------------------------------------------------------------------
@@ -461,7 +464,7 @@ snippet sharedobject
 	//{
 	//	printf("DLL: fini()! \n");
 	//}
-	
+
 	//---------------------------------------------------------------------------
 	// Oper.h
 	//---------------------------------------------------------------------------
@@ -471,7 +474,7 @@ snippet sharedobject
 	#ifdef __cplusplus
 	extern "C" {
 	#endif
-		
+
 		double fun(double a, double b);
 
 		class OperClass
@@ -497,11 +500,11 @@ snippet externC
 	extern "C" {
 	#endif
 	${1:/*code*/}
-	
+
 	#ifdef __cplusplus
 	} /* end of extern "C" */ ${2}
 	#endif
-#	 
+#
 #===============================================================================
 #                           DESIGN PATTERNS
 #===============================================================================
@@ -519,16 +522,16 @@ snippet builder
 	        {
 	            return pizza;
 	        }
-	
+
 	        void createPizza()
 	        {
 	            pizza = new Pizza();
 	        }
-	
+
 	        virtual void buildDough() = 0;
 	        virtual void buildSauce() = 0;
 	        virtual void buildTopping() = 0;
-	
+
 	    protected:
 	        Pizza* pizza;
 	};
@@ -541,7 +544,7 @@ snippet callback
 	int SomeCallback(float variable) {
 		return 1;
 	}
-	
+
 	void DoWork(CallbackT callback);
 	DoWork(&SomeCallback);
 #-------------------------------------------------------------------------------
@@ -629,27 +632,35 @@ snippet TEST
 	{
 		${3}
 	}
-#------------------------------------------------------------------------------- 
-# snippet avlboost	
-#------------------------------------------------------------------------------- 
-snippet avlboost	
-	//---------------------------------------------------------------------------
-	// adding availability IND-MDW
-	//---------------------------------------------------------------------------
-	at::FareSentinel mkt1FareSentinel("IND", "MDW");
-	CHECKINT(at::MarketGetAllPrices("IND", PLACE_LEVEL_AIRPORT, "MDW", PLACE_LEVEL_AIRPORT), NO_AP_ERROR);
-	CHECKCHAR(pIob->Prices[6].FcID, FcID);
-	UpdateFarePrice(FcID, 90000, pIob->Prices[6].UniqueLOID);
-	CHECKINT(at::SendTransaction(T_PRICE_UPDATE), NO_AP_ERROR);     
-#-------------------------------------------------------------------------------
-# snippet inhibit
-#-------------------------------------------------------------------------------
-snippet inhibit
-	//---------------------------------------------------------------------------
-	// add inhibit Y rule
-	//---------------------------------------------------------------------------
-	char szParams[L_RULE_PARAMETERS];
-	sprintf(szParams, "/%c%cF/", RULE_ACTION_SET, RULE_SUBACTION_NO_DISPLAY);
-	CHECKINT(sentinel.PrepareRule(szParams, RULE_ALPHA, RULE_USAGE_PRECALCULATION), NO_AP_ERROR);
-	CHECKINT(sentinel.RuleAddToHost(), NO_AP_ERROR);   
-
+snippet incall
+	#include <algorithm>
+	#include <boost/algorithm/cxx11/all_of.hpp>
+	#include <boost/algorithm/cxx11/any_of.hpp>
+	#include <boost/algorithm/string.hpp>
+	#include <boost/algorithm/string/predicate.hpp>
+	#include <boost/assign/list_of.hpp>
+	#include <boost/bind.hpp>
+	#include <boost/foreach.hpp>
+	#include <boost/function.hpp>
+	#include <boost/lexical_cast.hpp>
+	#include <boost/optional.hpp>
+	#include <boost/progress.hpp>
+	#include <boost/range/algorithm/copy.hpp>
+	#include <boost/static_assert.hpp>
+	#include <boost/thread/pthread/mutex.hpp>
+	#include <boost/type_traits.hpp>
+	#include <boost/typeof/typeof.hpp>
+	#include <boost/utility/enable_if.hpp>
+	#include <fstream>
+	#include <functional>
+	#include <iostream>
+	#include <limits>
+	#include <list>
+	#include <locale>
+	#include <set>
+	#include <sstream>
+	#include <stdexcept>
+	#include <stdint.h>
+	#include <stdlib.h>
+	#include <string>
+	#include <vector>
