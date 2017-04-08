@@ -74,6 +74,7 @@ call pathogen#helptags()
 "# Text Edition Settings
 "#--------------------------------------------------------------------------#{{{
 "set verbose=1           " see everything vim is doing
+set clipboard=unnamedplus
 
 "spaces
 set tabstop=3           " n-space tabs
@@ -181,6 +182,8 @@ nnoremap N Nzzzv
 nnoremap g; g;zz
 nnoremap g, g,zz
 
+map <C-h> :FSHere<cr>
+
 "#}}}#---------------------------------------------------------------------------
 "#   visually selected text
 "#---------------------------------------------------------------------------#{{{
@@ -217,7 +220,7 @@ endfunc
 :augroup comments
 :   autocmd!
 :   autocmd FileType sh,ruby,awk,perl let b:comment_leader = '#'
-:   autocmd FileType conf,fstab,make,txt,gitconfig let b:comment_leader = '#'
+:   autocmd FileType conf,fstab,make,cmake,txt,gitconfig let b:comment_leader = '#'
 :   autocmd FileType tex                     let b:comment_leader = '%'
 :   autocmd FileType mail                    let b:comment_leader = '>'
 :   autocmd FileType vim                     let b:comment_leader = '"'
@@ -473,14 +476,6 @@ vnoremap kj <esc>
 "#}}}"#-------------------------------------------------------------------------
 "# Command output in split
 "#--------------------------------------------------------------------------#{{{
-
-"funct! Exec(comand)
-"    redir =>output
-"    silent a:comand
-"    redir END
-"    return output
-"endfunct!
-
 command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
 function! s:RunShellCommand(cmdline)
   echo a:cmdline
