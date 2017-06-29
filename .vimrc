@@ -1,6 +1,6 @@
 "-------------------------------------------------------------------------------
 "
-" Version: 12
+" Version: 13
 " Author: Piotr Borkowski
 " Created:  Nov 2003 10:20:19
 " Last-modified: 10.12.2010
@@ -15,6 +15,62 @@
 "   command! AutoCloseOn :let s:running = 1
 "-------------------------------------------------------------------------------
 "#{{{
+
+"#}}}"#-------------------------------------------------------------------------
+"# vundle
+"#--------------------------------------------------------------------------#{{{
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+"#------------------------------------------------------------------------------
+
+set nocompatible
+filetype off
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" let Vundle manage Vundle, required
+"A (https://github.com/vim-scripts/a.vim)
+"NERDCommenter (https://github.com/scrooloose/nerdcommenter)
+"SuperTab (https://github.com/ervandew/supertab)
+"Tagbar (https://github.com/majutsushi/tagbar)
+"vim-airline (https://github.com/bling/vim-airline)
+"UltiSnips (https://github.com/SirVer/ultisnips)
+"vim-autoclose (https://github.com/Townk/vim-autoclose)
+"vim-fugitive (https://github.com/tpope/vim-fugitive)
+"vim-gitgutter (https://github.com/airblade/vim-gitgutter)
+"vim-multiple-cursors (https://github.com/terryma/vim-multiple-cursors)
+
+Plugin 'VundleVim/Vundle.vim'
+"Plugin 'rip-rip/clang_complete'
+Plugin 'kien/ctrlp.vim'
+Plugin 'majutsushi/tagbar'
+Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/syntastic'
+Plugin 'Valloric/YouCompleteMe'
+
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'garbas/vim-snipmate'
+
+" fuf
+" L9
+"" vim-scripts repos
+"Bundle 'L9'
+"Bundle 'FuzzyFinder'
+
+"Plugin 'tpope/vim-fugitive'
+"Plugin 'git://git.wincent.com/command-t.git'
+"Plugin 'file:///home/gmarik/path/to/plugin'
+"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+
+call vundle#end()            " required
+filetype plugin indent on    " required
 
 
 "#}}}"#-------------------------------------------------------------------------
@@ -31,7 +87,7 @@ if has("win32")                    "system
    set lines=50 columns=140
    set encoding=utf-8                   "needed for win
 else
-    set guifont=Liberation\ Mono\ 7.1
+    set guifont=Liberation\ Mono\ 8
 endif
 
 if has("gui_running")
@@ -47,28 +103,6 @@ endif
 "indentation rules and plugins(filetype)
 syntax on
 filetype plugin indent on
-
-
-"#}}}#---------------------------------------------------------------------------
-"#    pathogen
-"#---------------------------------------------------------------------------#{{{
-"#   Submodule add
-"#       > git rm -r .vim/bundle/fugitive
-"#       > git submodule add git://github.com/tpope/vim-fugitive.git bundle/fugitive
-"#   Register :
-"#       > git submodule init
-"#       > git submodule update
-"#       > git submodule update --init --recursive
-"#   Remove submodule:
-"#       remove references in .gitmodules
-"#                            .git/config.
-"#       > git rm --cached .vim/bundle/fugitive
-"#   Update all:
-"#       git submodule foreach git pull origin master
-"#--------------------------------------------------------------------------------
-call pathogen#infect()
-call pathogen#helptags()
-
 
 "#}}}"#-------------------------------------------------------------------------
 "# Text Edition Settings
@@ -185,6 +219,23 @@ nnoremap g, g,zz
 map <C-h> :FSHere<cr>
 
 "#}}}#---------------------------------------------------------------------------
+"#    vimrc
+"#---------------------------------------------------------------------------#{{{
+nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+nnoremap <leader>sv :source $MYVIMRC<cr>
+
+noremap J :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-D>:set scroll=0<CR>
+noremap K :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-U>:set scroll=0<CR>
+
+nnoremap H ^
+nnoremap L g_
+vnoremap H ^
+vnoremap L g_
+
+inoremap kj <esc>
+vnoremap kj <esc>
+
+"#}}}#---------------------------------------------------------------------------
 "#   visually selected text
 "#---------------------------------------------------------------------------#{{{
 nnoremap * viwy/<C-r>0<CR>:set hlsearch<CR>N
@@ -204,6 +255,11 @@ cnoremap ;' ()<Left>
 cnoremap ;< <><Left>
 cnoremap ;x <\>\(.*\)\</<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 
+" For local replace
+nnoremap gr gd[{V%::s/<C-R>///gc<left><left><left>
+
+" For global replace
+nnoremap gR gD:%s/<C-R>///gc<left><left><left>
 
 "#}}}"#-------------------------------------------------------------------------
 "# clearing function
@@ -258,62 +314,6 @@ vnoremap ? :call NewComment()<CR>
 au BufRead,BufNewFile *.scd setfiletype scd
 
 "#}}}"#-------------------------------------------------------------------------
-"#      Neocomplcache
-"#--------------------------------------------------------------------------#{{{
-let g:acp_enableAtStartup = 0
-let g:neocomplcache_enable_at_startup = 0
-let g:neocomplcache_min_syntax_length = 4
-let g:neocomplcache_min_keyword_length = 4
-let g:neocomplcache_enable_smart_case = 1            " smartcase
-"let g:neocomplcache_enable_camel_case_completion = 1 " camel case
-
-" Plugin key-mappings.
-" <CR>: close popup and save indent.
-"inoremap <expr><CR>  neocomplcache#close_popup() . "\<CR>"
-" <TAB>: completion.
-"inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-"inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-"inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-"inoremap <expr><C-y>  neocomplcache#close_popup()
-"inoremap <expr><C-e>  neocomplcache#cancel_popup()
-"inoremap <expr><C-g>  neocomplcache#undo_completion()
-" FIXME use <C-n>, <C-p> or <C-j>, <C-k> to select from popup.
-
-
-"#}}}"#-------------------------------------------------------------------------
-"# NERDTree
-"#--------------------------------------------------------------------------#{{{
-let NERDTreeWinPos="right"
-let NERDTreeDirArrows=0
-let NERDTreeMouseMode=1
-nnoremap <silent> <C-e> <Esc>:NERDTreeToggle . <CR> <C-w> l
-
-function! NERDTreeQuit()
-  redir => buffersoutput
-  silent buffers
-  redir END
-"                     1BufNo  2Mods.     3File           4LineNo
-  let pattern = '^\s*\(\d\+\)\(.....\) "\(.*\)"\s\+line \(\d\+\)$'
-  let windowfound = 0
-
-  for bline in split(buffersoutput, "\n")
-    let m = matchlist(bline, pattern)
-
-    if (len(m) > 0)
-      if (m[2] =~ '..a..')
-        let windowfound = 1
-      endif
-    endif
-  endfor
-
-  if (!windowfound)
-    quitall
-  endif
-endfunction
-autocmd! WinEnter * call NERDTreeQuit()
-
-"#}}}"#-------------------------------------------------------------------------
 "#
 "#-------------------------------------------------------------------------"#{{{
 :augroup my_functions
@@ -329,70 +329,13 @@ function! Synchronize()
 endfunc
 
 
-"#}}}"#=========================================================================
-"#                              C++ setttings
-"#==========================================================================#{{{
-
 "#}}}"#-------------------------------------------------------------------------
 "# path
 "#--------------------------------------------------------------------------#{{{
+set path+=**
 set path+=~/workspace/ssi/trunk/unix/devl/include/**
 set path+=~/workspace/ssi/trunk/unix/devl/src/**
 set path+=/usr/include/boost/**
-
-"#}}}"#-------------------------------------------------------------------------
-"#  CtrlP
-"#--------------------------------------------------------------------------#{{{
-let g:ctrlp_map = 'F7'
-let g:ctrlp_follow_symlinks=1
-let g:ctrlp_use_caching = 1     " <F5> while inside |CtrlP| will purge the cache
-let g:ctrlp_match_window_bottom = 0
-let g:ctrlp_match_window_reversed = 0
-let g:ctrlp_working_path_mode = 2
-let g:ctrlp_custom_ignore = '\.metadata\|\.git\|\.project\|\.cproject\|\.directory|\.o$'
-let g:ctrlp_extensions = ['tag', 'buffertag', 'quickfix', 'dir', 'rtscript']
-
-function! CheckPath()
-   exec ':CtrlP ~/workspace/ssi/trunk/unix'
-endfunction
-
-nnoremap <C-p> :call CheckPath()<CR>
-nnoremap <C-t> :CtrlPTag<CR>
-
-
-"#}}}"#-------------------------------------------------------------------------
-"# TagList
-"#--------------------------------------------------------------------------#{{{
-let Tlist_Ctags_Cmd = "/usr/bin/ctags"
-let Tlist_Use_Right_Window = 1
-let Tlist_WinWidth = 35
-let Tlist_Exit_OnlyWindow = 1     " exit if taglist is last window open
-let Tlist_GainFocus_On_ToggleOpen = 1
-let Tlist_Use_SingleClick = 1
-let Tlist_Show_One_File = 1       " Only show tags for current buffer
-let TlistHighlightTag = 1
-let Tlist_Highlight_Tag_On_BufEnter = 1
-let Tlist_Auto_Highlight_Tag = 1
-let Tlist_Show_Menu = 1
-
-let g:tagbar_sort = 0
-let g:tagbar_compact  = 0
-
-noremap <S-F4> :TlistToggle<CR>
-noremap <F4> :TagbarToggle<CR>
-
-
-
-au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
-set completeopt=menuone,menu,longest  ",preview  "for scratch window
-inoremap <C-o> <C-x><C-o>
-inoremap <C-u> <C-x><C-u>
-inoremap <C-space> <C-x><C-u>
-inoremap <C-n> <C-x><C-n>
-inoremap <C-f> <C-x><C-f>
-"automatically run down if omnicomplete
-inoremap <expr> <space> ((pumvisible())?("\<Down>"):("<space>"))
-
 
 "#}}}"#-------------------------------------------------------------------------
 "# Diff
@@ -421,30 +364,11 @@ endif
 
 
 "#}}}"#-------------------------------------------------------------------------
-"# FuzzyFinder
-"#--------------------------------------------------------------------------#{{{
-noremap <C-f> :FufRenewCache<CR>:FufFile<CR>
-
-
-"#}}}"#-------------------------------------------------------------------------
-"# BufExplorer
-"#--------------------------------------------------------------------------#{{{
-"#Sort by:
-"#   'extension', 'fullpath', 'mru' (recently used), 'name, 'number'
-"#-------------------------------------------------------------------------
-let g:bufExplorerSortBy='name'
-let g:bufExplorerDefaultHelp = 0
-let g:bufExplorerSplitBelow = 0
-
-noremap <C-b> :BufExplorer<CR>
-
-
-"#}}}"#-------------------------------------------------------------------------
 "# vimgrep
 "#--------------------------------------------------------------------------#{{{
 let g:ssi_path = "~/workspace/ssi/trunk/unix"
-nnoremap <C-g> :silent grep! "<C-R><C-W>" /home/sg216005/workspace/ssi/trunk/unix -r -i<CR>:copen<CR>
-nnoremap ' :silent grep! <C-r>/ /home/sg216005/workspace/ssi/trunk/unix -r -i<CR>:copen<CR>
+nnoremap <C-g> :silent grep! "<C-R><C-W>" ~/workspace/ssi/trunk/unix -r -i<CR>:copen<CR>
+nnoremap ' :silent grep! <C-r>/home/sg216005/workspace/ssi/trunk/unix -r -i<CR>:copen<CR>
 
 "#}}}#---------------------------------------------------------------------------
 "#    binary
@@ -456,22 +380,6 @@ function! BinToggle()
 endfunction
 nnoremap <leader>b :call BinToggle()<CR>
 
-"#}}}#---------------------------------------------------------------------------
-"#    vimrc
-"#---------------------------------------------------------------------------#{{{
-nnoremap <leader>ev :vsplit $MYVIMRC<cr>
-nnoremap <leader>sv :source $MYVIMRC<cr>
-
-noremap J :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-D>:set scroll=0<CR>
-noremap K :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-U>:set scroll=0<CR>
-
-nnoremap H ^
-nnoremap L g_
-vnoremap H ^
-vnoremap L g_
-
-inoremap kj <esc>
-vnoremap kj <esc>
 
 "#}}}"#-------------------------------------------------------------------------
 "# Command output in split
@@ -495,3 +403,28 @@ function! s:RunShellCommand(cmdline)
   setlocal nomodifiable
   1
 endfunction
+=======
+""#}}}"#-------------------------------------------------------------------------
+" "# Command output in split
+" "#--------------------------------------------------------------------------#{{{
+" command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
+" function! s:RunShellCommand(cmdline)
+"   echo a:cmdline
+"   let expanded_cmdline = a:cmdline
+"   for part in split(a:cmdline, ' ')
+"      if part[0] =~ '\v[%#<]'
+"         let expanded_part = fnameescape(expand(part))
+"         let expanded_cmdline = substitute(expanded_cmdline, part, expanded_part, '')
+"      endif
+"   endfor
+"   botright new
+"   setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
+"   call setline(1, 'You entered:    ' . a:cmdline)
+"   call setline(2, 'Expanded Form:  ' .expanded_cmdline)
+"   call setline(3,substitute(getline(2),'.','=','g'))
+"   execute '$read !'. expanded_cmdline
+"   setlocal nomodifiable
+"   1
+" endfunction
+
+:source ~/.vim/.vimrc_plugins
