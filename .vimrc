@@ -369,7 +369,7 @@ endif
 "#--------------------------------------------------------------------------#{{{
 let g:ssi_path = "~/workspace/ssi/trunk/unix"
 nnoremap <C-g> :silent grep! "<C-R><C-W>" ~/workspace/ssi/trunk/unix -r -i<CR>:copen<CR>
-nnoremap ' :silent grep! <C-r>/home/sg216005/workspace/ssi/trunk/unix -r -i<CR>:copen<CR>
+nnoremap ' :silent grep! <C-r>/ /home/sg216005/workspace/ssi/trunk/unix -r -i<CR>:copen<CR>
 
 "#}}}#---------------------------------------------------------------------------
 "#    binary
